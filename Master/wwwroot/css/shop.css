@@ -1,0 +1,81 @@
+﻿.btn-green {
+    --bs-btn-color: #fff !important;
+    --bs-btn-bg: #02542D !important;
+    --bs-btn-border-color: #02542D;
+    --bs-btn-hover-color: #02542D;
+    --bs-btn-hover-bg: #fff;
+    --bs-btn-hover-border-color: #02542D !important;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #02542D;
+    --bs-btn-active-border-color: #02542D;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #02542D;
+    --bs-btn-disabled-border-color: #02542D;
+}
+
+.btn-outline {
+    color: #fff !important; /* Text color black */
+    background-color: #000; /* Background color white */
+    border: 1px solid #fff; /* Border color black */
+}
+
+    .btn-outline:hover,
+    .btn-outline:focus,
+    .btn-outline:active {
+        color: #000 !important; /* Text color white */
+        background-color: #fff; /* Background color black */
+        border-color: #fff; /* Ensure the border remains black */
+    }
+
+.shadowBtn {
+    box-shadow: 5px 5px 20px 2px #0000008c !important;
+}
+
+#card-container {
+    display: flex;
+    justify-content: space-between; /* Spread cards equally on larger screens */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 16px; /* Add spacing between cards */
+    padding: 50px;
+}
+
+/* Ensure cards have a dynamic width */
+.card {
+    flex: 1 1 calc(20% - 16px); /* Each card takes ~20% of the width with gap */
+    max-width: 320px;
+    min-width: 220px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+    .card:hover {
+        transform: translateY(-5px); /* Moves the card up */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Adds shadow */
+    }
+
+
+
+/* Media query for smaller screens (e.g., 425px) */
+@media (max-width: 768px) {
+    .card {
+        flex: 1 1 calc(45% - 16px); /* Cards take ~45% of the width */
+    }
+}
+
+@media (max-width: 576px) {
+    .card {
+        flex: 1 1 100%; /* Stack cards on small screens */
+    }
+
+    #card-container {
+        justify-content: center !important; /* Center cards on small screens */
+    }
+}
+
+@media screen and (max-width:426px) {
+    .make-res {
+        font-size: 14px;
+        flex-direction: column-reverse !important;
+    }
+}

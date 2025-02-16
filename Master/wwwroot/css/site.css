@@ -1,0 +1,165 @@
+html {
+  font-size: 14px;
+}
+@import url('https://fonts.googleapis.com/css2?family=Lalezar&display=swap');
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+
+
+* {
+    /* color: #002E18; */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.navbar {
+    transition: top 0.3s ease; /* Optional: Add a smooth transition */
+    border-bottom: 2px solid #118B50;
+    box-shadow: 0px 0px 15px black;
+    ;
+}
+
+.coll {
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar-nav {
+    gap: 70px;
+    font-size: 15px;
+}
+
+.navbar-brand img {
+    width: 100%;
+    height: 50px;
+    margin: 0;
+}
+
+.navbar-nav .dropdown-toggle::after {
+    content: none;
+}
+
+.dropdown-item {
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: #118B50 !important;
+}
+
+.nav-link{
+    color:black;
+}
+
+
+.newsletter {
+    margin: 0 !important;
+    background: linear-gradient(to right,#118B50, #9CD49F);
+}
+
+.footer {
+    background-color: #02542D !important;
+}
+
+.footerLink {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+}
+
+.pillBg {
+    background-color: #fff;
+    border-radius: 170px;
+}
+
+.input-footer {
+    border: none !important;
+    direction: ltr;
+}
+
+.btn-green-footer {
+    --bs-btn-color: #fff !important;
+    --bs-btn-bg: #02542D !important;
+    --bs-btn-border-color: #02542D;
+    --bs-btn-hover-color: #02542D;
+    --bs-btn-hover-bg: #fff;
+    --bs-btn-hover-border-color: #02542D !important;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #02542D;
+    --bs-btn-active-border-color: #02542D;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #02542D;
+    --bs-btn-disabled-border-color: #02542D;
+    width: 100%;
+    border-radius: 170px !important;
+}
+
+.btn-outline {
+    color: #fff !important; /* Text color black */
+    background-color: #002e18; /* Background color white */
+    border: 1px solid #fff; /* Border color black */
+}
+
+    .btn-outline:hover,
+    .btn-outline:focus,
+    .btn-outline:active {
+        color: #002e18 !important; /* Text color white */
+        background-color: #fff; /* Background color black */
+        border-color: #fff; /* Ensure the border remains black */
+    }
+
+.Copyright {
+    background-color: #002E18 !important;
+    color: #fff;
+}
+
+@media screen and (max-width:426px) {
+    .navbar {
+        direction: ltr;
+    }
+
+    .navbar-nav {
+        gap: 0;
+    }
+
+    .coll {
+        direction: rtl;
+        align-items: start;
+        justify-content: start;
+    }
+
+    .newsletter .row {
+        margin-bottom: 24px;
+        text-align: center !important;
+    }
+
+    .res {
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .btn-green-footer {
+        font-size: 12px;
+    }
+
+    .btn-cont {
+        justify-content: space-between !important;
+    }
+
+    .emailRes {
+        width: 100%;
+    }
+}
+

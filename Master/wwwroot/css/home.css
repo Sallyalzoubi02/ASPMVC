@@ -1,0 +1,328 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Lalezar&display=swap");
+
+* {
+    /* color: #002E18; */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+html::-webkit-scrollbar {
+    width: 1rem;
+}
+
+html::-webkit-scrollbar-track {
+    background: #19875492;
+}
+
+html::-webkit-scrollbar-thumb {
+    background: #198754;
+    border-radius: 5rem;
+}
+
+/* Blurring effect */
+.blurred {
+    filter: blur(5px);
+    pointer-events: none;
+    transition: filter 0.3s ease;
+}
+
+.topp {
+    top: -8px;
+}
+
+.laz {
+    font-family: Lalezar !important;
+}
+
+#header {
+    height: 90vh;
+    background-image: url(~/image/background1.png) !important;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position-y: -90px;
+    background-position-x: -60px;
+}
+/* إعدادات البداية (عنصر غير ظاهر) */
+.hidden {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.hidden2 {
+    opacity: 0;
+    transform: translatex(50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+/* عندما يظهر العنصر */
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.visible2 {
+    opacity: 1;
+    transform: translatex(0);
+}
+
+hr {
+    color: #118b50 !important;
+    opacity: 1 !important;
+}
+
+.m {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.mar {
+    margin-top: 200px;
+    margin-bottom: 200px;
+}
+
+.s2 {
+    background-image: url(~/image/bgd.png) !important;
+    height: max-content;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 20px;
+}
+
+.carousel {
+    border-radius: 0px 170px 170px 0px; /* Pill shape */
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 300px;
+    border-radius: 0px 170px 170px 0px; /* Pill shape */
+}
+
+.welcome {
+    padding: 60px;
+}
+
+.btn-font {
+    font-size: 32px !important;
+    --bs-border-radius: 7.375rem;
+    width: 50%;
+}
+
+.text {
+    text-align: center;
+    font-size: 24px;
+}
+
+.text-par {
+    font-size: 30px;
+}
+
+.moreLink {
+    display: inline-block; /* تأكد من أنها تظهر كعنصر مدمج */
+    color: #118b50;
+    margin-left: 0; /* أزل الهوامش من الجهة اليسرى */
+    text-decoration: none;
+    font-size: 20px;
+    text-align: left; /* لضمان النص يتمحور لليسار */
+}
+
+.btn-success {
+    border: 2px solid #1a6e47 !important;
+    box-shadow: 10px 10px 29px rgba(0, 0, 0, 0.5);
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #198754;
+    --bs-btn-border-color: #0c3e27;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #157347;
+    --bs-btn-hover-border-color: #0c3e27;
+    --bs-btn-focus-shadow-rgb: 60, 153, 110;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #146c43;
+    --bs-btn-active-border-color: #13653f;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #198754;
+    --bs-btn-disabled-border-color: #198754;
+}
+
+.card {
+    width: 100%;
+    min-height: 530px;
+    max-width: 447px;
+    perspective: 1000px;
+    border: none !important;
+}
+
+.card-img-top {
+    width: 70% !important;
+}
+
+.card-inner {
+    width: 100%;
+    height: 530px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.999s;
+}
+
+.card:hover .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+}
+
+.card-front {
+    color: #002e18;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 8%;
+    justify-content: center;
+    transform: rotateY(0deg);
+    border: 3px solid #118b50 !important;
+}
+
+.card-back {
+    background-color: #118b50;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #0c3e27;
+    border-radius: 10px;
+    justify-content: center;
+    transform: rotateY(180deg);
+    padding: 20px;
+}
+
+.s3 .container-fluid .row {
+    column-gap: 30px !important;
+}
+
+.simg {
+    border-radius: 5%;
+}
+
+.newsletter {
+    margin: 0 !important;
+    background: linear-gradient(to right, #118b50, #9cd49f);
+}
+
+.footer {
+    background-color: #02542d;
+}
+
+.footerLink {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+}
+
+.pillBg {
+    background-color: #fff;
+    border-radius: 170px;
+}
+
+.form-control {
+    border: none !important;
+    direction: ltr;
+}
+
+.btn-green {
+    --bs-btn-color: #fff !important;
+    --bs-btn-bg: #02542d !important;
+    --bs-btn-border-color: #02542d;
+    --bs-btn-hover-color: #02542d;
+    --bs-btn-hover-bg: #fff;
+    --bs-btn-hover-border-color: #02542d !important;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #02542d;
+    --bs-btn-active-border-color: #02542d;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #02542d;
+    --bs-btn-disabled-border-color: #02542d;
+    width: 100%;
+    border-radius: 170px !important;
+}
+
+.btn-outline {
+    color: #fff !important; /* Text color black */
+    background-color: #000; /* Background color white */
+    border: 1px solid #fff; /* Border color black */
+}
+
+    .btn-outline:hover,
+    .btn-outline:focus,
+    .btn-outline:active {
+        color: #000 !important; /* Text color white */
+        background-color: #fff; /* Background color black */
+        border-color: #fff; /* Ensure the border remains black */
+    }
+
+.Copyright {
+    background-color: #002e18 !important;
+    color: #fff;
+}
+
+@media screen and (max-width: 426px) {
+    /* Reorder columns for small screens */
+    header .container-fluid {
+        flex-direction: row-reverse;
+    }
+
+        header .container-fluid .row {
+            display: flex;
+            flex-direction: column-reverse !important; /* Reverses the order of the columns */
+        }
+
+    .navbar-collapse div {
+        display: block !important;
+    }
+
+    .navbar-nav {
+        gap: 12px !important;
+        font-size: 16px;
+    }
+
+    .carousel {
+        width: 50%;
+        float: left;
+    }
+
+    .carousel-item img {
+        height: 100px;
+    }
+
+    header {
+        background-position-y: -70px;
+        background-position-x: -40px;
+    }
+
+    .btn-font {
+        font-size: 20px !important;
+    }
+
+        .btn-font img {
+            width: 30%;
+        }
+
+    .card {
+        margin-bottom: 10px;
+    }
+}
+
+/*
+* {
+    border: 1px solid red !important;
+  }
+    */

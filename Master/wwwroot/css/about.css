@@ -1,0 +1,171 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Lalezar&display=swap");
+
+* {
+    /* color: #002E18; */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+html::-webkit-scrollbar {
+    width: 1rem;
+}
+
+html::-webkit-scrollbar-track {
+    background: #19875492;
+}
+
+html::-webkit-scrollbar-thumb {
+    background: #198754;
+    border-radius: 5rem;
+}
+
+.navbar {
+    transition: top 0.3s ease; /* Optional: Add a smooth transition */
+    border-bottom: 2px solid #118b50;
+    box-shadow: 0px 0px 15px black;
+}
+
+.hidden {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.navbar-brand img {
+    width: 100%;
+    height: 70px;
+    margin: 0;
+}
+/* Blurring effect */
+.blurred {
+    filter: blur(5px);
+    pointer-events: none;
+    transition: filter 0.3s ease;
+}
+
+.navbar-nav .dropdown-toggle::after {
+    content: none;
+}
+
+.laz {
+    font-family: Lalezar !important;
+}
+
+.size {
+    font-size: 4.5rem;
+    line-height: 1.2; /* Set line height for better spacing */
+}
+
+.text-par {
+    font-size: 22px;
+}
+
+.s1 {
+    height: 60vh;
+}
+
+.rotate {
+    transform: rotate(180deg);
+}
+
+.aboutBG {
+    background: linear-gradient(to right, rgba(67, 67, 67, 0.29), #002e18), url(~/image/about.jpg);
+    background-repeat: no-repeat !important;
+    background-size: cover;
+    height: 60vh;
+    width: 100%;
+    border-bottom: 2px solid #002e18;
+}
+
+.m1 {
+    width: 20%;
+    position: absolute;
+    border-radius: 10%;
+    top: -50px;
+    right: 120px;
+}
+
+.m3 {
+    width: 20%;
+    position: absolute;
+    border-radius: 10%;
+    bottom: -5px;
+    right: 120px;
+}
+
+.m2 {
+    width: 45%;
+    position: absolute;
+    border-radius: 10%;
+    right: 200px;
+}
+
+.m4 {
+    width: 45%;
+    position: absolute;
+    border-radius: 10%;
+    right: 200px;
+    top: -20px;
+}
+
+.m5 {
+    width: 50%;
+    position: absolute;
+    border-radius: 10%;
+    right: 90px;
+    top: 30px;
+}
+
+.m6 {
+    width: 23%;
+    position: absolute;
+    border-radius: 10%;
+    top: 191px;
+    left: 141px;
+}
+
+@media screen and (max-width: 426px) {
+    .size {
+        font-size: 1.5rem;
+    }
+
+    .aboutBG {
+        height: 25vh;
+    }
+
+    .text-par {
+        font-size: 17px !important;
+    }
+
+    .s1 {
+        height: 100vh;
+    }
+
+    .sMedia {
+        height: 130vh !important;
+    }
+
+    .m1 {
+        top: -23px;
+        right: 165px;
+    }
+
+    .m3 {
+        bottom: -101px;
+        right: 165px;
+    }
+
+    .m6 {
+        top: 602px;
+        left: 62px;
+    }
+
+    .m5 {
+        right: 64px;
+        top: 550px;
+    }
+}

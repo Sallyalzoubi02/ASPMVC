@@ -1,0 +1,215 @@
+﻿@{
+    ViewData["Title"] = "Contact us";
+}
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/Contact.css" />
+}
+
+<div id="content" class="bg-plain hidden animate">
+    <section class="s2 mb-5">
+        <div class="container d-flex flex-column justify-content-center align-items-center gap-4 h-100 mb-5">
+            <h2 class="laz text-center hidden animate">
+                تواصل مع فريقنا
+            </h2>
+            <h4 class="text-center laz w-75 hidden animate">
+                نحن في أثر نسعد بتواصلكم معنا، سواءً لطرح استفساراتكم، أو تقديم اقتراحاتكم، أو طلب المساعدة في خدمات
+                إعادة التدوير. فريقنا جاهز لخدمتكم والإجابة على جميع تساؤلاتكم.
+            </h4>
+        </div>
+    </section>
+    <section class="s1 mt-5 mb-5">
+
+
+        <div class="container mt-5 d-flex justify-content-center align-items-center">
+            <div class="row w-100 gap-5 d-flex justify-content-between">
+                <div class="col-md-5">
+                    <div class="card w-100 text-light p-1 gap-3">
+
+                        <div class="card-body">
+                            <h5 class="text-center laz mb-5">نموذج الاتصال</h5>
+                            <p>إذا كنت تفضل التواصل معنا عبر الإنترنت، يرجى ملء النموذج أدناه، وسنعاود الاتصال بك في أقرب وقت ممكن:</p>
+
+                            <form>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="firstName" class="form-label">الاسم الأول</label>
+                                        <input type="text" id="firstName" class="form-control" placeholder="">
+                                    </div>
+                                    <div class="col">
+                                        <label for="lastName" class="form-label">العائلة</label>
+                                        <input type="text" id="lastName" class="form-control" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">البريد الإلكتروني</label>
+                                    <input type="email" id="email" class="form-control" placeholder="">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">عنوان الرسالة (الموضوع)</label>
+                                    <input type="email" id="email" class="form-control" placeholder="">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">الرسالة</label>
+                                    <textarea name="message" class="form-control" id="message" cols="30" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="submit" value="إرسال" class="btn btn-green ps-4 pe-4">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 d-flex flex-column justify-content-center align-items-start gap-3">
+                    <div class="row w-100">
+                        <h2 class="laz">معلومات الإتصال</h2>
+                    </div>
+                    <div class="row w-100">
+                        <p class="laz">لا تتردد في التواصل معنا، وسنقوم بالرد عليك في أقرب وقت ممكن.</p>
+                    </div>
+                    <div class="row w-100 gap-5">
+                        <div class="col-md-5 con d-flex ">
+                            <div class="d-flex align-items-center ps-2">
+                                <img src="image/icon.png" class="w-100 h-50" alt="">
+                            </div>
+                            <div class="pt-2">
+                                <h5 class="laz">
+                                    العنوان
+                                </h5>
+                                <p>
+
+                                    بناية رقم 15، ط. الثالث<br><br>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-5 con d-flex ">
+                            <div class="d-flex align-items-center ps-2">
+                                <img src="image/icon (1).png" class="w-100 h-50" alt="">
+                            </div>
+                            <div class="pt-2">
+                                <h5 class="laz">
+                                    الهاتف
+                                </h5>
+                                <p>
+                                    06-5678901<br><br>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row w-100 gap-5">
+                        <div class="col-md-5 con d-flex ">
+                            <div class="d-flex align-items-center ps-2">
+                                <img src="image/icon (2).png" class="w-100 h-50" alt="">
+                            </div>
+                            <div class="pt-2">
+                                <h5 class="laz">
+                                    البريد الإلكتروني
+                                </h5>
+                                <p>
+                                    Athurjo@gmail.com<br><br>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-5 con d-flex ">
+                            <div class="d-flex align-items-center ps-2">
+                                <img src="image/icon (3).png" class="w-100 h-50" alt="">
+                            </div>
+                            <div class="pt-2">
+                                <h5 class="laz">
+                                    الدوام
+                                </h5>
+                                <p>
+                                    يومياً من 9 صباحاً- 4 عصراً<br><br>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="row w-100 mt-5">
+                    <div class="row w-100 mt-2 d-flex justify-content-between">
+                        <div class="col-md-4">
+                            <p>مواقع التواصل الاجتماعي: </p>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="#" target="_blank" rel=""><i class="fa-brands fa-square-youtube text-darkgreen"></i></a>
+                            <a href="#" target="_blank" rel=""><i class="fa-brands fa-linkedin text-darkgreen"></i></a>
+                            <a href="#" target="_blank" rel=""><i class="fa-brands fa-square-instagram text-darkgreen"></i></a>
+                            <a href="#" target="_blank" rel=""><i class="fa-brands fa-telegram text-darkgreen"></i></i></a>
+                            <a href="#" target="_blank" rel=""><i class="fa-brands fa-square-facebook text-darkgreen"></i></a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="s3 mt-5 text-light h-100">
+        <div class="light-green  h-100 ">
+            <div class="container  d-flex flex-column justify-content-center align-items-center gap-4 mt-5 ">
+                <h2 class="laz  mt-5 text-center">
+                    تواصل مع فريقنا
+                </h2>
+                <p class="text-center">
+                    نحن في أثر نسعد بتواصلكم معنا، سواءً لطرح استفساراتكم، أو تقديم اقتراحاتكم، أو طلب المساعدة في خدمات
+                    إعادة التدوير. فريقنا جاهز لخدمتكم والإجابة على جميع تساؤلاتكم.
+                </p>
+            </div>
+            <div class="container-fluid mt-5 h-100">
+                <div class="row w-100 ">
+                    <div class="col-md-6 d-flex justify-content-center align-items-start">
+                        <img src="image/contact-icon.png" class="w-75" alt="">
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-center align-items-start fixed-h">
+                        <div class="faq-container">
+
+                            <div class="faq-item">
+                                <div class="faq-question">
+                                    <span class="laz">كيف يمكنني الاستفادة من منصة أثر؟</span>
+                                    <div class="faq-icon d-flex justify-content-center align-items-center"><img src="../img/minus-square.png" alt=""></div>
+                                </div>
+                                <div class="faq-answer open">
+                                    <p>يمكنك الاستفادة من منصة أثر من خلال التبرع بالمواد القابلة للتدوير التي لم تعد بحاجة إليها. بمجرد رفع بيانات المواد وتحديد موقعك، سنقوم بجمعها أو توفير مكان إسقاط قريب لك.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <div class="faq-question">
+                                    <span class="laz">كيف يمكنني التواصل مع فريق الدعم؟</span>
+                                    <div class="faq-icon d-flex justify-content-center align-items-center"><img src="../img/plus-square.png" alt=""></div>
+                                </div>
+                                <div class="faq-answer">
+                                    <p>للتواصل مع فريق الدعم، يمكنك ملء نموذج الاتصال الموجود في الصفحة أو التواصل معنا مباشرة عبر الهاتف أو البريد الإلكتروني. سنقوم بالرد عليك في أسرع وقت ممكن.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <div class="faq-question">
+                                    <span class="laz">ما هي أنواع المواد التي يمكنني التبرع بها؟</span>
+                                    <div class="faq-icon d-flex justify-content-center align-items-center"><img src="../img/plus-square.png" alt=""></div>
+                                </div>
+                                <div class="faq-answer">
+                                    <p>نقبل مجموعة واسعة من المواد القابلة للتدوير، بما في ذلك الورق، البلاستيك، الزجاج، المعادن، والملابس. إذا كان لديك أي استفسار حول مادة معينة، لا تتردد في التواصل معنا.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <div class="faq-question">
+                                    <span class="laz">كيف تضمنون أمان بياناتي وخصوصيتي؟</span>
+                                    <div class="faq-icon d-flex justify-content-center align-items-center"><img src="../img/plus-square.png" alt=""></div>
+                                </div>
+                                <div class="faq-answer">
+                                    <p>نلتزم بحماية بياناتك الشخصية وفقًا لأعلى معايير الأمان. يتم استخدام بياناتك فقط لتسهيل عمليات جمع المواد وتحسين تجربتك معنا.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
