@@ -34,7 +34,7 @@
                                 <a class="nav-link active" asp-controller="Home" asp-action="Index">الصفحة الرئيسية</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="Recycle">التدوير</a>
+                                <a class="nav-link" asp-controller="Home" asp-action="recycling">التدوير</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Shop" asp-action="Shop">تسوق</a>
@@ -45,22 +45,30 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Home" asp-action="About">من نحن</a>
                             </li>
+                            
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="Contact">التواصل</a>
+                                <a class="nav-link" asp-controller="Home" asp-action="JoinUs">إنضم لنا</a>
                             </li>
-                            <li class="nav-item dropdown position-relative ">
+                            <li class="nav-item dropdown position-relative">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                   aria-expanded="false" id="usericon" onclick="bluer()">
+                                   aria-expanded="false" id="usericon">
                                     <i class="fa-solid fa-user"></i>
                                 </a>
                                 <ul class="dropdown-menu" id="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index">تسجيل الدخول</a></li>
-                                    <li>
-                                        <hr class="dropdown-divider">
-                                    </li>
-                                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index">مستخدم جديد</a></li>
+                                    @if (Context.Session.GetString("logged") == "true")
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="User" asp-action="profile">الصفحة الشخصية</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" asp-controller="User" asp-action="Logout">تسجيل خروج</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="dropdown-item" asp-controller="Home" asp-action="Sign" asp-route-formType="login">تسجيل الدخول</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Home" asp-action="Sign" asp-route-formType="register">إنشاء حساب</a></li>
+                                    }
                                 </ul>
                             </li>
+
                         </ul>
                     </div>
                 </div>
@@ -69,7 +77,7 @@
     </header>
 
     <div>
-        <main role="main" class="pb-3">
+        <main id="content" role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
@@ -188,8 +196,16 @@
         <!-- Copyright -->
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+   <script>
+               document.addEventListener("DOMContentLoaded", function () {
+            const dropdownToggle = document.getElementById('usericon');
+            dropdownToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+            });
+        });
+
+   </script>
 </body>
 </html>

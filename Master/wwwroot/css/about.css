@@ -18,11 +18,6 @@ html::-webkit-scrollbar-thumb {
     border-radius: 5rem;
 }
 
-.navbar {
-    transition: top 0.3s ease; /* Optional: Add a smooth transition */
-    border-bottom: 2px solid #118b50;
-    box-shadow: 0px 0px 15px black;
-}
 
 .hidden {
     opacity: 0;
@@ -35,11 +30,6 @@ html::-webkit-scrollbar-thumb {
     transform: translateY(0);
 }
 
-.navbar-brand img {
-    width: 100%;
-    height: 70px;
-    margin: 0;
-}
 /* Blurring effect */
 .blurred {
     filter: blur(5px);
@@ -73,7 +63,7 @@ html::-webkit-scrollbar-thumb {
 }
 
 .aboutBG {
-    background: linear-gradient(to right, rgba(67, 67, 67, 0.29), #002e18), url(~/image/about.jpg);
+    background: linear-gradient(to right, rgba(67, 67, 67, 0.29), #002e18), url(/image/about.jpg); 
     background-repeat: no-repeat !important;
     background-size: cover;
     height: 60vh;
@@ -126,6 +116,11 @@ html::-webkit-scrollbar-thumb {
     border-radius: 10%;
     top: 191px;
     left: 141px;
+}
+
+.bg-green {
+    background-color: #118b50;
+    color: white;
 }
 
 @media screen and (max-width: 426px) {

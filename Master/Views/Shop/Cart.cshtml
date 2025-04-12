@@ -7,154 +7,162 @@
     <link rel="stylesheet" href="~/css/cart.css" />
 }
 
-<section class="h-100 h-custom">
-    <div class="container h-100 py-5">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col">
+    <section class="h-100 h-custom">
+        <div class="container h-100 py-5">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col">
 
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="h5">سلة المشتريات</th>
-                                <th scope="col" class="text-center">العدد</th>
-                                <th scope="col" class="text-center">السعر</th>
-                                <th scope="col" class="text-center">ازلة</th>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="h5">سلة المشتريات</th>
+                                    <th scope="col" class="text-center">العدد</th>
+                                    <th scope="col" class="text-center">السعر</th>
+                                    <th scope="col" class="text-center">ازلة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- سيتم ملؤها بواسطة JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="container py-5">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <div class="payment-container p-4 bg-light rounded-3">
+                                    <h3 class="text-center mb-4 fw-bold text-dark"><i class="fas fa-shopping-cart me-2"></i>إتمام الطلب</h3>
 
-                <div class="card shadow-2-strong mb-5 mb-lg-0 mt-3 bg-green" style="border-radius: 16px;">
-                    <div class="card-body p-4">
+                                    <div class="row g-4">
+                                        <!-- قسم طرق الدفع -->
+                                        <div class="col-md-6">
+                                            <div class="payment-methods p-4 h-100 bg-white rounded-3 shadow-sm">
+                                                <h5 class="fw-bold mb-4 text-dark">اختر طريقة الدفع</h5>
 
-                        <div class="row">
-                            <div class="col-md-6 col-lg-4 col-xl-3 mb-4 mb-md-0">
-                                <form>
-                                    <div class="d-flex flex-row pb-3">
-                                        <div class="d-flex align-items-center ps-2 green-radio">
-                                            <input class="form-check-input" type="radio" name="radioNoLabel" id="radioNoLabel2v"
-                                                   value="" aria-label="..." />
-                                        </div>
-                                        <label class="w-100" for="radioNoLabel2v">
-                                            <div class="rounded border w-100 p-3">
-                                                <p class="d-flex align-items-center mb-0">
-                                                    <i class="fas fa-money-bill-wave fa-2x fa-lg text-body ps-2"></i>عند الاستلام
-                                                </p>
+                                                <div class="row g-3">
+                                                    <div class="col-6">
+                                                        <div class="payment-method p-3 active" onclick="selectPayment(this, 'credit')">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="payment-icon ms-3 bg-success text-white rounded-2 p-2">
+                                                                    <i class="fab fa-cc-visa"></i>
+                                                                </div>
+                                                                <span class="fw-bold">بطاقة ائتمانية</span>
+                                                            </div>
+                                                            <input type="radio" name="paymentMethod" class="d-none" checked>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-6">
+                                                        <div class="payment-method p-3" onclick="selectPayment(this, 'cash')">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="payment-icon ms-3 bg-success text-white rounded-2 p-2">
+                                                                    <i class="fas fa-money-bill-wave"></i>
+                                                                </div>
+                                                                <span class="fw-bold">الدفع عند الاستلام</span>
+                                                            </div>
+                                                            <input type="radio" name="paymentMethod" class="d-none">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- تفاصيل البطاقة -->
+                                                <div class="mt-4 pt-3" id="cardDetails">
+                                                    <h6 class="fw-bold mb-3 text-dark">معلومات البطاقة</h6>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label text-muted">رقم البطاقة</label>
+                                                        <input type="text" class="form-control" placeholder="1234 5678 9012 3456">
+                                                    </div>
+
+                                                    <div class="row g-2">
+                                                        <div class="col-md-8">
+                                                            <label class="form-label text-muted">اسم صاحب البطاقة</label>
+                                                            <input type="text" class="form-control" placeholder="الاسم كما هو مدون على البطاقة">
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label text-muted">CVV</label>
+                                                            <input type="password" class="form-control" placeholder="123">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </label>
-                                    </div>
-                                    <div class="d-flex flex-row pb-3">
-                                        <div class="d-flex align-items-center ps-2 green-radio">
-                                            <input class="form-check-input" type="radio" name="radioNoLabel" id="radioNoLabel1v"
-                                                   value="" aria-label="..." checked />
                                         </div>
-                                        <label class="w-100" for="radioNoLabel1v">
-                                            <div class="rounded border w-100 p-3">
-                                                <p class="d-flex align-items-center mb-0">
-                                                    <i class="fab fa-cc-mastercard fa-2x text-body ps-2"></i>Credit
-                                                    Card
-                                                </p>
+
+                                        <!-- قسم ملخص الطلب مع إضافة كود الخصم -->
+                                        <div class="col-md-6">
+                                            <div class="payment-summary p-4 h-100 bg-white rounded-3 shadow-sm">
+                                                <h5 class="fw-bold mb-4 text-dark">ملخص الطلب</h5>
+
+                                                <!-- قسم كود الخصم الجديد -->
+                                                <div class="discount-section mb-4">
+                                                    <h6 class="fw-bold mb-3">كود الخصم</h6>
+                                                    <div class="discount-input-group">
+                                                        <input type="text" class="form-control discount-input" id="discountCode" placeholder="أدخل كود الخصم">
+                                                        <button class="btn apply-discount-btn" onclick="applyDiscount()">
+                                                            <i class="fas fa-tag me-1"></i>تطبيق
+                                                        </button>
+                                                    </div>
+                                                    <small id="discountMessage" class="text-muted mt-2 d-block"></small>
+                                                </div>
+
+                                                <div class="summary-item">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span class="text-muted">سعر المنتجات</span>
+                                                        <span class="fw-bold" id="subtotal">250.00 ر.س</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="summary-item">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span class="text-muted">الخصم</span>
+                                                        <span class="fw-bold text-success" id="discountAmount">-0.00 ر.س</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="summary-item">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span class="text-muted">رسوم الشحن</span>
+                                                        <span class="fw-bold" id="shipping">15.00 ر.س</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="summary-item">
+                                                    <div class="d-flex justify-content-between">
+                                                        <span class="text-muted">الضريبة</span>
+                                                        <span class="fw-bold" id="tax">12.50 ر.س</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="border-top pt-3 mb-4">
+                                                    <div class="d-flex justify-content-between fw-bold fs-5">
+                                                        <span>المجموع النهائي</span>
+                                                        <span class="text-success" id="total">277.50 ر.س</span>
+                                                    </div>
+                                                </div>
+
+                                                <button class="btn btn-confirm w-100 text-white py-3" onclick="confirmOrder()">
+                                                    <i class="fas fa-lock me-2"></i>تأكيد الطلب والدفع
+                                                </button>
+
+                                                <div class="text-center mt-3">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-shield-alt me-2"></i>دفع آمن ومحمي بنظام SSL
+                                                    </small>
+                                                </div>
                                             </div>
-                                        </label>
-                                    </div>
-                                    <div class="d-flex flex-row pb-3">
-                                        <div class="d-flex align-items-center ps-2 green-radio">
-                                            <input class="form-check-input" type="radio" name="radioNoLabel" id="radioNoLabel2v"
-                                                   value="" aria-label="..." />
-                                        </div>
-                                        <label class="w-100" for="radioNoLabel2v">
-                                            <div class="rounded border w-100 p-3">
-                                                <p class="d-flex align-items-center mb-0">
-                                                    <i class="fab fa-cc-visa fa-2x fa-lg text-body ps-2"></i>Debit Card
-                                                </p>
-                                            </div>
-                                        </label>
-                                    </div>
-
-                                    <div class="d-flex flex-row">
-                                        <div class="d-flex align-items-center ps-2 green-radio">
-                                            <input class="form-check-input " type="radio" name="radioNoLabel" id="radioNoLabel3v"
-                                                   value="" aria-label="..." />
-                                        </div>
-                                        <label class="w-100" for="radioNoLabel3v">
-                                            <div class="rounded border w-100 p-3">
-                                                <p class="d-flex align-items-center mb-0">
-                                                    <i class="fab fa-cc-paypal fa-2x fa-lg text-body ps-2"></i>PayPal
-                                                </p>
-                                            </div>
-                                        </label>
-                                    </div>
-
-                                </form>
-                            </div>
-                            <div class="col-md-6 col-lg-4 col-xl-6 d-flex flex-column justify-content-center">
-                                <div class="row">
-                                    <div class="col-12 col-xl-6">
-                                        <div data-mdb-input-init class="form-outline mb-4 mb-xl-5">
-                                            <label class="form-label" for="typeName">Name on card</label>
-                                            <input type="text" id="typeName" class="form-control form-control-lg" siez="17"
-                                                   placeholder="Ex: John Smith" />
-                                        </div>
-
-                                        <div data-mdb-input-init class="form-outline ">
-                                            <label class="form-label" for="typeExp">Expiration</label>
-                                            <input type="text" id="typeExp" class="form-control form-control-lg" placeholder="MM/YY"
-                                                   size="7" id="exp" minlength="7" maxlength="7" />
-
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-xl-6">
-                                        <div data-mdb-input-init class="form-outline mb-4 mb-xl-5">
-                                            <label class="form-label" for="typeText">Card Number</label>
-                                            <input type="text" id="typeText" class="form-control form-control-lg" siez="17"
-                                                   placeholder="1111 2222 3333 4444" minlength="19" maxlength="19" />
-                                        </div>
-
-                                        <div data-mdb-input-init class="form-outline ">
-                                            <label class="form-label" for="typeText">Cvv</label>
-                                            <input type="password" id="typeText" class="form-control form-control-lg"
-                                                   placeholder="&#9679;&#9679;&#9679;" size="1" minlength="3" maxlength="3" />
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-xl-3">
-                                <div class="d-flex justify-content-between" style="font-weight: 500;">
-                                    <p class="mb-2">المبلغ</p>
-                                    <p class="mb-2 total-price" dir="ltr"> 0 JD</p>
-                                </div>
-
-                                <div class="d-flex justify-content-between" style="font-weight: 500;">
-                                    <p class="mb-0">الشحن</p>
-                                    <p class="mb-0" dir="ltr">2.99 JD</p>
-                                </div>
-
-                                <hr class="my-4">
-
-                                <div class="d-flex justify-content-between mb-4" style="font-weight: 500;">
-                                    <p class="mb-2">المجموع (شامل الضريبة)</p>
-                                    <p class="mb-2 tax" dir="ltr">2.99 JD </p>
-                                </div>
-
-                                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-green btn-block btn-lg">
-                                    <div class="d-flex justify-content-between">
-
-                                        <span> اتمام الشراء </span>
-
-                                    </div>
-                                </button>
-
                             </div>
                         </div>
-
                     </div>
                 </div>
-
             </div>
-        </div>
-    </div>
-</section>
+    </section>
+
+
+@section Scripts {
+    <script src="~/js/cart.js"></script>
+}
+

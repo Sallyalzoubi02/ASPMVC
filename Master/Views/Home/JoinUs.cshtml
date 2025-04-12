@@ -1,0 +1,202 @@
+﻿@section Styles {
+    <link rel="stylesheet" href="~/css/join.css" />
+}
+<!-- Header -->
+<header class="join-header text-center">
+    <div class="container">
+        <h1><i class="fas fa-hands-helping ms-2"></i> انضم إلى فريقنا</h1>
+        <p class="lead">كن جزءًا من رحلتنا نحو بيئة أنظف ومستقبل مستدام</p>
+    </div>
+</header>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <ul class="nav nav-tabs mb-4 justify-content-center" id="joinTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="employee-tab" data-bs-toggle="tab" data-bs-target="#employee" type="button" role="tab">
+                        <i class="fas fa-briefcase ms-2"></i> التوظيف
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="volunteer-tab" data-bs-toggle="tab" data-bs-target="#volunteer" type="button" role="tab">
+                        <i class="fas fa-hand-holding-heart ms-2"></i> التطوع
+                    </button>
+                </li>
+            </ul>
+
+            <div class="application-form">
+                <div class="tab-content" id="joinTabsContent">
+                    <!-- Employee Form -->
+                    <div class="tab-pane fade show active" id="employee" role="tabpanel">
+                        <h3 class="mb-4 text-center"><i class="fas fa-briefcase ms-2"></i> طلب توظيف</h3>
+                        <form id="employeeForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="empFullName" class="form-label required-field">الاسم الكامل</label>
+                                    <input type="text" class="form-control" id="empFullName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="empNationalId" class="form-label required-field">رقم الهوية</label>
+                                    <input type="text" class="form-control" id="empNationalId" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="empPhone" class="form-label required-field">رقم الجوال</label>
+                                    <input type="tel" class="form-control" id="empPhone" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="empEmail" class="form-label">البريد الإلكتروني</label>
+                                    <input type="email" class="form-control" id="empEmail">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="empCity" class="form-label required-field">المدينة</label>
+                                    <select class="form-select" id="empCity" required>
+                                        <option value="" selected disabled>اختر المدينة</option>
+                                        <option value="الرياض">الرياض</option>
+                                        <option value="جدة">جدة</option>
+                                        <option value="الدمام">الدمام</option>
+                                        <option value="مكة">مكة</option>
+                                        <option value="المدينة">المدينة</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="empDistrict" class="form-label required-field">الحي</label>
+                                    <input type="text" class="form-control" id="empDistrict" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="empExperience" class="form-label">سنوات الخبرة (إن وجدت)</label>
+                                    <input type="number" class="form-control" id="empExperience" min="0">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="empPosition" class="form-label required-field">الوظيفة المتقدم لها</label>
+                                    <select class="form-select" id="empPosition" required>
+                                        <option value="" selected disabled>اختر الوظيفة</option>
+                                        <option value="مندوب جمع">مندوب جمع المواد القابلة لإعادة التدوير</option>
+                                        <option value="مشرف فريق">مشرف فريق الجمع</option>
+                                        <option value="سائق">سائق مركبة الجمع</option>
+                                        <option value="فني صيانة">فني صيانة معدات</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="empWhy" class="form-label required-field">لماذا تريد الانضمام إلى فريقنا؟</label>
+                                <textarea class="form-control" id="empWhy" rows="3" required></textarea>
+                            </div>
+
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-eco btn-lg">
+                                    <i class="fas fa-paper-plane ms-2"></i> تقديم الطلب
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Volunteer Form -->
+                    <div class="tab-pane fade" id="volunteer" role="tabpanel">
+                        <h3 class="mb-4 text-center"><i class="fas fa-hand-holding-heart ms-2"></i> طلب تطوع</h3>
+                        <form id="volunteerForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="volFullName" class="form-label required-field">الاسم الكامل</label>
+                                    <input type="text" class="form-control" id="volFullName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="volNationalId" class="form-label">رقم الهوية (اختياري)</label>
+                                    <input type="text" class="form-control" id="volNationalId">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="volPhone" class="form-label required-field">رقم الجوال</label>
+                                    <input type="tel" class="form-control" id="volPhone" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="volEmail" class="form-label">البريد الإلكتروني</label>
+                                    <input type="email" class="form-control" id="volEmail">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="volCity" class="form-label required-field">المدينة</label>
+                                    <select class="form-select" id="volCity" required>
+                                        <option value="" selected disabled>اختر المدينة</option>
+                                        <option value="الرياض">الرياض</option>
+                                        <option value="جدة">جدة</option>
+                                        <option value="الدمام">الدمام</option>
+                                        <option value="مكة">مكة</option>
+                                        <option value="المدينة">المدينة</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="volDistrict" class="form-label required-field">الحي</label>
+                                    <input type="text" class="form-control" id="volDistrict" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="volAge" class="form-label required-field">العمر</label>
+                                    <input type="number" class="form-control" id="volAge" min="18" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="volAvailability" class="form-label required-field">متاح للأيام</label>
+                                    <select class="form-select" id="volAvailability" multiple required>
+                                        <option value="السبت">السبت</option>
+                                        <option value="الأحد">الأحد</option>
+                                        <option value="الإثنين">الإثنين</option>
+                                        <option value="الثلاثاء">الثلاثاء</option>
+                                        <option value="الأربعاء">الأربعاء</option>
+                                        <option value="الخميس">الخميس</option>
+                                        <option value="الجمعة">الجمعة</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="volSkills" class="form-label">المهارات الخاصة (إن وجدت)</label>
+                                <textarea class="form-control" id="volSkills" rows="2"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="volWhy" class="form-label required-field">لماذا تريد التطوع معنا؟</label>
+                                <textarea class="form-control" id="volWhy" rows="3" required></textarea>
+                            </div>
+
+                            <div class="mb-4 form-check">
+                                <input type="checkbox" class="form-check-input" id="volAgreement" required>
+                                <label class="form-check-label" for="volAgreement">أوافق على شروط وأحكام التطوع</label>
+                            </div>
+
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-eco btn-lg">
+                                    <i class="fas fa-paper-plane ms-2"></i> تقديم الطلب
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <p>لأي استفسارات، يمكنك التواصل معنا عبر <a href="mailto:recruitment@ecoshop.com">recruitment@ecoshop.com</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/Join.js"></script>
+}

@@ -1,0 +1,92 @@
+﻿body {
+    background-color: white;
+    font-family: Arial, sans-serif ;
+}
+
+.laz {
+    font-family: Lalezar !important;
+}
+
+.size {
+    font-size: 4.5rem;
+    line-height: 1.2; /* Set line height for better spacing */
+}
+
+.BG {
+    background: url(/image/recyclingPage.png);
+    background-repeat: no-repeat !important;
+    background-size: cover;
+    height: 60vh;
+    width: 100%;
+    border-bottom: 2px solid #002e18;
+}
+
+.blurred {
+    filter: blur(5px);
+    pointer-events: none;
+    transition: filter 0.3s ease;
+}
+
+.section-title {
+    background-color: #118b50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.recycle-buttons {
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+    .recycle-buttons button {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background-color: #e6ffe6;
+        border: 2px solid #118b50;
+        font-weight: bold;
+        color: #118b50;
+        transition: all 0.3s ease; /* إضافة تأثير سلس */
+    }
+
+        /* تأثير عند التمرير */
+        .recycle-buttons button:hover {
+            background-color: #118b50; /* تغيير الخلفية إلى الأخضر عند التمرير */
+            color: white; /* تغيير النص إلى اللون الأبيض */
+            transform: scale(1.1); /* تكبير الزر قليلاً */
+        }
+
+.recycle-content {
+    display: none;
+    background-color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+    .recycle-content img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .recycle-content.active {
+        display: block;
+    }
+
+
+@media screen and (max-width: 426px) {
+    .size {
+        font-size: 1rem;
+    }
+
+    .sub-size {
+        font-size: 12px;
+    }
+
+    .BG {
+        height: 25vh;
+    }
+}

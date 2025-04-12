@@ -33,13 +33,11 @@ html::-webkit-scrollbar-thumb {
     font-family: Lalezar !important;
 }
 
-#header {
+.h {
     height: 90vh;
-    background-image: url(~/image/background1.png) !important;
+    background: linear-gradient(to Top, rgba(255, 255, 255, 0.29), #f4f4f4a0), url(/image/cartoonBG.png) ;
     background-repeat: no-repeat;
-    background-size: contain;
-    background-position-y: -90px;
-    background-position-x: -60px;
+    background-size: cover;
 }
 /* إعدادات البداية (عنصر غير ظاهر) */
 .hidden {
@@ -76,28 +74,19 @@ hr {
 }
 
 .mar {
+    margin-top: 150px;
+    margin-bottom: 200px;
+}
+
+.mar2 {
     margin-top: 200px;
     margin-bottom: 200px;
 }
 
 .s2 {
-    background-image: url(~/image/bgd.png) !important;
-    height: max-content;
-    background-repeat: no-repeat;
-    background-size: cover;
-    padding: 20px;
-}
-
-.carousel {
-    border-radius: 0px 170px 170px 0px; /* Pill shape */
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.carousel-item img {
-    width: 100%;
-    height: 300px;
-    border-radius: 0px 170px 170px 0px; /* Pill shape */
+    background-color: #1a8754;
+    color: white;
+    padding: 90px 60px;
 }
 
 .welcome {
@@ -112,7 +101,7 @@ hr {
 
 .text {
     text-align: center;
-    font-size: 24px;
+    font-size: 18px;
 }
 
 .text-par {
@@ -149,7 +138,7 @@ hr {
 
 .card {
     width: 100%;
-    min-height: 530px;
+    min-height: 400px;
     max-width: 447px;
     perspective: 1000px;
     border: none !important;
@@ -161,7 +150,7 @@ hr {
 
 .card-inner {
     width: 100%;
-    height: 530px;
+    height: 400px;
     position: relative;
     transform-style: preserve-3d;
     transition: transform 0.999s;
@@ -180,7 +169,7 @@ hr {
 }
 
 .card-front {
-    color: #002e18;
+    color: #118b50;
     display: flex;
     flex-direction: column;
     align-items: center;

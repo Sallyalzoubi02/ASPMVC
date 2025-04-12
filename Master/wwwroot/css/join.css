@@ -1,0 +1,55 @@
+﻿body {
+    font-family: 'Tahoma', Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+.join-header {
+    background-color: #1a8754;
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+
+.application-form {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    padding: 2rem;
+    margin-bottom: 3rem;
+}
+
+.form-section {
+    display: none;
+}
+
+    .form-section.active {
+        display: block;
+    }
+
+.nav-tabs .nav-link {
+    color: #1a8754;
+    border: none;
+    padding: 1rem 1.5rem;
+    font-weight: bold;
+}
+
+    .nav-tabs .nav-link.active {
+        color: white;
+        background-color: #1a8754;
+        border: none;
+    }
+
+.required-field::after {
+    content: " *";
+    color: red;
+}
+
+.btn-eco {
+    background-color: #1a8754;
+    color: white;
+}
+
+    .btn-eco:hover {
+        background-color: #1a8754;
+        color: white;
+    }

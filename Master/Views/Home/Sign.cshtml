@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Log Page";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/sign.css" />
+}
+<div class="forms hidden animate " id="content">
+    <div class="container" id="container">
+        <div class="form-container sign-up">
+            <form asp-action="Register" method="post">
+                <h1>انشاء حساب</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+
+                </div>
+                <span>ادخل معلوماتك الأساسية</span>
+                <fieldset>
+                    <input type="text" name="firstName" placeholder=" الاسم الأول">
+                    <input type="text" name="lastName" placeholder=" العائلة">
+                    <input type="email" name="email" placeholder="البريد الإلكتروني">
+                    <input type="password" name="password" placeholder="كلمة المرور">
+                    <input type="phone" name="phone" placeholder="رقم الهاتف">
+                    <select name="city" id="city" placeholder="المحافظة">
+                        <option value="Amman">Amman</option>
+                        <option value="Irbid">Irbid</option>
+                        <option value="Jerash">Jerash</option>
+                        <option value="Ajloun">Ajloun</option>
+                        <option value="M'aan">M'aan</option>
+                        <option value="Aqaba">Aqaba</option>
+                        <option value="Altafelah">Altafelah</option>
+                        <option value="Alkarak">Alkarak</option>
+                        <option value="Salt">As-Salt</option>
+                        <option value="Madaba">Madaba</option>
+                        <option value="Zarqa">Zarqa</option>
+                        <option value="Almafraq">Almafraq</option>
+                    </select>
+                    <input type="text" name="location" placeholder="العنوان">
+                    <select name="accont" id="accont" placeholder="نوع الحساب" onchange="toggleCompanyField(this.value)">
+                        <option value="person">افراد</option>
+                        <option value="company">شركات</option>
+                    </select>
+                    <div id="companyNameField" style="display: none;">
+                        <input type="text" name="CompanyName" placeholder="اسم الشركة" class="form-control mt-2" />
+                    </div>
+                    <div class="gender">
+                        <label><input type="radio" name="gender" value="male" required>ذكر</label>
+                        <label><input type="radio" name="gender" value="female" required>أنثى</label>
+                    </div>
+                
+
+                </fieldset>
+                <button type="submit">إنشاء حساب</button>
+            </form>
+        </div>
+        <div class="form-container sign-in">
+            <form asp-action="Login" asp-controller="Home" method="post">
+                <h1>تسجيل الدخول</h1>
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+                    <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+
+                </div>
+                <span>استخدم الايميل الخاص بك</span>
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                }
+                <input type="email" name="email" placeholder="البريد الإلكتروني" class="w-75" required>
+                <input type="password" name="password" placeholder="كلمة المرور" class="w-75" required>
+                <a asp-action="forgetPassword">هل نسيت كلمة المرور؟</a>
+                <button type="submit">تسجيل الدخول</button>
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>مرحبا بعودتك!</h1>
+                    <p>ادخل معلومات حسابك </p>
+                    <button  id="login">تسجيل دخول</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>مرحبا بك!</h1>
+                    <p>سجل معنا الآن , لتتمكن من الاستفادة من جميع خدماتنا</p>
+                    <button class="hidden" id="register">مستخدم جديد</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/sign.js"></script>
+    <script>
+       
+    
+        function toggleCompanyField(value) {
+            const companyField = document.getElementById("companyNameField");
+            if (value === "company") {
+                companyField.style.display = "block";
+            } else {
+                companyField.style.display = "none";
+            }
+        }
+
+        // إذا المستخدم رجع على الصفحة وفيه قيمة محفوظة من ViewBag
+        document.addEventListener('DOMContentLoaded', function () {
+            const selected = document.getElementById("accont").value;
+            toggleCompanyField(selected);
+        });
+    </script>
+
+}

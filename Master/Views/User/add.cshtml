@@ -1,0 +1,495 @@
+﻿@{
+    ViewData["Title"] = "إضافة عنصر وتسليمه";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        /* الأنماط الأساسية */
+        .bg-green {
+            background-color: #02542d;
+        }
+
+        .form-container {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+
+        .btn-green {
+            background-color: #fff;
+            color: #02542d;
+            border: 2px solid #02542d;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+            .btn-green:hover {
+                background-color: #02542d;
+                color: #fff;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+
+        /* أنماط الخطوات */
+        .step {
+            display: none;
+        }
+
+            .step.active {
+                display: block;
+            }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.3);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+            .step-circle.active {
+                background-color: white;
+                color: #02542d;
+            }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background-color: rgba(255,255,255,0.3);
+            margin: auto 0;
+        }
+
+        /* أنماط عامة */
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #28a745;
+                box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+            }
+
+        .laz {
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+            .laz::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 80px;
+                height: 3px;
+                background-color: white;
+            }
+
+        #map {
+            height: 200px;
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid white;
+            background-color: #f8f9fa;
+        }
+
+        .form-label {
+            color: white;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        #cardInfo {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .upload-container {
+            border: 2px dashed #fff;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            margin-bottom: 20px;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .form-check-input:checked {
+            background-color: #02542d;
+            border-color: #02542d;
+        }
+
+        /* التكيف مع الأجهزة الصغيرة */
+        @@media (max-width: 768px) {
+            .step-indicator {
+                flex-wrap: wrap;
+            }
+
+            .step-line {
+                display: none;
+            }
+        }
+
+        #paymentFields {
+            display: none;
+        }
+
+        .form-select{
+            background-position: left 0.75rem center; /* يحرك السهم إلى اليسار */
+            padding-left: 2rem; /* تعديل المساحة لعدم تطابق النص مع السهم */
+            padding-right: 0.75rem; /* تعديل المساحة للجانب الأيمن */
+            direction: rtl; /* لجعل النص يبدأ من اليمين (اختياري) */
+        }
+
+    </style>
+}
+
+<main class="bg py-5" id="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2 d-flex align-items-center justify-content-center or">
+                <button type="button" class="btn btn-green" id="nextBtn">التالي</button>
+            </div>
+
+            <div class="col-md-8 rounded text-white py-5 bg-green form-container">
+                <!-- مؤشر الخطوات -->
+                <div class="step-indicator">
+                    <div class="step-circle active" data-step="1">1</div>
+                    <div class="step-line"></div>
+                    <div class="step-circle" data-step="2">2</div>
+                    <div class="step-line"></div>
+                    <div class="step-circle" data-step="3">3</div>
+                </div>
+
+                <!-- الخطوة 1: معلومات العنصر -->
+                <form id="itemForm" class="step active" data-step="1">
+                    <h2 class="laz text-center">معلومات العنصر</h2>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="itemName" class="form-label">اسم العنصر</label>
+                            <input type="text" class="form-control" id="itemName" placeholder="أدخل اسم العنصر" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="itemType" class="form-label">نوع العنصر</label>
+                            <select class="form-select" id="itemType" required>
+                                <option value="" disabled selected>اختر نوع العنصر</option>
+                                <option value="glass">زجاج</option>
+                                <option value="plastic">بلاستيك</option>
+                                <option value="fabric">قماش</option>
+                                <option value="iron">حديد</option>
+                                <option value="wood">خشب</option>
+                                <option value="electronic">إلكترونيات</option>
+                                <option value="other">أخرى</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="quantity" class="form-label">الكمية</label>
+                            <input type="number" class="form-control" id="quantity" min="1" value="1" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="condition" class="form-label">حالة العنصر</label>
+                            <select class="form-select" id="condition" required>
+                                <option value="" disabled selected>اختر حالة العنصر</option>
+                                <option value="new">جديد</option>
+                                <option value="used">مستعمل - جيد</option>
+                                <option value="damaged">تالف</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">رفع صورة العنصر</label>
+                        <div class="upload-container">
+                            <div class="upload-icon">↑</div>
+                            <p class="text-white">
+                                اسحب الصورة هنا أو <a href="#" onclick="document.getElementById('fileInput').click()" class="text-white">اختر ملف</a>
+                            </p>
+                            <p class="text-white-50">الحجم الأقصى: 5MB</p>
+                            <input type="file" id="fileInput" accept="image/*" style="display: none;" />
+                            <div id="fileName" class="text-white mt-2" style="display: none;"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemNotes" class="form-label">ملاحظات إضافية</label>
+                        <textarea id="itemNotes" rows="3" class="form-control" placeholder="أدخل أي ملاحظات إضافية عن العنصر..."></textarea>
+                    </div>
+                </form>
+
+                <!-- الخطوة 2: معلومات التسليم -->
+                <form id="deliveryForm" class="step" data-step="2">
+                    <h2 class="laz text-center">معلومات التسليم</h2>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="deliveryTime" class="form-label">وقت التسليم</label>
+                            <input type="time" class="form-control" id="deliveryTime" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="deliveryDate" class="form-label">تاريخ التسليم</label>
+                            <input type="date" class="form-control" id="deliveryDate" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="city" class="form-label">المحافظة</label>
+                        <select class="form-select" id="city" required>
+                            <option value="" disabled selected>اختر المحافظة</option>
+                            <option value="Amman">عمان</option>
+                            <option value="Irbid">اربد</option>
+                            <option value="Jerash">جرش</option>
+                            <option value="Ajloun">عجلون</option>
+                            <option value="M'aan">معان</option>
+                            <option value="Aqaba">العقبة</option>
+                        </select>
+                    </div>
+
+                    <h3 class="text-white mt-4 mb-3">حدد موقع التسليم</h3>
+                    <div id="map"></div>
+
+                    <div class="mt-3">
+                        <input class="form-check-input" type="checkbox" id="fastDelivery" />
+                        <label class="form-check-label" for="fastDelivery">
+                            خدمة التسليم السريع (رسوم إضافية)
+                        </label>
+                    </div>
+                </form>
+
+                <!-- الخطوة 3: طريقة الدفع -->
+                <form id="paymentForm" class="step" data-step="3">
+                    <div id="paymentFields">
+                    <h2 class="laz text-center">طريقة الدفع</h2>
+
+                    <div class="mb-3">
+                        <label for="paymentMethod" class="form-label">اختر طريقة الدفع</label>
+                        <select id="paymentMethod" class="form-select" required>
+                            <option value="" disabled selected>اختر طريقة الدفع</option>
+                            <option value="cash">الدفع عند الاستلام</option>
+                            <option value="card">بطاقة ائتمان</option>
+                        </select>
+                    </div>
+
+                    <div id="cardInfo" style="display: none">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cardNumber" class="form-label">رقم البطاقة</label>
+                                <input type="text" id="cardNumber" class="form-control" placeholder="أدخل رقم البطاقة" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cardExpiry" class="form-label">تاريخ الانتهاء</label>
+                                <input type="month" id="cardExpiry" class="form-control" placeholder="شهر/سنة" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cardCVV" class="form-label">رمز التحقق (CVV)</label>
+                                <input type="text" id="cardCVV" class="form-control" placeholder="أدخل رمز التحقق" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cardholderName" class="form-label">اسم صاحب البطاقة</label>
+                                <input type="text" id="cardholderName" class="form-control" placeholder="اسم صاحب البطاقة" />
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <h4 class="text-white">ملخص الطلب</h4>
+                        <div class="bg-white text-dark p-3 rounded">
+                            <p id="itemSummary"></p>
+                            <p id="deliverySummary"></p>
+                            <p id="paymentSummary"></p>
+                            <h5 class="mt-3">المجموع: <span id="totalAmount">3 دينار أردني</span></h5>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-center justify-content-center or2">
+                <button onclick="back()" class="back-btn" style="border: none; background: none;">
+                    <i class="fa-regular fa-circle-left fa-3x" style="color: #02542d"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        let currentStep = 1;
+        const totalSteps = 3;
+        let map, marker;
+        let isFastDelivery = false;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initMap();
+
+            document.getElementById('fileInput').addEventListener('change', function () {
+                const fileNameDiv = document.getElementById('fileName');
+                if (this.files.length > 0) {
+                    fileNameDiv.textContent = this.files[0].name;
+                    fileNameDiv.style.display = 'block';
+                } else {
+                    fileNameDiv.style.display = 'none';
+                }
+            });
+
+            document.getElementById('paymentMethod').addEventListener('change', function () {
+                document.getElementById('cardInfo').style.display = this.value === 'card' ? 'block' : 'none';
+            });
+
+            document.getElementById('nextBtn').addEventListener('click', nextStep);
+
+            document.getElementById('fastDelivery').addEventListener('change', function () {
+                isFastDelivery = this.checked;
+                togglePaymentFields(isFastDelivery);
+            });
+        });
+
+        function togglePaymentFields(show) {
+            const paymentFields = document.getElementById('paymentFields');
+            if (paymentFields) {
+                paymentFields.style.display = show ? 'block' : 'none';
+            }
+
+            // Reset payment method and card info if hidden
+            if (!show) {
+                document.getElementById('paymentMethod').value = "";
+                document.getElementById('cardInfo').style.display = 'none';
+                document.getElementById('cardNumber').value = "";
+                document.getElementById('cardExpiry').value = "";
+                document.getElementById('cardCVV').value = "";
+                document.getElementById('cardholderName').value = "";
+            }
+        }
+
+        function initMap() {
+            map = L.map('map').setView([31.9454, 35.9284], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            map.on('click', function (e) {
+                if (marker) map.removeLayer(marker);
+                marker = L.marker(e.latlng).addTo(map).bindPopup('موقع التسليم').openPopup();
+            });
+        }
+
+        function nextStep() {
+            if (!validateStep(currentStep)) return;
+
+            if (currentStep < totalSteps) {
+                document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+                document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.remove('active');
+
+                currentStep++;
+
+                document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+                document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.add('active');
+
+                document.getElementById('nextBtn').textContent = currentStep === totalSteps ? 'تأكيد الطلب' : 'التالي';
+
+                if (currentStep === totalSteps) {
+                    updateSummary();
+                }
+            } else {
+                submitForm();
+            }
+        }
+
+        function validateStep(step) {
+            let isValid = true;
+
+            if (step === 1) {
+                const form = document.getElementById('itemForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    isValid = false;
+                }
+            } else if (step === 2) {
+                const form = document.getElementById('deliveryForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    isValid = false;
+                }
+            } else if (step === 3 && isFastDelivery) {
+                const form = document.getElementById('paymentForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        function updateSummary() {
+            const itemName = document.getElementById('itemName').value;
+            const itemType = document.getElementById('itemType').value;
+            const quantity = document.getElementById('quantity').value;
+            const condition = document.getElementById('condition').value;
+
+            const deliveryDate = document.getElementById('deliveryDate').value;
+            const deliveryTime = document.getElementById('deliveryTime').value;
+            const city = document.getElementById('city').value;
+
+            document.getElementById('itemSummary').textContent = `العنصر: ${itemName} (${itemType}) × ${quantity} - الحالة: ${condition}`;
+            document.getElementById('deliverySummary').textContent = `التسليم: ${city} - ${deliveryDate} ${deliveryTime}`;
+
+            if (isFastDelivery) {
+                const paymentMethod = document.getElementById('paymentMethod').value;
+                document.getElementById('paymentSummary').textContent = `طريقة الدفع: ${paymentMethod === 'card' ? 'بطاقة ائتمان' : 'نقدًا عند الاستلام'}`;
+                document.getElementById('totalAmount').textContent = `3 دينار أردني`;
+            } else {
+                document.getElementById('paymentSummary').textContent = `الدفع: غير مطلوب`;
+                document.getElementById('totalAmount').textContent = `0 دينار أردني (تسليم مجاني)`;
+            }
+        }
+
+        function submitForm() {
+            updateSummary();
+            alert("تم إرسال الطلب بنجاح!");
+            // ممكن ترسل البيانات للسيرفر هنا باستخدام AJAX أو fetch
+        }
+
+        function back() {
+            if (currentStep === 1) return;
+
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+            document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.remove('active');
+
+            currentStep--;
+
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+            document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.add('active');
+
+            document.getElementById('nextBtn').textContent = currentStep === totalSteps ? 'تأكيد الطلب' : 'التالي';
+        }
+    </script>
+}
+
+

@@ -1,0 +1,481 @@
+﻿@model Master.Models.UserProfileViewModel
+@{
+    ViewData["Title"] = "profile";
+}
+
+
+@section Styles {
+    <style>
+        .profile-header {
+            background-color: #1a8754;
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 5px solid white;
+        }
+
+        .eco-points {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .eco-badge {
+            color: white;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: #1a8754 !important;
+            color: white !important;
+        }
+
+        .nav-pills .nav-link {
+            color: #1a8754 !important;
+        }
+
+        .recycling-history img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+        }
+
+        .progress {
+            height: 25px;
+        }
+
+        /* تنسيق خاص لتبويب كلمة السر */
+        #password .form-control {
+            margin-bottom: 1rem;
+        }
+
+        #password .btn {
+            min-width: 120px;
+        }
+
+        /* رسائل التحذير */
+        .invalid-feedback {
+            display: none;
+            color: #dc3545;
+        }
+
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+
+        .bg-yellow {
+            background-color: #d4b24e;
+        }
+    </style>
+
+}
+
+    <!-- Header -->
+<!-- Header -->
+<header class="profile-header text-center">
+    <div class="container">
+        <img src="@(!string.IsNullOrEmpty(Model.User.Image) ? Model.User.Image : Url.Content("~/image/icon.jpg"))"
+             alt="الصورة الشخصية" class="profile-img rounded-circle mb-3">
+        <h1>@Model.User.Name</h1>
+
+        @if (Model.IsOwner && Model.Companies.Any())
+        {
+            <p class="lead">صاحب شركة @Model.Companies.First().CompanyName</p>
+        }
+        else
+        {
+            <p class="lead">محارب بيئي </p>
+        }
+
+        <div class="d-flex justify-content-center gap-3">
+            <span class="badge eco-badge bg-yellow">
+                <i class="fas fa-leaf ms-1"></i> @GetUserBadge(Model.User.Points)
+            </span>
+            <span class="badge bg-light text-dark">
+                <i class="fas fa-map-marker-alt ms-1"></i> @Model.User.City
+            </span>
+        </div>
+    </div>
+</header>
+
+    <div class="container mb-5">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                    <img src="~/image/icon.jpg" alt="الصورة الشخصية" class="rounded-circle mb-3" width="100">
+                        <h5 class="card-title">أحمد محمد</h5>
+                        <p class="text-muted mb-1">ahmed@example.com</p>
+                        <p class="text-muted mb-4">+966 50 123 4567</p>
+
+                        <div class="d-flex justify-content-center mb-2">
+                            <button class="btn btn-outline-primary ms-2">
+                                <i class="fas fa-user-edit ms-1"></i>
+                                تعديل
+                            </button>
+                            <button class="btn btn-outline-danger">
+                                <i class="fas fa-sign-out-alt ms-1"></i> تسجيل
+                                خروج
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eco Points -->
+                <div class="card mb-4 eco-points">
+                    <div class="card-body text-center">
+                        <h5 class="card-title"><i class="fas fa-recycle ms-2"></i>نقاطي البيئية</h5>
+                        <h2 class="display-4">1,250</h2>
+                        <p class="text-muted">استبدل النقاط بخصومات</p>
+
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 65%"
+                                 aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p>65% للوصول للمستوى التالي (البلاتيني)</p>
+
+                        <button class="btn btn-success"><i class="fas fa-gift ms-1"></i> استبدال</button>
+                    </div>
+                </div>
+
+                <!-- Recycling Stats -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-chart-bar ms-2"></i>إحصائيات التدوير</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                العناصر المعاد تدويرها
+                                <span class="badge bg-success rounded-pill">147</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                ثاني أكسيد الكربون الموفّر
+                                <span class="badge bg-success rounded-pill">245 كغ</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                الأشجار المحفوظة
+                                <span class="badge bg-success rounded-pill">12</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <ul class="nav nav-pills mb-4" id="profileTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="orders-tab" data-bs-toggle="pill"
+                                data-bs-target="#orders" type="button" role="tab">
+                            طلباتي
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="recycling-tab" data-bs-toggle="pill"
+                                data-bs-target="#recycling" type="button" role="tab">
+                            سجل التدوير
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="addresses-tab" data-bs-toggle="pill"
+                                data-bs-target="#addresses" type="button" role="tab">
+                            العناوين
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings"
+                                type="button" role="tab">
+                            الإعدادات
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="password-tab" data-bs-toggle="pill" data-bs-target="#password"
+                                type="button" role="tab">
+                            تغيير كلمة السر
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="profileTabsContent">
+                    <!-- Orders Tab -->
+                    <div class="tab-pane fade show active" id="orders" role="tabpanel">
+                        <h4 class="mb-4">الطلبات الأخيرة</h4>
+
+                    @foreach (var order in Model.Orders)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-header d-flex justify-content-between bg-light">
+                                <span>طلب رقم #EC-@order.Id</span>
+                                <span class="badge @GetOrderStatusBadgeClass(order.OrderStatus)">
+                                    @GetOrderStatusText(order.OrderStatus)
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var item in order.OrderItems)
+                                {
+                                    <div class="row mb-3">
+                                        <div class="col-md-2">
+                                            <img src="@item.Product.ImageUrl" alt="المنتج" class="img-fluid">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5>@item.Product.Name</h5>
+                                            <p class="text-muted">الكمية: @item.Quantity</p>
+                                        </div>
+                                        <div class="col-md-4 text-start">
+                                            <p>@item.Price.ToString("N2") ر.س</p>
+                                            @if (order.OrderStatus == "delivered")
+                                            {
+                                                <button class="btn btn-sm btn-outline-primary">إعادة طلب</button>
+                                                <button class="btn btn-sm btn-outline-secondary">تقييم</button>
+                                            }
+                                            else if (order.OrderStatus == "shipped")
+                                            {
+                                                <button class="btn btn-sm btn-outline-primary">تتبع</button>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-0">تاريخ الطلب: @order.CreatedAt.ToString??("dd MMMM yyyy")</p>
+                                    <p class="mb-0 fw-bold">المجموع: @order.TotalAmount.ToString("N2") ر.س</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (Model.Orders.Count > 5)
+                    {
+                        <button class="btn btn-outline-success">عرض جميع الطلبات</button>
+                    }
+                    @if (Model.Orders.Count == 0){
+                        <h5>لا يوجد طلبات</h5>
+
+                    }
+                    </div>
+
+                    <!-- Recycling History Tab -->
+                    <div class="tab-pane fade" id="recycling" role="tabpanel">
+                        <h4 class="mb-4">سجل التدوير</h4>
+@* 
+                    @foreach (var request in Model.RecyclingRequests)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row recycling-history align-items-center">
+                                    <div class="col-md-2 text-center">
+                                        <img src="@request.ImageUrl" alt="العنصر المعاد تدويره" class="rounded">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <h5>@request.MaterialType</h5>
+                                        <p class="text-muted mb-1">تاريخ التدوير: @request.RequestDate.ToString("dd MMMM yyyy")</p>
+                                        <p class="text-muted">الوزن: @request.Weight كغ</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p class="mb-1">
+                                            <i class="fas fa-co2 text-success ms-1"></i>
+                                            ثاني أكسيد الكربون الموفّر: @(request.Weight * 1.75) كغ
+                                        </p>
+                                        <p><i class="fas fa-leaf text-success ms-1"></i> النقاط: @request.PointsEarned</p>
+                                    </div>
+                                    <div class="col-md-2 text-start">
+                                        <button class="btn btn-sm btn-outline-success">تفاصيل</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    } *@
+
+                    @if (Model.RecyclingRequests.Count > 3)
+                    {
+                        <button class="btn btn-outline-success">عرض كل سجل التدوير</button>
+                    }
+                    @if (Model.RecyclingRequests.Count == 0)
+                    {
+                        <h5>لا يوجد طلبات تدوير</h5>
+
+                    }
+                    </div>
+
+                
+
+                    <!-- Addresses Tab -->
+                <div class="tab-pane fade" id="addresses" role="tabpanel">
+                    <h4 class="mb-4">عنواني</h4>
+
+                    <form asp-action="UpdateUserAddress" method="post">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">الاسم الكامل</label>
+                                    <input type="text" class="form-control" asp-for="User.Name" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">العنوان</label>
+                                    <input type="text" class="form-control" asp-for="User.Location" required>
+                                    <small class="text-muted">(الشارع، الحي، رقم المنزل)</small>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">المدينة</label>
+                                        <input type="text" class="form-control" asp-for="User.City" required>
+                                    </div>
+                                    
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">رقم الهاتف</label>
+                                    <input type="tel" class="form-control" asp-for="User.Phone" required>
+                                </div>
+                            </div>
+
+                            <div class="card-footer bg-light">
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-secondary" onclick="history.back()">
+                                        رجوع
+                                    </button>
+                                    <button type="submit" class="btn btn-success">حفظ التعديلات</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    @if (string.IsNullOrEmpty(Model.User.Location))
+                    {
+                        <div class="alert alert-info">
+                            ليس لديك عنوان مسجل. يرجى إضافة عنوانك.
+                        </div>
+                    }
+                </div>
+
+                    <!-- Settings Tab -->
+                <div class="tab-pane fade" id="settings" role="tabpanel">
+                    <h4 class="mb-4">إعدادات الحساب</h4>
+                    @{
+                        var (firstName, lastName) = SplitName(Model.User.Name);
+                    }
+                    <form asp-action="UpdateProfile" method="post">
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName" class="form-label">الاسم الأول</label>
+                                <input name="firstName" value="@firstName" class="form-control" required>
+                                <span class="text-danger" data-valmsg-for="firstName"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName" class="form-label">الاسم الأخير</label>
+                                <input name="lastName" value="@lastName" class="form-control" required>
+                                <span class="text-danger" data-valmsg-for="lastName"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">البريد الإلكتروني</label>
+                                <input name="email" value="@Model.User.Email" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">الهاتف</label>
+                                <input name="phone" value="@Model.User.Phone" class="form-control" required>
+                                <span class="text-danger" data-valmsg-for="phone"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" onclick="history.back()">
+                                رجوع
+                            </button>
+                            <button type="submit" class="btn btn-success">حفظ التغييرات</button>
+                        </div>
+                    </form>
+                </div>
+
+                    <!-- Password Change Tab -->
+                    <div class="tab-pane fade" id="password" role="tabpanel">
+                        <h4 class="mb-4">تغيير كلمة المرور</h4>
+                    <form asp-action="ChangePassword" method="post" id="passwordForm">
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label for="CurrentPassword" class="form-label">كلمة المرور الحالية</label>
+                                <input type="password" class="form-control" name="CurrentPassword" required>
+                                <span class="text-danger" data-valmsg-for="CurrentPassword"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="NewPassword" class="form-label">كلمة المرور الجديدة</label>
+                                <input type="password" class="form-control" name="NewPassword" required>
+                                <span class="text-danger" data-valmsg-for="NewPassword"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="ConfirmPassword" class="form-label">تأكيد كلمة المرور الجديدة</label>
+                                <input type="password" class="form-control" name="ConfirmPassword" required>
+                                <span class="text-danger" data-valmsg-for="ConfirmPassword"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" onclick="history.back()">
+                                رجوع
+                            </button>
+                            <button type="submit" class="btn btn-success">حفظ التغييرات</button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+@section Scripts {
+    <link rel="stylesheet" href="~/css/profile.js" />
+    @functions {
+    (string FirstName, string LastName) SplitName(string fullName)
+    {
+        if (string.IsNullOrEmpty(fullName))
+            return ("", "");
+
+        var parts = fullName.Split(' ', 2);
+        return (parts[0], parts.Length > 1 ? parts[1] : "");
+    }
+    }
+    @functions {
+    string GetUserBadge(int? points)
+    {
+        return points switch
+        {
+            >= 2000 => "عضو بلاتيني",
+            >= 1000 => "عضو ذهبي",
+            >= 500 => "عضو فضي",
+            _ => "عضو جديد"
+        };
+    }
+
+    string GetOrderStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "delivered" => "bg-success",
+            "shipped" => "bg-warning text-dark",
+            "processing" => "bg-info",
+            "cancelled" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+
+    string GetOrderStatusText(string status)
+    {
+        return status switch
+        {
+            "delivered" => "تم التوصيل",
+            "shipped" => "تم الشحن",
+            "processing" => "قيد المعالجة",
+            "cancelled" => "ملغى",
+            _ => status
+        };
+    }
+}
+}

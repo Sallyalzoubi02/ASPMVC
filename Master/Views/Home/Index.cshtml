@@ -6,13 +6,12 @@
     <link rel="stylesheet" href="~/css/home.css" />
 }
 
-<div id="content">
-    <div id="header">
+    <header class="mb-5 h">
         <div class="container-fluid">
-            <div class="row d-flex justify-content-between">
+            <div class="row d-flex justify-content-between align-items-center">
                 <div class="col-md-6">
                     <div class="d-flex flex-column welcome align-items-center justify-content-center hidden animate">
-                        <img src="image/logo-with-title.png" class="hidden animate" width="80%" alt="">
+                        <img src="image/logo-with-title2.png" class="hidden animate mb-5" width="80%" alt="">
                         <button type="button" class="btn btn-success btn-font laz ">
                             سجل الأن <img class="p-2"
                                           src="image/Arrow 2.png" alt="">
@@ -20,28 +19,18 @@
                     </div>
                 </div>
                 <div class="col-md-5 m">
-                    <div class="slider hidden2 animate2">
-                        <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <img src="image/slider1.jpg" class="d-block" alt="...">
-                                </div>
-                                <div class="carousel-item">
-                                     <img src="image/slider3.jpg" class="d-block" alt="...">
-                                </div>
-
-                            </div>
-                        </div>
+                    <div class=" hidden2 animate2">
+                        <img src="image/h6-background-2.png" class="mt-4" width="80%">
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </header>
     <section class="mt-5 mb-5">
-        <div class="container-fluid">
+        <div class="container-fluid p-5">
 
 
-            <div class="row d-flex justify-content-evenly align-items-center mt-5 mb-5">
+            <div class=" mt-5 row d-flex justify-content-evenly align-items-center mt-5 mb-5">
                 <div class="col-md-3">
 
                     <div class="card">
@@ -54,7 +43,7 @@
                             </div>
                             <div class="card-back">
                                 <h1 class="laz">انتشر الى العالم</h1>
-                                <p class="laz ">الأهداف الموحدة ستصنع العجائب. قم بطرح حملات إعادة التدوير في مجتمعك.</p>
+                                <p class="laz text-center">الأهداف الموحدة ستصنع العجائب. قم بطرح حملات إعادة التدوير في مجتمعك.</p>
                             </div>
                         </div>
                     </div>
@@ -74,7 +63,7 @@
                             <div class="card-back">
                                 <h1 class="laz">رحلة التدوير</h1>
 
-                                <p class="laz ">ألق نظرة سريعة على كيفية تحول الأشياء إلى منتجات جديدة ومفيدة.</p>
+                                <p class="laz text-center">ألق نظرة سريعة على كيفية تحول الأشياء إلى منتجات جديدة ومفيدة.</p>
 
                             </div>
                         </div>
@@ -92,7 +81,7 @@
                             </div>
                             <div class="card-back">
                                 <h1 class="laz ">كيف ندور</h1>
-                                <p class="laz ">
+                                <p class="laz text-center">
                                     يتم استخدام عمليات مختلفة لإعادة تدوير أنواع مختلفة من المواد. يتم استكشاف مجموعة من التقنيات للحصول على أفضل النتائج من منتجات إعادة التدوير
                                 </p>
                             </div>
@@ -105,12 +94,11 @@
         </div>
     </section>
 
-    <section class="s2 mar">
+    <section class="s2 mt-5">
 
         <div class="container-fluid">
-            <hr class="mb-5">
-            <div class="row">
-                <h1 class="laz text-success me-auto">خمسة اسباب لإعادة التدوير</h1>
+            <div class="row ">
+                <h1 class="laz mb-5 me-auto">خمسة اسباب لإعادة التدوير</h1>
             </div>
             <div class="container-fluid mt-5">
 
@@ -164,12 +152,11 @@
                 </div>
             </div>
         </div>
-       
+        </div>
     </section>
 
-    <section class="s3 mar">
+    <section class="s3 mar2">
         <div class="container-fluid">
-            <hr class="mb-5">
             <div class="row d-flex justify-content-center">
                 <div class="col-md-5">
                     <img class="simg" src="image/home.jpg" alt="" width="100%">
@@ -193,9 +180,8 @@
         </div>
     </section>
 
-    <section class="s3 mar">
+    <section class="s3 mar2">
         <div class="container-fluid">
-            <hr class="mb-5">
             <div class="row d-flex justify-content-center">
 
                 <div class="col-md-6 d-flex flex-column justify-content-center align-items-start">
@@ -209,7 +195,7 @@
 
                     <div class="d-flex justify-content-end w-100">
                         <!-- إضافة div جديد -->
-                        <a href="#" target="_blank" rel="" class="moreLink">
+                    <a asp-controller="Home" asp-action="JoinUs" class="moreLink">
                             المزيد<i class="fa-solid fa-arrow-left me-2"></i>
                         </a>
                     </div>
@@ -221,4 +207,3 @@
             </div>
         </div>
     </section>
-</div>
