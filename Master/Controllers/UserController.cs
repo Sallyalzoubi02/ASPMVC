@@ -19,10 +19,7 @@ namespace Master.Controllers
         {
             return View();
         }
-        public IActionResult add2()
-        {
-            return View();
-        }
+        
         public IActionResult profile()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -32,6 +29,8 @@ namespace Master.Controllers
             var user = myDb.Users
        .Include(u => u.Orders)
            .ThenInclude(u => u.OrderItems)
+                               .ThenInclude(oi => oi.Product) // تأكد من تحميل المنتج
+
        .Include(u => u.RecyclingRequests)
        .Include(u => u.Companies)
        .FirstOrDefault(u => u.Id == userId);
@@ -55,7 +54,7 @@ namespace Master.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateProfile(string firstName, string lastName, string email, string phone)
+        public IActionResult UpdateProfile(string Name, DateOnly birth_date, string email, string phone)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
 
@@ -64,9 +63,10 @@ namespace Master.Controllers
             if (user != null)
             {
                 // دمج الاسم الأول والأخير وحفظه في حقل Name
-                user.Name = $"{firstName} {lastName}";
+                user.Name = Name;
                 user.Email = email;
                 user.Phone = phone;
+                user.BirthDate = birth_date;
                 myDb.SaveChanges();
                 return RedirectToAction("profile");
             }
@@ -74,19 +74,26 @@ namespace Master.Controllers
             return NotFound();
         }
 
-
-        public static class NameHelper
+        public IActionResult OrderDetails(int id)
         {
-            // Splits "Ahmed Mohamed" into ("Ahmed", "Mohamed")
-            public static (string FirstName, string LastName) SplitName(string fullName)
-            {
-                if (string.IsNullOrEmpty(fullName))
-                    return ("", "");
+            var userId = HttpContext.Session.GetInt32("UserId");
 
-                var parts = fullName.Split(' ', 2); // Split into max 2 parts
-                return (parts[0], parts.Length > 1 ? parts[1] : "");
+            var order = myDb.Orders
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product) // تأكد من تحميل المنتج
+                .FirstOrDefault(o => o.Id == id && o.UserId == userId);
+
+            if (order == null) return NotFound();
+
+            // تسجيل البيانات للتحقق منها
+            foreach (var item in order.OrderItems)
+            {
+                Console.WriteLine($"OrderItem ID: {item.Id}, Product: {(item.Product != null ? item.Product.Name : "NULL")}");
             }
+
+            return View(order);
         }
+
 
         public IActionResult Logout()
         {

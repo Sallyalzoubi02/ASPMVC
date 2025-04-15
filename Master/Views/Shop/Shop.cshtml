@@ -1,4 +1,4 @@
-﻿
+﻿@model List<Master.Models.Product>
 @{
     ViewData["Title"] = "Shop";
 }
@@ -13,58 +13,119 @@
             <!-- Wrapper with border -->
             <div class="d-flex align-items-center justify-content-between border-bottom make-res hidden animate">
                 <!-- Tabs -->
-                <ul class="nav nav-tabs border-0 ">
+                <ul class="nav nav-tabs border-0">
                     <li class="nav-item">
-                        <a class="nav-link text-dark active hidden animate" aria-current="page" href="#">منتجات صديقة للبيئة</a>
+                        <a class="nav-link text-dark @(Context.Request.Query["productType"].Count == 0 ? "active" : "")"
+                           href="/Shop/Shop">الكل</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark hidden animate" href="#">منتجات معاد تدويرها</a>
+                        <a class="nav-link text-dark @(Context.Request.Query["productType"] == "0" ? "active" : "")"
+                           href="/Shop/Shop?productType=0">منتجات صديقة للبيئة</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark @(Context.Request.Query["productType"] == "1" ? "active" : "")"
+                           href="/Shop/Shop?productType=1">منتجات معاد تدويرها</a>
                     </li>
                 </ul>
 
                 <!-- Dropdown Buttons -->
                 <div class="d-flex gap-3">
+                    <!-- Company Filter -->
                     <div class="dropdown pb-1">
-                        <button class="btn btn-green dropdown-toggle hidden animate" type="button" id="dropdownMenuButton1"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            الشركة
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
+                        <select class="form-control bg-success text-white text-end" id="companyFilter" onchange="applyFilters()" style="cursor:pointer;">
+                            <option value="">كل الشركات</option>
+                            @foreach (var company in ViewBag.Companies)
+                            {
+                                <option class="bg-white text-black" value="@company">@company</option>
+                            }
+                        </select>
                     </div>
 
+                    <!-- Price Sort -->
                     <div class="dropdown pb-1">
-                        <button class="btn btn-green dropdown-toggle hidden animate" type="button" id="dropdownMenuButton2"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            السعر
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
+                        <select class="form-control bg-success text-white text-end" id="priceSort" onchange="applyFilters()" style="cursor:pointer;">
+                            <option class="bg-white text-black" value="">ترتيب السعر</option>
+                            <option class="bg-white text-black" value="max">من الأقل للأعلى </option>
+                            <option class="bg-white text-black" value="min">من الأعلى للأقل </option>
+                        </select>
                     </div>
 
+                    <!-- Category Filter -->
                     <div class="dropdown pb-1">
-                        <button class="btn btn-green dropdown-toggle hidden animate" type="button" id="dropdownMenuButton3"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            النوع
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
+                        <select class="form-control bg-success text-white text-end" id="categoryFilter" onchange="applyFilters()" style="cursor:pointer;">
+                            <option value="">كل الفئات</option>
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <option class="bg-white text-black" value="@category">@category</option>
+                            }
+                        </select>
                     </div>
                 </div>
+
+              
             </div>
         </div>
     </div>
 
 
-    <div id="card-container" class="d-flex flex-wrap justify-content-center gap-3 hidden animate align-items-center"></div>
+    <div id="card-container" class="d-flex flex-wrap justify-content-center gap-3 hidden animate align-items-center">
+        @foreach (var product in Model)
+        {
+            <div class="card" style="max-width: 250px; height:470px">
+                <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">@product.Name</h5>
+                    <p class="card-text">@product.Description</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="h5 mb-0">@product.Price.ToString("0.00") JD</span>
+                        
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between bg-light">
+                    <form method="post" action="/Shop/AddToCart">
+                        <input type="hidden" name="productId" value="@product.Id" />
+                        <input type="hidden" name="quantity" value="1" />
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-green btn-sm">
+                            إضافة الى السلة
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
 
 </div>
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    
+    <script>
+        function applyFilters() {
+            // Get selected values
+            const company = document.getElementById('companyFilter').value;
+            const priceSort = document.getElementById('priceSort').value;
+            const category = document.getElementById('categoryFilter').value;
+
+            // Build query string
+            const queryParams = new URLSearchParams();
+            if (company) queryParams.append('company', company);
+            if (priceSort) queryParams.append('priceSort', priceSort);
+            if (category) queryParams.append('category', category);
+
+            // Reload page with new filters
+            window.location.href = '/Shop/Shop?' + queryParams.toString();
+        }
+
+        // Initialize select values from current query params
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            document.getElementById('companyFilter').value = urlParams.get('company') || '';
+            document.getElementById('priceSort').value = urlParams.get('priceSort') || '';
+            document.getElementById('categoryFilter').value = urlParams.get('category') || '';
+        });
+    </script>
+}

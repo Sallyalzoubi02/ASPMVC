@@ -13,13 +13,15 @@ public partial class RecyclingRequest
 
     public string MaterialType { get; set; } = null!;
 
-    public string Quantity { get; set; } = null!;
+    public int Quantity { get; set; }
 
     public string? ImageUrl { get; set; }
 
     public string? Notes { get; set; }
 
     public DateTime? CreatedAt { get; set; }
+
+    public string? ItemCondition { get; set; }
 
     public virtual ICollection<Delivery> Deliveries { get; set; } = new List<Delivery>();
 

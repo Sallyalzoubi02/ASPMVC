@@ -17,12 +17,12 @@
                 </div>
                 <span>ادخل معلوماتك الأساسية</span>
                 <fieldset>
-                    <input type="text" name="firstName" placeholder=" الاسم الأول">
-                    <input type="text" name="lastName" placeholder=" العائلة">
-                    <input type="email" name="email" placeholder="البريد الإلكتروني">
-                    <input type="password" name="password" placeholder="كلمة المرور">
-                    <input type="phone" name="phone" placeholder="رقم الهاتف">
-                    <select name="city" id="city" placeholder="المحافظة">
+                    <input type="text" name="Name" placeholder=" الاسم " required>
+                    <input type="phone" name="phone" placeholder="رقم الهاتف" required>
+                    <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+                    <input type="password" name="password" placeholder="كلمة المرور" required>
+                    <input type="date" name="Bdate" placeholder="تاريخ الميلاد " required>
+                    <select name="city" id="city" placeholder="المحافظة" required>
                         <option value="Amman">Amman</option>
                         <option value="Irbid">Irbid</option>
                         <option value="Jerash">Jerash</option>
@@ -36,13 +36,13 @@
                         <option value="Zarqa">Zarqa</option>
                         <option value="Almafraq">Almafraq</option>
                     </select>
-                    <input type="text" name="location" placeholder="العنوان">
-                    <select name="accont" id="accont" placeholder="نوع الحساب" onchange="toggleCompanyField(this.value)">
+                    <input type="text" name="location" placeholder="العنوان" required>
+                    <select name="accont" id="accont" placeholder="نوع الحساب" onchange="toggleCompanyField(this.value)" required>
                         <option value="person">افراد</option>
                         <option value="company">شركات</option>
                     </select>
                     <div id="companyNameField" style="display: none;">
-                        <input type="text" name="CompanyName" placeholder="اسم الشركة" class="form-control mt-2" />
+                        <input type="text" name="CompanyName" placeholder="اسم الشركة" class="form-control mt-2" required />
                     </div>
                     <div class="gender">
                         <label><input type="radio" name="gender" value="male" required>ذكر</label>

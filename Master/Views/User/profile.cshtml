@@ -150,18 +150,18 @@
                     <div class="card-body">
                         <h5 class="card-title"><i class="fas fa-chart-bar ms-2"></i>إحصائيات التدوير</h5>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                العناصر المعاد تدويرها
-                                <span class="badge bg-success rounded-pill">147</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                ثاني أكسيد الكربون الموفّر
-                                <span class="badge bg-success rounded-pill">245 كغ</span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                الأشجار المحفوظة
-                                <span class="badge bg-success rounded-pill">12</span>
-                            </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            العناصر المعاد تدويرها
+                            <span class="badge bg-success rounded-pill">@Model.TotalRecycledItems كغ</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            ثاني أكسيد الكربون الموفّر
+                            <span class="badge bg-success rounded-pill">@Model.TotalCO2Saved.ToString("0.00") كغ</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            عدد الطلبات
+                            <span class="badge bg-success rounded-pill">@Model.TotalOrders</span>
+                        </li>
                         </ul>
                     </div>
                 </div>
@@ -217,34 +217,35 @@
                                 </span>
                             </div>
                             <div class="card-body">
-                                @foreach (var item in order.OrderItems)
+                                @if (order.OrderItems != null && order.OrderItems.Any())
                                 {
-                                    <div class="row mb-3">
-                                        <div class="col-md-2">
-                                            <img src="@item.Product.ImageUrl" alt="المنتج" class="img-fluid">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <h5>@item.Product.Name</h5>
-                                            <p class="text-muted">الكمية: @item.Quantity</p>
-                                        </div>
-                                        <div class="col-md-4 text-start">
-                                            <p>@item.Price.ToString("N2") ر.س</p>
-                                            @if (order.OrderStatus == "delivered")
-                                            {
-                                                <button class="btn btn-sm btn-outline-primary">إعادة طلب</button>
-                                                <button class="btn btn-sm btn-outline-secondary">تقييم</button>
-                                            }
-                                            else if (order.OrderStatus == "shipped")
-                                            {
-                                                <button class="btn btn-sm btn-outline-primary">تتبع</button>
-                                            }
-                                        </div>
-                                    </div>
+                                    @foreach (var item in order.OrderItems)
+                                    {
+                                        @if (item.Product != null) // التحقق من وجود المنتج
+                                        {
+                                            <div class="row mb-3">
+                                                <div class="col-md-2">
+                                                    <img src="@(item.Product.ImageUrl ?? "/images/default-product.png")"
+                                                         alt="المنتج" class="img-fluid">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h5>@item.Product.Name</h5>
+                                                    <p class="text-muted">الكمية: @item.Quantity</p>
+                                                </div>
+                                                <div class="col-md-4 text-start">
+                                                    <p>@item.Price.ToString("N2") دينار اردني</p>
+                                                    
+                                                </div>
+                                            </div>
+                                        }
+                                    }
                                 }
                                 <hr>
                                 <div class="d-flex justify-content-between">
-                                    <p class="mb-0">تاريخ الطلب: @order.CreatedAt.ToString??("dd MMMM yyyy")</p>
-                                    <p class="mb-0 fw-bold">المجموع: @order.TotalAmount.ToString("N2") ر.س</p>
+                                    <p class="mb-0">تاريخ الطلب: @order.CreatedAt</p>
+                                    <p class="mb-0 fw-bold">المجموع: @order.TotalAmount.ToString("N2") دينار اردني</p>
+                                    <a asp-action="OrderDetails" asp-route-id="@order.Id"
+                                       class="btn btn-sm btn-outline-success">التفاصيل</a>
                                 </div>
                             </div>
                         </div>
@@ -292,11 +293,11 @@
                         </div>
                     } *@
 
-                    @if (Model.RecyclingRequests.Count > 3)
+                    @if (Model.RecyclingRequests != null && Model.RecyclingRequests.Count > 3)
                     {
                         <button class="btn btn-outline-success">عرض كل سجل التدوير</button>
                     }
-                    @if (Model.RecyclingRequests.Count == 0)
+                    @if (Model.RecyclingRequests != null && Model.RecyclingRequests.Count == 0)
                     {
                         <h5>لا يوجد طلبات تدوير</h5>
 
@@ -359,28 +360,29 @@
                     <!-- Settings Tab -->
                 <div class="tab-pane fade" id="settings" role="tabpanel">
                     <h4 class="mb-4">إعدادات الحساب</h4>
-                    @{
-                        var (firstName, lastName) = SplitName(Model.User.Name);
-                    }
+                    
                     <form asp-action="UpdateProfile" method="post">
                         <div class="row mb-4">
                             <div class="col-md-6 mb-3">
-                                <label for="firstName" class="form-label">الاسم الأول</label>
-                                <input name="firstName" value="@firstName" class="form-control" required>
-                                <span class="text-danger" data-valmsg-for="firstName"></span>
+                                <label for="Name" class="form-label">الاسم </label>
+                                <input name="Name" value="@Model.User.Name" class="form-control" required>
+                                <span class="text-danger" data-valmsg-for="Name"></span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="lastName" class="form-label">الاسم الأخير</label>
-                                <input name="lastName" value="@lastName" class="form-control" required>
-                                <span class="text-danger" data-valmsg-for="lastName"></span>
+                                <label for="birth_date" class="form-label">تاريخ الميلاد</label>
+                                <input type="date" name="birth_date"
+                                       value="@(Model.User.BirthDate?.ToString("yyyy-MM-dd"))"
+                                       class="form-control" required>
+                                <span class="text-danger" data-valmsg-for="birth_date"></span>
                             </div>
+                            
                             <div class="col-md-6 mb-3">
                                 <label for="email" class="form-label">البريد الإلكتروني</label>
-                                <input name="email" value="@Model.User.Email" class="form-control" readonly>
+                                <input type="email" name="email" value="@Model.User.Email" class="form-control" readonly>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="phone" class="form-label">الهاتف</label>
-                                <input name="phone" value="@Model.User.Phone" class="form-control" required>
+                                <input type="phone" name="phone" value="@Model.User.Phone" class="form-control" required>
                                 <span class="text-danger" data-valmsg-for="phone"></span>
                             </div>
                         </div>
@@ -432,16 +434,7 @@
     
 @section Scripts {
     <link rel="stylesheet" href="~/css/profile.js" />
-    @functions {
-    (string FirstName, string LastName) SplitName(string fullName)
-    {
-        if (string.IsNullOrEmpty(fullName))
-            return ("", "");
-
-        var parts = fullName.Split(' ', 2);
-        return (parts[0], parts.Length > 1 ? parts[1] : "");
-    }
-    }
+    
     @functions {
     string GetUserBadge(int? points)
     {

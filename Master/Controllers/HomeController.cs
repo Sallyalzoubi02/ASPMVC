@@ -85,8 +85,8 @@ namespace Master.Controllers
 
 
         [HttpPost]
-        public IActionResult Register(string firstName, string lastName, string email, string phone, string city,
-                              string location, string accont, string gender, string password, string? companyName)
+        public IActionResult Register(string Name, string email, string phone, string city,
+                              string location,DateOnly Bdate, string accont, string gender, string password, string? companyName)
         {
             var existingUser = Db.Users.SingleOrDefault(u => u.Email == email);
             if (existingUser != null)
@@ -97,10 +97,11 @@ namespace Master.Controllers
 
             var user = new User
             {
-                Name = $"{firstName.Trim()} {lastName.Trim()}", // Combine into one string
+                Name = Name,
                 Email = email,
                 Phone = phone,
                 City = city,
+                BirthDate = Bdate,
                 Location = location,
                 UserType = accont,
                 Gender = gender,
