@@ -68,7 +68,7 @@
     </div>
 
 
-    <div id="card-container" class="d-flex flex-wrap justify-content-center gap-3 hidden animate align-items-center">
+    <div id="card-container" class="d-flex my-5 flex-wrap justify-content-center gap-3 hidden animate align-items-center">
         @foreach (var product in Model)
         {
             <div class="card" style="max-width: 250px; height:470px">
@@ -119,6 +119,7 @@
             // Reload page with new filters
             window.location.href = '/Shop/Shop?' + queryParams.toString();
         }
+
 
         // Initialize select values from current query params
         document.addEventListener('DOMContentLoaded', function() {

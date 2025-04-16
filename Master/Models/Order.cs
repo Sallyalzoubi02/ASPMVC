@@ -21,6 +21,12 @@ public partial class Order
 
     public DateTime? CreatedAt { get; set; }
 
+    public string? Address1 { get; set; }
+
+    public string? Address2 { get; set; }
+
+    public int? Phone { get; set; }
+
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
     public virtual Payment? Payment { get; set; }

@@ -2,6 +2,8 @@
 using Master.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json; // لتحويل الجلسة إلى JSON
+using Master.Extensions;
 
 namespace Master.Controllers
 {
@@ -64,13 +66,58 @@ namespace Master.Controllers
 
             if (BCrypt.Net.BCrypt.Verify(password1, Virify))
             {
-                // تسجيل الدخول
-                Response.Cookies.Append("UserId", user.Id.ToString(), new CookieOptions
+                if (HttpContext.Session.GetString("fromPayment") == "true")
                 {
-                    Expires = DateTime.Now.AddDays(7), // الكوكي تنتهي بعد أسبوع
-                    HttpOnly = true, // تأمين الكوكي ضد الوصول عبر JavaScript
-                    SameSite = SameSiteMode.Strict // تحديد سياسة SameSite
-                });
+                    var tempCart = HttpContext.Session.Get<List<TempCartItem>>("TempCart");
+                    if (tempCart != null && tempCart.Any())
+                    {
+                        // 2. البحث عن سلة المستخدم الحالية
+                        var userCart = Db.Carts
+                            .Include(c => c.CartItems)
+                            .FirstOrDefault(c => c.UserId == user.Id);
+
+                        // 3. إذا لم يكن لديه سلة، ننشئ واحدة جديدة
+                        if (userCart == null)
+                        {
+                            userCart = new Cart
+                            {
+                                UserId = user.Id
+                            };
+                            Db.Carts.Add(userCart);
+                            Db.SaveChanges();
+                        }
+                        foreach (var tempItem in tempCart)
+                        {
+                            var existingItem = userCart.CartItems.FirstOrDefault(ci => ci.ProductId == tempItem.ProductId);
+
+                            if (existingItem != null)
+                            {
+                                // إذا كان المنتج موجودًا بالفعل، نزيد الكمية
+                                existingItem.Quantity += tempItem.Quantity;
+                                existingItem.TotalPrice = existingItem.UnitPrice * existingItem.Quantity;
+                            }
+                            else
+                            {
+                                // إذا كان المنتج غير موجود، نضيفه جديدًا
+                                userCart.CartItems.Add(new CartItem
+                                {
+                                    ProductId = tempItem.ProductId,
+                                    Quantity = tempItem.Quantity,
+                                    UnitPrice = tempItem.Price,
+                                    TotalPrice = tempItem.Price * tempItem.Quantity,
+                                    CreatedAt = DateTime.Now
+                                });
+                            }
+                        }
+
+                        Db.SaveChanges();
+
+                        // 5. مسح السلة المؤقتة من السيشن
+                        HttpContext.Session.Remove("TempCart");
+                        HttpContext.Session.Remove("fromPayment");
+                        }
+                    }
+                
 
 
                 HttpContext.Session.SetString("logged", "true");
@@ -108,6 +155,58 @@ namespace Master.Controllers
                 Password = BCrypt.Net.BCrypt.HashPassword(password),
                 Points = 0
             };
+
+            if (HttpContext.Session.GetString("fromPayment") == "true")
+            {
+                var tempCart = HttpContext.Session.Get<List<TempCartItem>>("TempCart");
+                if (tempCart != null && tempCart.Any())
+                {
+                    // 2. البحث عن سلة المستخدم الحالية
+                    var userCart = Db.Carts
+                        .Include(c => c.CartItems)
+                        .FirstOrDefault(c => c.UserId == user.Id);
+
+                    // 3. إذا لم يكن لديه سلة، ننشئ واحدة جديدة
+                    if (userCart == null)
+                    {
+                        userCart = new Cart
+                        {
+                            UserId = user.Id
+                        };
+                        Db.Carts.Add(userCart);
+                        Db.SaveChanges();
+                    }
+                    foreach (var tempItem in tempCart)
+                    {
+                        var existingItem = userCart.CartItems.FirstOrDefault(ci => ci.ProductId == tempItem.ProductId);
+
+                        if (existingItem != null)
+                        {
+                            // إذا كان المنتج موجودًا بالفعل، نزيد الكمية
+                            existingItem.Quantity += tempItem.Quantity;
+                            existingItem.TotalPrice = existingItem.UnitPrice * existingItem.Quantity;
+                        }
+                        else
+                        {
+                            // إذا كان المنتج غير موجود، نضيفه جديدًا
+                            userCart.CartItems.Add(new CartItem
+                            {
+                                ProductId = tempItem.ProductId,
+                                Quantity = tempItem.Quantity,
+                                UnitPrice = tempItem.Price,
+                                TotalPrice = tempItem.Price * tempItem.Quantity,
+                                CreatedAt = DateTime.Now
+                            });
+                        }
+                    }
+
+                    Db.SaveChanges();
+
+                    // 5. مسح السلة المؤقتة من السيشن
+                    HttpContext.Session.Remove("TempCart");
+                    HttpContext.Session.Remove("fromPayment");
+                }
+            }
 
             Db.Users.Add(user);
             Db.SaveChanges();

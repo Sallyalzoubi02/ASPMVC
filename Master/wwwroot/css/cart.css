@@ -19,6 +19,7 @@ html::-webkit-scrollbar-thumb {
     border-radius: 5rem;
 }
 
+
 .payment-container {
     background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
     border-radius: 15px;
@@ -81,8 +82,3 @@ html::-webkit-scrollbar-thumb {
     color: #1a8754;
 }
 
-@media (min-width: 1025px) {
-    .h-custom {
-        height: 100vh !important;
-    }
-}

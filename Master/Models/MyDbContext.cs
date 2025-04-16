@@ -152,6 +152,12 @@ public partial class MyDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("orders_id_primary");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Address1)
+                .HasMaxLength(255)
+                .IsFixedLength();
+            entity.Property(e => e.Address2)
+                .HasMaxLength(255)
+                .IsFixedLength();
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("created_at");
@@ -166,6 +172,7 @@ public partial class MyDbContext : DbContext
                 .HasDefaultValue("Pending")
                 .HasColumnName("order_status");
             entity.Property(e => e.PaymentId).HasColumnName("payment_id");
+            entity.Property(e => e.Phone).HasColumnName("phone");
             entity.Property(e => e.TotalAmount)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("total_amount");

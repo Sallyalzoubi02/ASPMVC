@@ -1,41 +1,118 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Cart";
 }
 
-@section Styles{
+@section Styles {
     <link rel="stylesheet" href="~/css/cart.css" />
 }
-
+<div class="main-content-wrapper">
     <section class="h-100 h-custom">
         <div class="container h-100 py-5">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col">
-
                     <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="h5">سلة المشتريات</th>
-                                    <th scope="col" class="text-center">العدد</th>
-                                    <th scope="col" class="text-center">السعر</th>
-                                    <th scope="col" class="text-center">ازلة</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- سيتم ملؤها بواسطة JavaScript -->
-                            </tbody>
-                        </table>
+                        @using (Html.BeginForm())
+                        {
+                            @Html.AntiForgeryToken()
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="h5">سلة المشتريات</th>
+                                        <th scope="col" class="text-center">العدد</th>
+                                        <th scope="col" class="text-center">السعر</th>
+                                        <th scope="col" class="text-center">ازلة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model is List<Master.Models.CartItem> dbItems)
+                                    {
+                                        @foreach (var item in dbItems)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="@item.Product.ImageUrl" class="img-fluid rounded-3" style="width: 120px;" alt="@item.Product.Name">
+                                                        <div class="flex-column ms-4">
+                                                            <p class="mb-2">@item.Product.Name</p>
+                                                            <p class="mb-0 text-muted">@item.Product.Description</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <div class="d-flex flex-row justify-content-center">
+                                                        <button class="btn btn-link px-2" onclick="updateQuantity(@item.ProductId, -1, event)">
+                                                            <i class="fas fa-minus"></i>
+                                                        </button>
+                                                        <input type="number"
+                                                               class="form-control quantity-input"
+                                                               value="@item.Quantity"
+                                                               min="1"
+                                                               style="width: 60px; text-align: center;"
+                                                               data-price="@item.UnitPrice">
+                                                        <button class="btn btn-link px-2" onclick="updateQuantity(@item.ProductId, 1, event)">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <p class="mb-0" style="font-weight: 500;">@(item.UnitPrice * item.Quantity) دينار أردني</p>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <button class="btn btn-danger btn-sm" onclick="removeItem(@item.ProductId, event)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else if (Model is List<Master.Models.TempCartItem> tempItems)
+                                    {
+                                        @foreach (var item in tempItems)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="@item.ImageUrl" class="img-fluid rounded-3" style="width: 120px;" alt="@item.ProductName">
+                                                        <div class="flex-column ms-4">
+                                                            <p class="mb-2">@item.ProductName</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <div class="d-flex flex-row justify-content-center">
+                                                        <button class="btn btn-link px-2" onclick="updateTempQuantity(@item.ProductId, -1, event)">
+                                                            <i class="fas fa-minus"></i>
+                                                        </button>
+                                                        <input type="number" class="form-control quantity-input" value="@item.Quantity" min="1" style="width: 60px; text-align: center;" data-price="@item.Price">
+                                                        <button class="btn btn-link px-2" onclick="updateTempQuantity(@item.ProductId, 1, event)">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <p class="mb-0" style="font-weight: 500;">@(item.Price * item.Quantity) دينار أردني</p>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <button class="btn btn-danger btn-sm" onclick="removeTempItem(@item.ProductId, event)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        }
                     </div>
 
                     <div class="container py-5">
                         <div class="row justify-content-center">
-                            <div class="col-lg-10">
+                            <div class="col-md-9">
                                 <div class="payment-container p-4 bg-light rounded-3">
                                     <h3 class="text-center mb-4 fw-bold text-dark"><i class="fas fa-shopping-cart me-2"></i>إتمام الطلب</h3>
 
                                     <div class="row g-4">
-                                        <!-- قسم طرق الدفع -->
+                                        @* <!-- قسم طرق الدفع -->
                                         <div class="col-md-6">
                                             <div class="payment-methods p-4 h-100 bg-white rounded-3 shadow-sm">
                                                 <h5 class="fw-bold mb-4 text-dark">اختر طريقة الدفع</h5>
@@ -87,10 +164,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> *@
 
                                         <!-- قسم ملخص الطلب مع إضافة كود الخصم -->
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="payment-summary p-4 h-100 bg-white rounded-3 shadow-sm">
                                                 <h5 class="fw-bold mb-4 text-dark">ملخص الطلب</h5>
 
@@ -109,46 +186,47 @@
                                                 <div class="summary-item">
                                                     <div class="d-flex justify-content-between">
                                                         <span class="text-muted">سعر المنتجات</span>
-                                                        <span class="fw-bold" id="subtotal">250.00 ر.س</span>
+                                                        <span class="fw-bold" id="subtotal">250.00 دينار أردني</span>
                                                     </div>
                                                 </div>
 
                                                 <div class="summary-item">
                                                     <div class="d-flex justify-content-between">
                                                         <span class="text-muted">الخصم</span>
-                                                        <span class="fw-bold text-success" id="discountAmount">-0.00 ر.س</span>
+                                                        <span class="fw-bold text-success" id="discountAmount">-0.00 دينار أردني</span>
                                                     </div>
                                                 </div>
 
                                                 <div class="summary-item">
                                                     <div class="d-flex justify-content-between">
-                                                        <span class="text-muted">رسوم الشحن</span>
-                                                        <span class="fw-bold" id="shipping">15.00 ر.س</span>
+                                                        <span class="text-muted">رسوم التوصيل</span>
+                                                        <span class="fw-bold" id="shipping">1.00 دينار أردني</span>
                                                     </div>
                                                 </div>
 
-                                                <div class="summary-item">
-                                                    <div class="d-flex justify-content-between">
-                                                        <span class="text-muted">الضريبة</span>
-                                                        <span class="fw-bold" id="tax">12.50 ر.س</span>
-                                                    </div>
-                                                </div>
+                                                
 
                                                 <div class="border-top pt-3 mb-4">
                                                     <div class="d-flex justify-content-between fw-bold fs-5">
                                                         <span>المجموع النهائي</span>
-                                                        <span class="text-success" id="total">277.50 ر.س</span>
+                                                        <span class="text-success" id="total">0 دينار أردني</span>
                                                     </div>
                                                 </div>
-
-                                                <button class="btn btn-confirm w-100 text-white py-3" onclick="confirmOrder()">
-                                                    <i class="fas fa-lock me-2"></i>تأكيد الطلب والدفع
+                                                @using (Html.BeginForm("ConfirmOrder", "Shop", FormMethod.Post))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-confirm w-100 text-white py-3">
+                                                   تأكيد الطلب والدفع
+                                                    <i class="fas fa-lock me-2"></i>
                                                 </button>
-
+                                                }
                                                 <div class="text-center mt-3">
-                                                    <small class="text-muted">
-                                                        <i class="fas fa-shield-alt me-2"></i>دفع آمن ومحمي بنظام SSL
-                                                    </small>
+                                                  
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-shield-alt me-2"></i>دفع آمن ومحمي بنظام SSL
+                                                        </small>
+                                                   
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -157,12 +235,220 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> 
             </div>
-    </section>
-
-
+        </div> 
+    </section> 
+</div> 
 @section Scripts {
     <script src="~/js/cart.js"></script>
-}
+    <script>
+        // دوال معالجة السلة المؤقتة (لغير المسجلين)
+        async function updateTempQuantity(productId, change, event) {
+            event.preventDefault();
 
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                const response = await fetch('/Shop/UpdateTempQuantity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({
+                        ProductId: productId,
+                        Change: change
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    // تحديث الواجهة
+                    const row = event.target.closest('tr');
+                    const quantityInput = row.querySelector('.quantity-input');
+                    const priceElement = row.querySelector('p[style*="font-weight: 500"]');
+
+                    // حساب الكمية الجديدة
+                    const newQuantity = parseInt(quantityInput.value) + change;
+                    if (newQuantity >= 1) {
+                        quantityInput.value = newQuantity;
+
+                        // احصل على سعر الوحدة من data-price
+                        const unitPrice = parseFloat(quantityInput.dataset.price);
+
+                        // احسب السعر الجديد
+                        const newPrice = unitPrice * newQuantity;
+
+                        // عرض السعر بالتنسيق الصحيح
+                        priceElement.textContent = newPrice.toFixed(2) + ' دينار أردني';
+
+                        // تحديث المجموع الكلي
+                        updateCartTotals();
+                    }
+                } else {
+                    alert(result.message || 'حدث خطأ أثناء التحديث');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('حدث خطأ في الاتصال بالخادم');
+            }
+        }
+
+        function updateCartTotals() {
+            let subtotal = 0;
+
+            // حساب المجموع الجزئي لجميع العناصر
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const priceText = row.querySelector('p[style*="font-weight: 500"]')?.textContent;
+                if (priceText) {
+                    // استخراج الرقم من النص (إزالة النص غير الرقمي)
+                    const priceValue = parseFloat(priceText.replace(/[^\d.]/g, ''));
+                    if (!isNaN(priceValue)) {
+                        subtotal += priceValue;
+                    }
+                }
+            });
+
+            // القيم الثابتة
+            const shipping = 1.00;
+            const total = subtotal + shipping ;
+
+            // تحديث العناصر في صفحة الدفع
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' دينار أردني';
+            document.getElementById('total').textContent = total.toFixed(2) + ' دينار أردني';
+        }
+
+        async function removeTempItem(productId, event) {
+            event.preventDefault();
+
+            if (confirm('هل أنت متأكد من إزالة هذا المنتج؟')) {
+                try {
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                    const response = await fetch('/Shop/RemoveTempItem', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        body: JSON.stringify({
+                            ProductId: productId
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        updateCartTotals();
+                        location.reload();
+
+                    } else {
+                        alert(result.message || 'حدث خطأ أثناء الإزالة');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('حدث خطأ في الاتصال بالخادم: ' + error.message);
+                }
+            }
+        }
+
+        // دوال معالجة سلة المستخدم المسجل
+        async function updateQuantity(productId, change, event) {
+            event.preventDefault();
+
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                const response = await fetch('/Shop/UpdateQuantity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({
+                        ProductId: productId,
+                        Change: change
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    const row = event.target.closest('tr');
+                    const quantityInput = row.querySelector('.quantity-input');
+                    const priceElement = row.querySelector('p[style*="font-weight: 500"]');
+
+                    const newQuantity = parseInt(quantityInput.value) + change;
+                    if (newQuantity >= 1) {
+                        quantityInput.value = newQuantity;
+                        const unitPrice = parseFloat(quantityInput.dataset.price);
+                        const newPrice = unitPrice * newQuantity;
+                        priceElement.textContent = newPrice.toFixed(2) + ' دينار أردني';
+
+                        // تحديث الإجماليات
+                        updateCartTotals();
+
+                        showToast(change > 0 ? 'تم زيادة الكمية بنجاح' : 'تم تقليل الكمية بنجاح');
+                    }
+                } else {
+                    alert(result.message || 'حدث خطأ أثناء التحديث');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('حدث خطأ في الاتصال بالخادم');
+            }
+        }
+
+        async function removeItem(productId, event) {
+            event.preventDefault();
+
+            if (confirm('هل أنت متأكد من إزالة هذا المنتج من السلة؟')) {
+                try {
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                    const response = await fetch('/Shop/RemoveItem', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        body: JSON.stringify({
+                            ProductId: productId
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        // إزالة الصف من الجدول
+                        event.target.closest('tr').remove();
+
+                        // تحديث المجموع الكلي
+                        updateCartTotals();
+
+                        // إظهار رسالة نجاح
+                        showToast('تم إزالة المنتج بنجاح');
+                    } else {
+                        alert(result.message || 'حدث خطأ أثناء الإزالة');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('حدث خطأ في الاتصال بالخادم');
+                }
+            }
+        }
+
+        // دالة مساعدة لعرض الرسائل
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'cart-toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 500);
+            }, 2000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartTotals();
+        });
+
+       
+    </script>
+}
