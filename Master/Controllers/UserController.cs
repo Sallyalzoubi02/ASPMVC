@@ -19,7 +19,38 @@ namespace Master.Controllers
         {
             return View();
         }
-        
+
+        [HttpPost]
+        public IActionResult AddRecyclingRequest(RecyclingRequest request)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login", "Auth");
+
+            if (request.RequestedDate <= DateTime.Now)
+            {
+                ModelState.AddModelError("", "لا يمكن اختيار تاريخ في الماضي.");
+                return View(request);
+            }
+
+            // تحقق من وجود طلب بنفس الوقت ونفس المدينة
+            bool isConflict = myDb.RecyclingRequests
+                .Any(r => r.City == request.City && r.RequestedDate == request.RequestedDate);
+
+            if (isConflict)
+            {
+                ModelState.AddModelError("", "يوجد طلب بنفس التاريخ والمدينة.");
+                return View(request);
+            }
+
+            // حفظ الطلب
+            request.UserId = userId;
+            request.CreatedAt = DateTime.Now;
+            myDb.RecyclingRequests.Add(request);
+            myDb.SaveChanges();
+
+            return RedirectToAction("profile");
+        }
+
         public IActionResult profile()
         {
             var userId = HttpContext.Session.GetInt32("UserId");

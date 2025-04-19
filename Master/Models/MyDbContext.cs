@@ -23,6 +23,8 @@ public partial class MyDbContext : DbContext
 
     public virtual DbSet<Company> Companies { get; set; }
 
+    public virtual DbSet<Coupon> Coupons { get; set; }
+
     public virtual DbSet<Delivery> Deliveries { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
@@ -114,6 +116,16 @@ public partial class MyDbContext : DbContext
                 .HasForeignKey(d => d.OwnerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("company_owner_id_foreign");
+        });
+
+        modelBuilder.Entity<Coupon>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Coupons__3214EC07C433F978");
+
+            entity.Property(e => e.Code).HasMaxLength(100);
+            entity.Property(e => e.DiscountPercentage).HasColumnType("decimal(5, 2)");
+            entity.Property(e => e.ExpiryDate).HasColumnType("datetime");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
         });
 
         modelBuilder.Entity<Delivery>(entity =>
@@ -223,15 +235,12 @@ public partial class MyDbContext : DbContext
                 .HasColumnName("created_at");
             entity.Property(e => e.PaymentMethod)
                 .HasMaxLength(50)
-                .IsUnicode(false)
                 .HasColumnName("payment_method");
             entity.Property(e => e.PaymentType)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("payment_type");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
-                .IsUnicode(false)
                 .HasDefaultValue("Pending")
                 .HasColumnName("status");
             entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -279,6 +288,7 @@ public partial class MyDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("recyclingrequests_id_primary");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("created_at");
@@ -302,6 +312,9 @@ public partial class MyDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("notes");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.RequestedDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.User).WithMany(p => p.RecyclingRequests)

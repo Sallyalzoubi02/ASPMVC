@@ -2,6 +2,9 @@
     ViewData["Title"] = "Cart";
 }
 
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+
 @section Styles {
     <link rel="stylesheet" href="~/css/cart.css" />
 }
@@ -27,7 +30,7 @@
                                             </div>
                                             <span class="fw-bold">بطاقة ائتمانية</span>
                                         </div>
-                                        <input type="radio" name="paymentMethod" class="d-none" checked>
+                                        <input type="radio" name="paymentMethod" class="d-none" checked data-method="credit">
                                     </div>
                                 </div>
 
@@ -39,7 +42,7 @@
                                             </div>
                                             <span class="fw-bold">الدفع عند الاستلام</span>
                                         </div>
-                                        <input type="radio" name="paymentMethod" class="d-none">
+                                        <input type="radio" name="paymentMethod" class="d-none" data-method="cash">
                                     </div>
                                 </div>
                             </div>
@@ -70,54 +73,25 @@
                     <!-- قسم ملخص الطلب مع إضافة كود الخصم -->
                     <div class="col-md-6">
                         <div class="payment-summary p-4 h-100 bg-white rounded-3 shadow-sm">
-                            <h5 class="fw-bold mb-4 text-dark">ملخص الطلب</h5>
+                            
+                                <h5 class="fw-bold mb-4 text-dark">معلومات التوصيل</h5>
 
-                            <!-- قسم كود الخصم الجديد -->
-                            <div class="discount-section mb-4">
-                                <h6 class="fw-bold mb-3">كود الخصم</h6>
-                                <div class="discount-input-group">
-                                    <input type="text" class="form-control discount-input" id="discountCode" placeholder="أدخل كود الخصم">
-                                    <button class="btn apply-discount-btn" onclick="applyDiscount()">
-                                        <i class="fas fa-tag me-1"></i>تطبيق
-                                    </button>
+                                <div class="mb-3">
+                                    <label class="form-label">العنوان الأول</label>
+                                    <input type="text" class="form-control" id="address1" placeholder="الشارع، الحي">
                                 </div>
-                                <small id="discountMessage" class="text-muted mt-2 d-block"></small>
-                            </div>
 
-                            <div class="summary-item">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted">سعر المنتجات</span>
-                                    <span class="fw-bold" id="subtotal">250.00 ر.س</span>
+                                <div class="mb-3">
+                                    <label class="form-label">العنوان الثاني</label>
+                                    <input type="text" class="form-control" id="address2" placeholder="معلومات إضافية">
                                 </div>
-                            </div>
 
-                            <div class="summary-item">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted">الخصم</span>
-                                    <span class="fw-bold text-success" id="discountAmount">-0.00 ر.س</span>
+                                <div class="mb-3">
+                                    <label class="form-label">رقم الهاتف</label>
+                                    <input type="text" class="form-control" id="phone" placeholder="05XXXXXXXX">
                                 </div>
-                            </div>
 
-                            <div class="summary-item">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted">رسوم الشحن</span>
-                                    <span class="fw-bold" id="shipping">15.00 ر.س</span>
-                                </div>
-                            </div>
-
-                            <div class="summary-item">
-                                <div class="d-flex justify-content-between">
-                                    <span class="text-muted">الضريبة</span>
-                                    <span class="fw-bold" id="tax">12.50 ر.س</span>
-                                </div>
-                            </div>
-
-                            <div class="border-top pt-3 mb-4">
-                                <div class="d-flex justify-content-between fw-bold fs-5">
-                                    <span>المجموع النهائي</span>
-                                    <span class="text-success" id="total">277.50 ر.س</span>
-                                </div>
-                            </div>
+                            <input type="hidden" name="__RequestVerificationToken" value="@Antiforgery.GetTokens(Context).RequestToken" />
 
                             <button class="btn btn-confirm w-100 text-white py-3" onclick="confirmOrder()">
                                 <i class="fas fa-lock me-2"></i>تأكيد الطلب والدفع
@@ -135,3 +109,66 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+
+        function selectPayment(element, type) {
+            // إزالة التنشيط من جميع الخيارات
+            document.querySelectorAll('.payment-method').forEach(opt => {
+                opt.classList.remove('active');
+                opt.querySelector('input[name="paymentMethod"]').checked = false;
+            });
+
+            // تفعيل الخيار المحدد
+            element.classList.add('active');
+            element.querySelector('input[name="paymentMethod"]').checked = true;
+
+            // إظهار/إخفاء تفاصيل البطاقة
+            const cardDetails = document.getElementById('cardDetails');
+            if (type === 'credit' || type === 'debit') {
+                cardDetails.style.display = 'block';
+            } else {
+                cardDetails.style.display = 'none';
+            }
+        }
+
+
+        async function confirmOrder() {
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').getAttribute('data-method') || 'credit';
+            const address1 = document.getElementById('address1').value;
+            const address2 = document.getElementById('address2').value;
+            const phone = document.getElementById('phone').value;
+
+            if (!address1 || !phone) {
+                alert('يرجى إدخال العنوان ورقم الهاتف');
+                return;
+            }
+
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                const response = await fetch('/Shop/ConfirmOrder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({
+                        PaymentMethod: paymentMethod,
+                        Address1: address1,
+                        Address2: address2,
+                        Phone: phone
+                    })
+                });
+
+                alert("added successfuly")
+
+            } catch (error) {
+                console.error(error);
+                alert('حدث خطأ أثناء تنفيذ الطلب');
+            }
+        }
+
+                                                            </script>
+                                                        }

@@ -30,11 +30,26 @@ namespace Master.Controllers
                     .FirstOrDefault(c => c.UserId == userId)?
                     .CartItems.ToList() ?? new List<CartItem>();
 
+                var appliedCouponJson = HttpContext.Session.GetString("AppliedCoupon");
+                if (!string.IsNullOrEmpty(appliedCouponJson))
+                {
+                    var appliedCoupon = JsonSerializer.Deserialize<AppliedCoupon>(appliedCouponJson);
+                    ViewBag.DiscountPercentage = appliedCoupon.DiscountPercentage;
+                    ViewBag.DiscountAmount = appliedCoupon.DiscountAmount;
+                }
                 return View("Cart", cartItems);
             }
             else // زائر
             {
                 var tempCart = HttpContext.Session.Get<List<TempCartItem>>("TempCart") ?? new List<TempCartItem>();
+                var appliedCouponJson = HttpContext.Session.GetString("AppliedCoupon");
+                if (!string.IsNullOrEmpty(appliedCouponJson))
+                {
+                    // Use the same deserialization approach as for logged-in users
+                    var appliedCoupon = JsonSerializer.Deserialize<AppliedCoupon>(appliedCouponJson);
+                    ViewBag.DiscountPercentage = appliedCoupon.DiscountPercentage;
+                    ViewBag.DiscountAmount = appliedCoupon.DiscountAmount;
+                }
                 return View("Cart", tempCart);
             }
         }
@@ -164,7 +179,7 @@ namespace Master.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ConfirmOrder()
+        public IActionResult PrepareOrder()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
 
@@ -192,6 +207,81 @@ namespace Master.Controllers
             // توجيه إلى صفحة الدفع
             return RedirectToAction("Payment");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmOrder([FromBody] ConfirmOrderViewModel model)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId"); // تابع بيجيب الآيدي من السيشن أو الهوية
+
+            if (userId == null)
+                return Json(new { success = false, message = "يجب تسجيل الدخول" });
+
+            var cartItems = _db.CartItems
+                .Where(c => c.Cart.UserId == userId)
+                .Include(c => c.Product)
+                .ToList();
+
+            if (!cartItems.Any())
+                return Json(new { success = false, message = "السلة فارغة" });
+
+            var totalAmount = cartItems.Sum(c => c.TotalPrice ?? (c.UnitPrice * c.Quantity));
+
+
+            var paymentStatus = model.PaymentMethod == "credit" ? "تم الدفع" : "بانتظار الدفع";
+
+            // 1- Payment
+            var payment = new Payment
+            {
+                UserId = userId,
+                Amount = totalAmount,
+                PaymentMethod = model.PaymentMethod,
+                PaymentType = "Order",
+                Status = paymentStatus,
+                CreatedAt = DateTime.Now
+            };
+
+            _db.Payments.Add(payment);
+            await _db.SaveChangesAsync();
+
+            // 2- Order
+            var order = new Order
+            {
+                UserId = userId,
+                PaymentId = payment.Id,
+                OrderStatus = "جاري المعالجة",
+                DeliveryAddress = model.Address1 + " " + model.Address2,
+                DeliveryTime = DateTime.Now.AddHours(1),
+                TotalAmount = totalAmount,
+                CreatedAt = DateTime.Now,
+                Address1 = model.Address1,
+                Address2 = model.Address2,
+                Phone = int.Parse(model.Phone)
+            };
+
+            _db.Orders.Add(order);
+            await _db.SaveChangesAsync();
+
+            // 3- OrderItems
+            foreach (var item in cartItems)
+            {
+                var orderItem = new OrderItem
+                {
+                    OrderId = order.Id,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    Price = item.TotalPrice ?? (item.UnitPrice * item.Quantity)
+                };
+                _db.OrderItems.Add(orderItem);
+            }
+
+            // 4- حذف cart items
+            _db.CartItems.RemoveRange(cartItems);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("profile","User");
+        }
+
 
         private void TransferTempCartToUserCart(int userId)
         {
@@ -231,6 +321,79 @@ namespace Master.Controllers
             HttpContext.Session.Remove("TempCart");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ApplyCoupon(string couponCode)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(couponCode))
+                {
+                    return Json(new { success = false, message = "الرجاء إدخال كود الخصم" });
+                }
+
+                // البحث عن الكوبون في قاعدة البيانات
+                var coupon = _db.Coupons.FirstOrDefault(c => c.Code == couponCode &&
+                                                           (c.ExpiryDate == null || c.ExpiryDate >= DateTime.Now) &&
+                                                           c.IsActive);
+
+                if (coupon == null)
+                {
+                    return Json(new { success = false, message = "كود الخصم غير صالح أو منتهي الصلاحية" });
+                }
+
+                // حساب المجموع الجزئي للسلة
+                var subtotal = CalculateCartSubtotal();
+
+                // حساب الخصم والمجموع النهائي
+                var discountAmount = subtotal * (coupon.DiscountPercentage / 100);
+                var total = subtotal - discountAmount ;
+
+                // تخزين بيانات الخصم في الجلسة
+                HttpContext.Session.SetString("AppliedCoupon", JsonSerializer.Serialize(new
+                {
+                    Code = coupon.Code,
+                    DiscountPercentage = coupon.DiscountPercentage,
+                    DiscountAmount = discountAmount
+                }));
+
+                return Json(new
+                {
+                    success = true,
+                    subtotal = subtotal.ToString("0.00"),
+                    discountAmount = discountAmount.ToString("0.00"),
+                    total = total.ToString("0.00"),
+                    message = $"تم تطبيق خصم {coupon.DiscountPercentage}% بنجاح"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "حدث خطأ أثناء معالجة الكوبون" });
+            }
+        }
+
+        private decimal CalculateCartSubtotal()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            decimal subtotal = 0;
+
+            if (userId != null)
+            {
+                // حساب المجموع للسلة الدائمة للمستخدم المسجل
+                subtotal = _db.CartItems
+                    .Include(ci => ci.Cart)
+                    .Where(ci => ci.Cart.UserId == userId)
+                    .Sum(ci => ci.UnitPrice * ci.Quantity);
+            }
+            else
+            {
+                // حساب المجموع للسلة المؤقتة للزائر
+                var tempCart = HttpContext.Session.Get<List<TempCartItem>>("TempCart") ?? new List<TempCartItem>();
+                subtotal = tempCart.Sum(item => item.Price * item.Quantity);
+            }
+
+            return subtotal;
+        }
 
         public IActionResult AddToCart(int productId, int quantity = 1)
         {

@@ -23,6 +23,10 @@ public partial class RecyclingRequest
 
     public string? ItemCondition { get; set; }
 
+    public string? City { get; set; }
+
+    public DateTime RequestedDate { get; set; }
+
     public virtual ICollection<Delivery> Deliveries { get; set; } = new List<Delivery>();
 
     public virtual User? User { get; set; }

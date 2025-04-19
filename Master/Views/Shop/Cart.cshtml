@@ -31,7 +31,7 @@
                                             <tr>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        <img src="@item.Product.ImageUrl" class="img-fluid rounded-3" style="width: 120px;" alt="@item.Product.Name">
+                                                        <img src="~/@item.Product.ImageUrl" class="img-fluid rounded-3" style="width: 120px;" alt="@item.Product.Name">
                                                         <div class="flex-column ms-4">
                                                             <p class="mb-2">@item.Product.Name</p>
                                                             <p class="mb-0 text-muted">@item.Product.Description</p>
@@ -72,7 +72,7 @@
                                             <tr>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        <img src="@item.ImageUrl" class="img-fluid rounded-3" style="width: 120px;" alt="@item.ProductName">
+                                                        <img src="~/@item.ImageUrl" class="img-fluid rounded-3" style="width: 120px;" alt="@item.ProductName">
                                                         <div class="flex-column ms-4">
                                                             <p class="mb-2">@item.ProductName</p>
                                                         </div>
@@ -112,59 +112,7 @@
                                     <h3 class="text-center mb-4 fw-bold text-dark"><i class="fas fa-shopping-cart me-2"></i>إتمام الطلب</h3>
 
                                     <div class="row g-4">
-                                        @* <!-- قسم طرق الدفع -->
-                                        <div class="col-md-6">
-                                            <div class="payment-methods p-4 h-100 bg-white rounded-3 shadow-sm">
-                                                <h5 class="fw-bold mb-4 text-dark">اختر طريقة الدفع</h5>
-
-                                                <div class="row g-3">
-                                                    <div class="col-6">
-                                                        <div class="payment-method p-3 active" onclick="selectPayment(this, 'credit')">
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="payment-icon ms-3 bg-success text-white rounded-2 p-2">
-                                                                    <i class="fab fa-cc-visa"></i>
-                                                                </div>
-                                                                <span class="fw-bold">بطاقة ائتمانية</span>
-                                                            </div>
-                                                            <input type="radio" name="paymentMethod" class="d-none" checked>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-6">
-                                                        <div class="payment-method p-3" onclick="selectPayment(this, 'cash')">
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="payment-icon ms-3 bg-success text-white rounded-2 p-2">
-                                                                    <i class="fas fa-money-bill-wave"></i>
-                                                                </div>
-                                                                <span class="fw-bold">الدفع عند الاستلام</span>
-                                                            </div>
-                                                            <input type="radio" name="paymentMethod" class="d-none">
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- تفاصيل البطاقة -->
-                                                <div class="mt-4 pt-3" id="cardDetails">
-                                                    <h6 class="fw-bold mb-3 text-dark">معلومات البطاقة</h6>
-
-                                                    <div class="mb-3">
-                                                        <label class="form-label text-muted">رقم البطاقة</label>
-                                                        <input type="text" class="form-control" placeholder="1234 5678 9012 3456">
-                                                    </div>
-
-                                                    <div class="row g-2">
-                                                        <div class="col-md-8">
-                                                            <label class="form-label text-muted">اسم صاحب البطاقة</label>
-                                                            <input type="text" class="form-control" placeholder="الاسم كما هو مدون على البطاقة">
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <label class="form-label text-muted">CVV</label>
-                                                            <input type="password" class="form-control" placeholder="123">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> *@
+                                        
 
                                         <!-- قسم ملخص الطلب مع إضافة كود الخصم -->
                                         <div class="col-md-12">
@@ -172,38 +120,35 @@
                                                 <h5 class="fw-bold mb-4 text-dark">ملخص الطلب</h5>
 
                                                 <!-- قسم كود الخصم الجديد -->
-                                                <div class="discount-section mb-4">
+                                                <div class="discount-section ">
                                                     <h6 class="fw-bold mb-3">كود الخصم</h6>
-                                                    <div class="discount-input-group">
-                                                        <input type="text" class="form-control discount-input" id="discountCode" placeholder="أدخل كود الخصم">
-                                                        <button class="btn apply-discount-btn" onclick="applyDiscount()">
-                                                            <i class="fas fa-tag me-1"></i>تطبيق
-                                                        </button>
-                                                    </div>
-                                                    <small id="discountMessage" class="text-muted mt-2 d-block"></small>
+                                                    <form asp-action="ApplyCoupon" asp-controller="Shop" method="post" id="couponForm">
+                                                        @Html.AntiForgeryToken()
+                                                        <div class="discount-input-group">
+                                                            <input type="text" class="form-control discount-input" name="couponCode" id="discountCode" placeholder="أدخل كود الخصم">
+                                                            <button type="submit" class="btn apply-discount-btn my-2">
+                                                                تطبيق <i class="fas fa-tag me-1"></i>
+                                                            </button>
+                                                        </div>
+                                                        <small id="discountMessage" class="text-muted mt-2 d-block"></small>
+                                                    </form>
                                                 </div>
 
                                                 <div class="summary-item">
                                                     <div class="d-flex justify-content-between">
                                                         <span class="text-muted">سعر المنتجات</span>
-                                                        <span class="fw-bold" id="subtotal">250.00 دينار أردني</span>
+                                                        <span class="fw-bold" id="subtotal">@(ViewBag.Subtotal?.ToString("0.00") ?? "0.00") دينار أردني</span>
                                                     </div>
                                                 </div>
 
                                                 <div class="summary-item">
                                                     <div class="d-flex justify-content-between">
                                                         <span class="text-muted">الخصم</span>
-                                                        <span class="fw-bold text-success" id="discountAmount">-0.00 دينار أردني</span>
+                                                        <span class="fw-bold text-success" id="discountAmount">-@((ViewBag.DiscountAmount ?? 0).ToString("0.00"))دينار أردني</span>
                                                     </div>
                                                 </div>
 
-                                                <div class="summary-item">
-                                                    <div class="d-flex justify-content-between">
-                                                        <span class="text-muted">رسوم التوصيل</span>
-                                                        <span class="fw-bold" id="shipping">1.00 دينار أردني</span>
-                                                    </div>
-                                                </div>
-
+                                                
                                                 
 
                                                 <div class="border-top pt-3 mb-4">
@@ -212,7 +157,7 @@
                                                         <span class="text-success" id="total">0 دينار أردني</span>
                                                     </div>
                                                 </div>
-                                                @using (Html.BeginForm("ConfirmOrder", "Shop", FormMethod.Post))
+                                                @using (Html.BeginForm("PrepareOrder", "Shop", FormMethod.Post))
                                                 {
                                                     @Html.AntiForgeryToken()
                                                 <button type="submit" class="btn btn-confirm w-100 text-white py-3">
@@ -309,9 +254,8 @@
                 }
             });
 
-            // القيم الثابتة
-            const shipping = 1.00;
-            const total = subtotal + shipping ;
+            
+            const total = subtotal  ;
 
             // تحديث العناصر في صفحة الدفع
             document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' دينار أردني';
@@ -449,6 +393,43 @@
             updateCartTotals();
         });
 
+
+                document.getElementById('couponForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+            const messageElement = document.getElementById('discountMessage');
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    messageElement.textContent = result.message;
+                    messageElement.style.color = 'green';
+
+                    // تحديث القيم في الصفحة
+                    document.getElementById('subtotal').textContent = result.subtotal + ' دينار أردني';
+                    document.getElementById('discountAmount').textContent = '-' + result.discountAmount + ' دينار أردني';
+                    document.getElementById('total').textContent = result.total + ' دينار أردني';
+                } else {
+                    messageElement.textContent = result.message;
+                    messageElement.style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                messageElement.textContent = 'حدث خطأ أثناء تطبيق الكوبون';
+                messageElement.style.color = 'red';
+            }
+        });
        
     </script>
 }
