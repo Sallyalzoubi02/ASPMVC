@@ -1,0 +1,360 @@
+﻿@model RecyclingRequestVm
+
+<div class="delivery-step-container">
+    <h4 class="section-title text-center mb-4">معلومات التسليم</h4>
+    <!-- تاريخ ووقت التسليم -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="DeliveryDate" class="form-label">تاريخ التسليم</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-calendar-alt"></i>
+                    </span>
+                    <input asp-for="DeliveryDate" type="date"
+                           class="form-control"
+                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                           required />
+                </div>
+                <span asp-validation-for="DeliveryDate" class="text-danger small"></span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="DeliveryTime" class="form-label">وقت التسليم</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="fas fa-clock"></i>
+                    </span>
+                    <input asp-for="DeliveryTime" type="time"
+                           class="form-control"
+                           min="08:00" max="20:00"
+                           required />
+                </div>
+                <span asp-validation-for="DeliveryTime" class="text-danger small"></span>
+            </div>
+        </div>
+    </div>
+    <!-- خيار التوصيل السريع -->
+    <div class="form-check mb-4">
+        <input asp-for="IsExpress" class="form-check-input" type="checkbox" id="expressDelivery" name="IsExpress" />
+        <label class="form-check-label" for="expressDeliveryCheckbox">
+            أريد خدمة توصيل سريع (+5 د.أ)
+        </label>
+    </div>
+    <!-- المحافظة -->
+    <div class="form-group mb-3">
+        <label asp-for="City" class="form-label">المحافظة</label>
+        <select asp-for="City" id="citySelect" class="form-select" required>
+            <option value="">اختر المحافظة...</option>
+            <option value="عمان">عمان</option>
+            <option value="إربد">إربد</option>
+            <!-- باقي المحافظات -->
+        </select>
+        <span asp-validation-for="City" class="text-danger small"></span>
+    </div>
+
+    <!-- شريط البحث -->
+    <div class="search-container mb-3">
+        <label class="form-label">ابحث عن موقع التسليم</label>
+        <div class="input-group">
+            <input type="text" id="locationSearch" class="form-control"
+                   placeholder="أدخل اسم الشارع أو المنطقة..." asp-for="LocationName">
+            <button id="searchButton" class="btn btn-primary" type="button">
+                <i class="fas fa-search"></i> بحث
+            </button>
+        </div>
+        <div id="searchResults" class="search-results"></div>
+    </div>
+
+    <!-- الخريطة -->
+    <div class="map-container mb-3">
+        <div id="map"></div>
+        <div class="map-controls">
+            <span id="coordinatesDisplay">إحداثيات: غير محدد</span>
+            <button id="resetMap" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-trash-alt"></i> مسح
+            </button>
+        </div>
+        <input type="hidden" asp-for="Latitude" id="latitudeInput" />
+        <input type="hidden" asp-for="Longitude" id="longitudeInput" />
+    </div>
+
+    <!-- باقي الحقول -->
+</div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<style>
+    .map-container {
+        height: 300px;
+        border: 2px solid #eee;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    #map {
+        height: 100%;
+        background: #f8f9fa;
+    }
+
+    .map-controls {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        background: rgba(255,255,255,0.9);
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .search-container {
+        position: relative;
+    }
+
+    .search-results {
+        position: absolute;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 0 0 5px 5px;
+        z-index: 1000;
+        display: none;
+    }
+
+    .search-item {
+        padding: 8px 15px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+    }
+
+        .search-item:hover {
+            background: #f5f5f5;
+        }
+</style>
+
+<script>
+    let map = null;
+    let marker = null;
+    let searchTimer;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const citySelect = document.getElementById('citySelect');
+        const searchInput = document.getElementById('locationSearch');
+        const searchButton = document.getElementById('searchButton');
+        const searchResults = document.getElementById('searchResults');
+        const resetMapBtn = document.getElementById('resetMap');
+        const coordinatesDisplay = document.getElementById('coordinatesDisplay');
+        const latitudeInput = document.getElementById('latitudeInput');
+        const longitudeInput = document.getElementById('longitudeInput');
+
+        const cities = {
+            'عمان': [31.9454, 35.9284],
+            'إربد': [32.5569, 35.8497],
+            'الزرقاء': [32.0667, 36.0833],
+            'العقبة': [29.5319, 35.0061],
+            'الكرك': [31.1851, 35.7048],
+            'معان': [30.1924, 35.7240],
+            'الطفيلة': [30.8333, 35.6000],
+            'مادبا': [31.7167, 35.8000],
+            'جرش': [32.2745, 35.8963],
+            'عجلون': [32.3326, 35.7519],
+            'البلقاء': [32.0833, 35.7500]
+        };
+
+        const customIcon = L.icon({
+            iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34]
+        });
+
+        function initMap() {
+            const mapContainer = document.getElementById('map');
+
+            if (mapContainer._leaflet_id) {
+                console.log('الخريطة مهيأة مسبقًا');
+                return;
+            }
+
+            map = L.map('map', {
+                preferCanvas: true,
+                zoomControl: false,
+                tap: false
+            }).setView([31.9454, 35.9284], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 18
+            }).addTo(map);
+
+            map.on('click', function (e) {
+                updateMarker(e.latlng);
+            });
+
+            setTimeout(() => {
+                if (map) {
+                    map.invalidateSize();
+                    console.log('تم إعادة حساب حجم الخريطة.');
+                }
+            }, 700);
+        }
+
+        function updateMarker(latlng) {
+            if (marker) map.removeLayer(marker);
+
+            marker = L.marker(latlng, {
+                icon: customIcon,
+                draggable: true
+            }).addTo(map)
+                .bindPopup('موقع التسليم المحدد')
+                .openPopup();
+
+            const lat = latlng.lat.toFixed(6);
+            const lng = latlng.lng.toFixed(6);
+            latitudeInput.value = lat;
+            longitudeInput.value = lng;
+            coordinatesDisplay.textContent = `إحداثيات: ${lat}, ${lng}`;
+
+            if (!searchInput.value.trim()) {
+                reverseGeocode(latlng);
+            }
+        }
+
+        function reverseGeocode(latlng) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}&accept-language=ar`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.display_name) {
+                        searchInput.value = data.display_name;
+                    }
+                })
+                .catch(error => console.error('Reverse geocoding error:', error));
+        }
+
+
+            function performSearch() {
+        const query = searchInput.value.trim();
+        const city = citySelect.value;
+
+        if (!city) {
+            showAlert('الرجاء اختيار المحافظة أولاً');
+            return;
+        }
+
+        if (query.length < 3) {
+            showAlert('الرجاء إدخال 3 أحرف على الأقل للبحث');
+            return;
+        }
+
+        searchResults.innerHTML = '<div class="search-item text-center py-2"><i class="fas fa-spinner fa-spin me-2"></i>جاري البحث...</div>';
+        searchResults.style.display = 'block';
+
+        // دمج اسم المدينة مع المعلم في معلمة واحدة
+        const searchQuery = `${query} ${city}`;
+
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}&countrycodes=JO&accept-language=ar`)
+            .then(response => response.json())
+            .then(data => {
+                searchResults.innerHTML = '';
+                // التحقق مما إذا كانت البيانات عبارة عن مصفوفة وأنه تم العثور على نتائج
+                if (Array.isArray(data) && data.length > 0) {
+                    data.slice(0, 5).forEach(item => {
+                        const result = document.createElement('div');
+                        result.className = 'search-item py-2 px-3';
+                        result.innerHTML = `
+                            <div class="fw-bold">${item.display_name.split(',')[0]}</div>
+                            <small class="text-muted">${item.display_name.split(',').slice(1, 3).join(',')}</small>
+                        `;
+
+                        result.addEventListener('click', () => {
+                            const latlng = L.latLng(item.lat, item.lon);
+                            updateMarker(latlng);  // تحديث الماركر
+                            map.setView(latlng, 16); // تكبير الخريطة على الموقع المحدد
+                            searchResults.style.display = 'none';  // إخفاء نتائج البحث
+                            searchInput.value = item.display_name;  // تحديث قيمة مربع النص
+                        });
+
+                        searchResults.appendChild(result);
+                    });
+                } else {
+                    searchResults.innerHTML = '<div class="search-item text-center py-2">لا توجد نتائج</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Search error:', error);
+                searchResults.innerHTML = '<div class="search-item text-center text-danger py-2">حدث خطأ أثناء البحث</div>';
+            });
+    }
+
+
+        function showAlert(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-warning alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+            alertDiv.role = 'alert';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => alertDiv.remove(), 150);
+            }, 3000);
+        }
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                if (this.value.trim().length >= 3) {
+                    performSearch();
+                }
+            }, 500);
+        });
+
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        resetMapBtn.addEventListener('click', function () {
+            if (marker) {
+                map.removeLayer(marker);
+                marker = null;
+            }
+            latitudeInput.value = '';
+            longitudeInput.value = '';
+            coordinatesDisplay.textContent = 'إحداثيات: غير محدد';
+            searchInput.value = '';
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.search-container') && e.target !== searchInput) {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        citySelect.addEventListener('change', function () {
+            const coords = cities[this.value] || [31.9454, 35.9284];
+            map.setView(coords, 12);
+        });
+
+        // شغّل الخريطة أول مرة
+        initMap();
+
+        // إذا كان في إحداثيات مخزنة مسبقاً
+        if (latitudeInput.value && longitudeInput.value) {
+            updateMarker(L.latLng(
+                parseFloat(latitudeInput.value),
+                parseFloat(longitudeInput.value)
+            ));
+            map.setView([latitudeInput.value, longitudeInput.value], 15);
+        }
+    });
+</script>

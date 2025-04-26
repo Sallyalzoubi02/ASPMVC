@@ -23,6 +23,8 @@ public partial class Payment
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
+    public virtual ICollection<RecyclingRequest> RecyclingRequests { get; set; } = new List<RecyclingRequest>();
+
     public virtual ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
 
     public virtual User? User { get; set; }

@@ -1,0 +1,314 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_AdminLayout";
+}
+
+
+<div class="geometric-shape shape-1"></div>
+<div class="geometric-shape shape-2"></div>
+<div class="geometric-shape shape-3"></div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <i class="fas fa-users"></i>
+            <div class="number" id="clients-count">0</div>
+            <div class="label">العملاء</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <i class="fas fa-shopping-cart"></i>
+            <div class="number" id="sales-count">0</div>
+            <div class="label">المبيعات</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <i class="fas fa-dollar-sign"></i>
+            <div class="number" id="revenue-count">0</div>
+            <div class="label">الإيرادات</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <i class="fas fa-chart-pie"></i>
+            <div class="number" id="growth-count">0%</div>
+            <div class="label">النمو</div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">مخطط المبيعات</h5>
+                <div class="chart-container">
+                    <canvas id="sales-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">أحدث الطلبات</h5>
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">طلب #1234</h6>
+                            <small>اليوم</small>
+                        </div>
+                        <p class="mb-1">منتج A - 2 قطعة</p>
+                        <small>قيمة الطلب: $120</small>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">طلب #1233</h6>
+                            <small>بالأمس</small>
+                        </div>
+                        <p class="mb-1">منتج B - 1 قطعة</p>
+                        <small>قيمة الطلب: $80</small>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">طلب #1232</h6>
+                            <small>بالأمس</small>
+                        </div>
+                        <p class="mb-1">منتج C - 3 قطع</p>
+                        <small>قيمة الطلب: $150</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">أفضل المنتجات</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>المنتج</th>
+                                <th>المبيعات</th>
+                                <th>الإيراد</th>
+                                <th>النسبة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>منتج A</td>
+                                <td>120</td>
+                                <td>$2,400</td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 75%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>منتج B</td>
+                                <td>90</td>
+                                <td>$1,800</td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 60%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>منتج C</td>
+                                <td>60</td>
+                                <td>$1,200</td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 40%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>منتج D</td>
+                                <td>30</td>
+                                <td>$600</td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar" style="width: 20%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">نشاط حديث</h5>
+                <div class="activity-feed">
+                    <div class="feed-item d-flex mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-user-circle fa-2x text-success me-3"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">عميل جديد</h6>
+                            <p class="mb-0 text-muted">تم تسجيل عميل جديد في النظام</p>
+                            <small class="text-muted">منذ 10 دقائق</small>
+                        </div>
+                    </div>
+                    <div class="feed-item d-flex mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-shopping-cart fa-2x text-success me-3"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">طلب جديد</h6>
+                            <p class="mb-0 text-muted">تم تقديم طلب جديد #1235</p>
+                            <small class="text-muted">منذ 30 دقيقة</small>
+                        </div>
+                    </div>
+                    <div class="feed-item d-flex mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-truck fa-2x text-success me-3"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">شحن الطلب</h6>
+                            <p class="mb-0 text-muted">تم شحن الطلب #1234</p>
+                            <small class="text-muted">منذ ساعتين</small>
+                        </div>
+                    </div>
+                    <div class="feed-item d-flex mb-3">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-dollar-sign fa-2x text-success me-3"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">دفع</h6>
+                            <p class="mb-0 text-muted">تم استلام دفعة بقيمة $200</p>
+                            <small class="text-muted">منذ 5 ساعات</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+          // Counter animation
+        function animateCounters() {
+            const clientsCounter = document.getElementById('clients-count');
+            const salesCounter = document.getElementById('sales-count');
+            const revenueCounter = document.getElementById('revenue-count');
+            const growthCounter = document.getElementById('growth-count');
+
+            const clientsTarget = 245;
+            const salesTarget = 189;
+            const revenueTarget = 5420;
+            const growthTarget = 24;
+
+            let clientsCount = 0;
+            let salesCount = 0;
+            let revenueCount = 0;
+            let growthCount = 0;
+
+            const interval = setInterval(() => {
+                if (clientsCount < clientsTarget) {
+                    clientsCount += 5;
+                    clientsCounter.textContent = clientsCount;
+                }
+
+                if (salesCount < salesTarget) {
+                    salesCount += 3;
+                    salesCounter.textContent = salesCount;
+                }
+
+                if (revenueCount < revenueTarget) {
+                    revenueCount += 100;
+                    revenueCounter.textContent = '$' + revenueCount;
+                }
+
+                if (growthCount < growthTarget) {
+                    growthCount += 1;
+                    growthCounter.textContent = growthCount + '%';
+                }
+
+                if (clientsCount >= clientsTarget &&
+                    salesCount >= salesTarget &&
+                    revenueCount >= revenueTarget &&
+                    growthCount >= growthTarget) {
+                    clearInterval(interval);
+                }
+            }, 50);
+        }
+
+        // Sales chart
+        function initSalesChart() {
+            const ctx = document.getElementById('sales-chart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو'],
+                    datasets: [{
+                        label: 'المبيعات',
+                        data: [1200, 1900, 1700, 2100, 2400, 2800, 3200],
+                        backgroundColor: 'rgba(25, 135, 84, 0.2)',
+                        borderColor: 'rgba(25, 135, 84, 1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            createAnimatedCircles();
+            animateCounters();
+            initSalesChart();
+
+            // Add hover effect to cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1)';
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                });
+            });
+        });
+    </script>
+}

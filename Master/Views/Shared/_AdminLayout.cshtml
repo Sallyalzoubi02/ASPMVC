@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد Success</title>
+    <!-- Bootstrap RTL CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/Admin.css" />
+    @RenderSection("Styles", required: false)
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <div class="animated-bg"></div>
+
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar col-md-3 col-lg-2 p-4">
+            <div class="d-flex flex-column h-100">
+                <img class="align-self-center" src="~/image/أثـر-removebg-preview (1) 2.png" alt="Logo" width="60%" />
+
+                <ul class="nav nav-pills flex-column mb-auto">
+                    <li class="nav-item">
+                        <a asp-action="Index" class="nav-link active" id="home-link">
+                            <i class="fas fa-home"></i>
+                            الرئيسية
+                        </a>
+                    </li>
+
+                    <!-- تبويب الأصناف والمنتجات -->
+                    <li class="nav-item">
+                        <a href="#products-collapse" class="nav-link" data-bs-toggle="collapse" aria-expanded="false" >
+                            <i class="fas fa-boxes"></i>
+                            إدارة المحتوى
+                        </a>
+                        <div class="collapse" id="products-collapse">
+                            <ul class="nav nav-pills flex-column ps-4">
+                                <li class="nav-item">
+                                    <a asp-action="Products" class="nav-link" id="products-link">
+                                        <i class="fas fa-box-open"></i>
+                                        المنتجات
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-action="Category" class="nav-link" id="category-link">
+                                        <i class="fas fa-tags"></i>
+                                        الأصناف
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <!-- تبويب العمال -->
+                    <li class="nav-item">
+                        <a href="#workers-collapse" class="nav-link" data-bs-toggle="collapse" aria-expanded="false" >
+                            <i class="fas fa-users-cog"></i>
+                            العمال
+                        </a>
+                        <div class="collapse" id="workers-collapse">
+                            <ul class="nav nav-pills flex-column ps-4">
+                                <li class="nav-item">
+                                    <a asp-action="Employment" class="nav-link" id="employment-link">
+                                        <i class="fas fa-briefcase"></i>
+                                        توظيف
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-action="Volunteering" class="nav-link" id="volunteering-link">
+                                        <i class="fas fa-hands-helping"></i>
+                                        تطوع
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a asp-action="Users" class="nav-link" id="users-link">
+                            <i class="fas fa-users"></i>
+                            العملاء
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-action="Recycling" class="nav-link" id="users-link">
+                            <i class="fa-solid fa-recycle"></i>
+                            التدوير
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-action="Subscription" class="nav-link" id="users-link">
+                            <i class="fa-solid fa-star"></i>
+                            الاشتراكات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-action="Orders" class="nav-link" id="orders-link">
+                            <i class="fas fa-chart-bar"></i>
+                            طلبات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-action="Payment" class="nav-link" id="payment-link">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            الفواتير
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-action="logout" class="nav-link" id="products-link">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            تسجيل الخروج
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="mt-auto text-center text-white">
+                    <img src="https://via.placeholder.com/80" alt="User" class="rounded-circle mb-2" width="60">
+                    <h6>مستخدم النظام</h6>
+                    <p class="small text-white-50">مدير النظام</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content col-md-9 col-lg-10">
+            @Html.AntiForgeryToken()
+            @RenderBody()
+
+            
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        // Animated background circles
+        function createAnimatedCircles() {
+            const animatedBg = document.querySelector('.animated-bg');
+            for (let i = 0; i < 15; i++) {
+                const circle = document.createElement('div');
+                circle.classList.add('circle');
+
+                const size = Math.random() * 100 + 50;
+                const posX = Math.random() * window.innerWidth;
+                const delay = Math.random() * 15;
+                const duration = Math.random() * 20 + 10;
+
+                circle.style.width = `${size}px`;
+                circle.style.height = `${size}px`;
+                circle.style.left = `${posX}px`;
+                circle.style.animationDelay = `${delay}s`;
+                circle.style.animationDuration = `${duration}s`;
+
+                animatedBg.appendChild(circle);
+            }
+        }
+        $(document).ready(function() {
+             // تحديد العنصر النشط بناءً على الصفحة الحالية
+             const currentPath = window.location.pathname.split('/').pop().toLowerCase();
+             const activeMap = {
+                 '': 'home-link',
+                 'products': 'products-link',
+                 'category': 'category-link',
+                 'employment': 'employment-link',
+                 'volunteering': 'volunteering-link',
+                 'users': 'users-link',
+                 'orders': 'orders-link',
+                 'payment': 'payment-link'
+             };
+
+             // إزالة النشط من جميع العناصر
+             $('.nav-link').removeClass('active');
+
+             // إضافة النشط للعنصر الحالي
+             if (activeMap[currentPath]) {
+                 $('#' + activeMap[currentPath]).addClass('active');
+
+                 // إذا كان ضمن قائمة منسدلة، نفتح القائمة
+                 if (['products-link', 'category-link'].includes(activeMap[currentPath])) {
+                     $('#products-collapse').addClass('show');
+                     $('#content-link').addClass('active');
+                 }
+
+                 if (['employment-link', 'volunteering-link'].includes(activeMap[currentPath])) {
+                     $('#workers-collapse').addClass('show');
+                     $('#workers-link').addClass('active');
+                 }
+             }
+
+             // إدارة النقر على القوائم المنسدلة
+             $('[data-bs-toggle="collapse"]').on('click', function() {
+                 const target = $(this).attr('href');
+                 $(target).collapse('toggle');
+             });
+         });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

@@ -187,11 +187,11 @@
                     <div class="row mb-3">
                         <div class="col-md-6 mb-3">
                             <label for="itemName" class="form-label">اسم العنصر</label>
-                            <input type="text" class="form-control" id="itemName" placeholder="أدخل اسم العنصر" required />
+                            <input type="text" class="form-control" id="itemName" placeholder="أدخل اسم العنصر" name="MaterialName" required />
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="itemType" class="form-label">نوع العنصر</label>
-                            <select class="form-select" id="itemType" required>
+                            <select class="form-select" id="itemType" name="MaterialType" required>
                                 <option value="" disabled selected>اختر نوع العنصر</option>
                                 <option value="glass">زجاج</option>
                                 <option value="plastic">بلاستيك</option>
@@ -207,11 +207,11 @@
                     <div class="row mb-3">
                         <div class="col-md-6 mb-3">
                             <label for="quantity" class="form-label">الكمية</label>
-                            <input type="number" class="form-control" id="quantity" min="1" value="1" required />
+                            <input type="number" class="form-control" id="quantity" name="Quantity" min="1" value="1" required />
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="condition" class="form-label">حالة العنصر</label>
-                            <select class="form-select" id="condition" required>
+                            <select class="form-select" name="ItemCondition" id="condition" required>
                                 <option value="" disabled selected>اختر حالة العنصر</option>
                                 <option value="new">جديد</option>
                                 <option value="used">مستعمل - جيد</option>
@@ -235,7 +235,7 @@
 
                     <div class="mb-3">
                         <label for="itemNotes" class="form-label">ملاحظات إضافية</label>
-                        <textarea id="itemNotes" rows="3" class="form-control" placeholder="أدخل أي ملاحظات إضافية عن العنصر..."></textarea>
+                        <textarea id="itemNotes" name="Notes" rows="3" class="form-control" placeholder="أدخل أي ملاحظات إضافية عن العنصر..."></textarea>
                     </div>
                 </form>
 
@@ -246,17 +246,17 @@
                     <div class="row mb-3">
                         <div class="col-md-6 mb-3">
                             <label for="deliveryTime" class="form-label">وقت التسليم</label>
-                            <input type="time" class="form-control" id="deliveryTime" required />
+                            <input type="time" name="RequestedTime" class="form-control" id="deliveryTime" required />
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="deliveryDate" class="form-label">تاريخ التسليم</label>
-                            <input type="date" class="form-control" id="deliveryDate" required />
+                            <input type="date" class="form-control" name="RequestedDate" id="deliveryDate" required />
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="city" class="form-label">المحافظة</label>
-                        <select class="form-select" id="city" required>
+                        <select class="form-select" id="city" name="City" required>
                             <option value="" disabled selected>اختر المحافظة</option>
                             <option value="Amman">عمان</option>
                             <option value="Irbid">اربد</option>
@@ -271,11 +271,12 @@
                     <div id="map"></div>
 
                     <div class="mt-3">
-                        <input class="form-check-input" type="checkbox" id="fastDelivery" />
-                        <label class="form-check-label" for="fastDelivery">
+                        <input class="form-check-input" type="checkbox" id="IsExpressDelivery" name="IsExpressDelivery" />
+                        <label class="form-check-label" for="IsExpressDelivery">
                             خدمة التسليم السريع (رسوم إضافية)
                         </label>
                     </div>
+
                 </form>
 
                 <!-- الخطوة 3: طريقة الدفع -->
@@ -285,7 +286,7 @@
 
                     <div class="mb-3">
                         <label for="paymentMethod" class="form-label">اختر طريقة الدفع</label>
-                        <select id="paymentMethod" class="form-select" required>
+                            <select id="paymentMethod" class="form-select" name="PaymentMethod" required>
                             <option value="" disabled selected>اختر طريقة الدفع</option>
                             <option value="cash">الدفع عند الاستلام</option>
                             <option value="card">بطاقة ائتمان</option>
@@ -339,192 +340,19 @@
 
 @section Scripts {
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-
+    <script src="~/js/recycling.js"></script>
     <script>
-        let currentStep = 1;
-        const totalSteps = 3;
-        let map, marker;
-        let isFastDelivery = false;
-
-        document.addEventListener("DOMContentLoaded", () => {
-            initMap();
-
-            document.getElementById('fileInput').addEventListener('change', function () {
-                const fileNameDiv = document.getElementById('fileName');
-                if (this.files.length > 0) {
-                    fileNameDiv.textContent = this.files[0].name;
-                    fileNameDiv.style.display = 'block';
+        // انتظر حتى يتم تحميل الصفحة بالكامل
+        window.onload = function() {
+            // انتظر نصف ثانية إضافية للتأكد من تحميل كل شيء
+            setTimeout(function() {
+                if (typeof initApp === 'function') {
+                    initApp();
                 } else {
-                    fileNameDiv.style.display = 'none';
+                    console.error('لم يتم العثور على الدالة initApp');
                 }
-            });
-
-            document.getElementById('paymentMethod').addEventListener('change', function () {
-                document.getElementById('cardInfo').style.display = this.value === 'card' ? 'block' : 'none';
-            });
-
-            document.getElementById('nextBtn').addEventListener('click', nextStep);
-
-            document.getElementById('fastDelivery').addEventListener('change', function () {
-                isFastDelivery = this.checked;
-                togglePaymentFields(isFastDelivery);
-            });
-
-            document.getElementById('city').addEventListener('change', function () {
-                const city = this.value;
-                if (!city) return;
-
-                let coords = null;
-                switch (city) {
-                    case 'Amman':
-                        coords = [31.9454, 35.9284];
-                        break;
-                    case 'Zarqa':
-                        coords = [32.0728, 36.0880];
-                        break;
-                    case 'Irbid':
-                        coords = [32.5569, 35.8497];
-                        break;
-                }
-
-                if (coords) {
-                    map.setView(coords, 13);
-                    if (marker) map.removeLayer(marker);
-                    marker = L.marker(coords).addTo(map).bindPopup('موقع التسليم').openPopup();
-                }
-            });
-        });
-
-        function togglePaymentFields(show) {
-            const paymentFields = document.getElementById('paymentFields');
-            if (paymentFields) {
-                paymentFields.style.display = show ? 'block' : 'none';
-            }
-
-            if (!show) {
-                document.getElementById('paymentMethod').value = "";
-                document.getElementById('cardInfo').style.display = 'none';
-                document.getElementById('cardNumber').value = "";
-                document.getElementById('cardExpiry').value = "";
-                document.getElementById('cardCVV').value = "";
-                document.getElementById('cardholderName').value = "";
-            }
-        }
-
-        function initMap() {
-            map = L.map('map').setView([31.9454, 35.9284], 12);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-
-            map.on('click', function (e) {
-                if (marker) map.removeLayer(marker);
-                marker = L.marker(e.latlng).addTo(map).bindPopup('موقع التسليم').openPopup();
-            });
-        }
-
-        function nextStep() {
-            if (!validateStep(currentStep)) return;
-
-            if (currentStep < totalSteps) {
-                document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
-                document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.remove('active');
-
-                currentStep++;
-
-                document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
-                document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.add('active');
-
-                document.getElementById('nextBtn').textContent = currentStep === totalSteps ? 'تأكيد الطلب' : 'التالي';
-                if (currentStep === 2) {
-            setTimeout(() => {
-                map.invalidateSize();
-                // ضبط مركز الخريطة إذا كان هناك علامة
-                if (marker) {
-                    map.setView(marker.getLatLng(), 13);
-                } else {
-                    // ضبط المركز الافتراضي إذا لم يكن هناك علامة
-                    map.setView([31.9454, 35.9284], 12);
-                }
-            }, 300);
-        }
-
-                if (currentStep === totalSteps) {
-                    updateSummary();
-                }
-            } else {
-                submitForm();
-            }
-        }
-
-        function validateStep(step) {
-            let isValid = true;
-
-            if (step === 1) {
-                const form = document.getElementById('itemForm');
-                if (!form.checkValidity()) {
-                    form.reportValidity();
-                    isValid = false;
-                }
-            } else if (step === 2) {
-                const form = document.getElementById('deliveryForm');
-                setTimeout(() => { map.invalidateSize(); }, 100);
-                if (!form.checkValidity()) {
-                    form.reportValidity();
-                    isValid = false;
-                }
-            } else if (step === 3 && isFastDelivery) {
-                const form = document.getElementById('paymentForm');
-                if (!form.checkValidity()) {
-                    form.reportValidity();
-                    isValid = false;
-                }
-            }
-
-            return isValid;
-        }
-
-        function updateSummary() {
-            const itemName = document.getElementById('itemName').value;
-            const itemType = document.getElementById('itemType').value;
-            const quantity = document.getElementById('quantity').value;
-            const condition = document.getElementById('condition').value;
-
-            const deliveryDate = document.getElementById('deliveryDate').value;
-            const deliveryTime = document.getElementById('deliveryTime').value;
-            const city = document.getElementById('city').value;
-
-            document.getElementById('itemSummary').textContent = `العنصر: ${itemName} (${itemType}) × ${quantity} - الحالة: ${condition}`;
-            document.getElementById('deliverySummary').textContent = `التسليم: ${city} - ${deliveryDate} ${deliveryTime}`;
-
-            if (isFastDelivery) {
-                const paymentMethod = document.getElementById('paymentMethod').value;
-                document.getElementById('paymentSummary').textContent = `طريقة الدفع: ${paymentMethod === 'card' ? 'بطاقة ائتمان' : 'نقدًا عند الاستلام'}`;
-                document.getElementById('totalAmount').textContent = `3 دينار أردني`;
-            } else {
-                document.getElementById('paymentSummary').textContent = `الدفع: غير مطلوب`;
-                document.getElementById('totalAmount').textContent = `0 دينار أردني (تسليم مجاني)`;
-            }
-        }
-
-        function submitForm() {
-            updateSummary();
-            alert("تم إرسال الطلب بنجاح!");
-        }
-
-        function back() {
-            if (currentStep === 1) return;
-
-            document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
-            document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.remove('active');
-
-            currentStep--;
-
-            document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
-            document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.add('active');
-
-            document.getElementById('nextBtn').textContent = currentStep === totalSteps ? 'تأكيد الطلب' : 'التالي';
-        }
+            }, 500);
+        };
     </script>
 }
 

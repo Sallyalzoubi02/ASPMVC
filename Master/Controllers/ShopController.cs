@@ -11,9 +11,9 @@ namespace Master.Controllers
 {
     public class ShopController : Controller
     {
-        private readonly MyDbContext _db;
+        private readonly MyDBContext _db;
 
-        public ShopController(MyDbContext db)
+        public ShopController(MyDBContext db)
         {
             _db = db;
         }
@@ -251,7 +251,7 @@ namespace Master.Controllers
                 PaymentId = payment.Id,
                 OrderStatus = "جاري المعالجة",
                 DeliveryAddress = model.Address1 + " " + model.Address2,
-                DeliveryTime = DateTime.Now.AddHours(1),
+                DeliveryTime = DateTime.Now.AddHours(72),
                 TotalAmount = totalAmount,
                 CreatedAt = DateTime.Now,
                 Address1 = model.Address1,
@@ -272,6 +272,9 @@ namespace Master.Controllers
                     Quantity = item.Quantity,
                     Price = item.TotalPrice ?? (item.UnitPrice * item.Quantity)
                 };
+                var product = _db.Products.Find(item.ProductId);
+                product.Stock -= 1;
+                _db.Products.Update(product);
                 _db.OrderItems.Add(orderItem);
             }
 
@@ -279,7 +282,9 @@ namespace Master.Controllers
             _db.CartItems.RemoveRange(cartItems);
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("profile","User");
+            
+
+            return RedirectToAction("profile", "User");
         }
 
 
@@ -347,7 +352,7 @@ namespace Master.Controllers
 
                 // حساب الخصم والمجموع النهائي
                 var discountAmount = subtotal * (coupon.DiscountPercentage / 100);
-                var total = subtotal - discountAmount ;
+                var total = subtotal - discountAmount;
 
                 // تخزين بيانات الخصم في الجلسة
                 HttpContext.Session.SetString("AppliedCoupon", JsonSerializer.Serialize(new
@@ -539,7 +544,7 @@ namespace Master.Controllers
             return View(query.ToList());
         }
 
-
+        [Route("ProductDetails/{id}")]
         public IActionResult ProductDetails(int id)
         {
             var product = _db.Products

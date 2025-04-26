@@ -1,70 +1,144 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Master.Models.Product
+
 @section Styles {
     <link rel="stylesheet" href="~/css/product.css" />
+    <style>
+        /* تحسينات إضافية */
+        .product-container {
+            background-color: #19875414;
+            border-radius: 10px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .product-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-tag {
+            font-size: 1.8rem;
+            color: #198754;
+            font-weight: bold;
+        }
+
+        .stock-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 1rem;
+        }
+
+        .in-stock {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .low-stock {
+            background-color: #fff3cd;
+            color: #664d03;
+        }
+
+        .out-of-stock {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+
+        .quantity-control {
+            width: 100px !important;
+        }
+
+        .btn-add-to-cart {
+            padding: 0.7rem 2rem;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+
+            .btn-add-to-cart:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
+            }
+
+        .product-description {
+            line-height: 1.8;
+            color: #555;
+        }
+    </style>
 }
-<main id="content" class="mt-5 mb-5">
-    <div class="container mt-5">
-        <div class="row">
-            <!-- Product Images -->
-            <div class="col-md-6 mb-4">
-                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxfHxoZWFkcGhvbmV8ZW58MHwwfHx8MTcyMTMwMzY5MHww&ixlib=rb-4.0.3&q=80&w=1080" alt="Product" class="img-fluid rounded mb-3 product-image" id="mainImage">
-                <div class="d-flex justify-content-between">
-                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxfHxoZWFkcGhvbmV8ZW58MHwwfHx8MTcyMTMwMzY5MHww&ixlib=rb-4.0.3&q=80&w=1080" alt="Thumbnail 1" class="thumbnail rounded active" onclick="changeImage(event, this.src)">
-                    <img src="https://images.unsplash.com/photo-1528148343865-51218c4a13e6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwzfHxoZWFkcGhvbmV8ZW58MHwwfHx8MTcyMTMwMzY5MHww&ixlib=rb-4.0.3&q=80&w=1080" alt="Thumbnail 2" class="thumbnail rounded" onclick="changeImage(event, this.src)">
-                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxfHxoZWFkcGhvbmV8ZW58MHwwfHx8MTcyMTMwMzY5MHww&ixlib=rb-4.0.3&q=80&w=1080" alt="Thumbnail 3" class="thumbnail rounded" onclick="changeImage(event, this.src)">
-                    <img src="https://images.unsplash.com/photo-1528148343865-51218c4a13e6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwzfHxoZWFkcGhvbmV8ZW58MHwwfHx8MTcyMTMwMzY5MHww&ixlib=rb-4.0.3&q=80&w=1080" alt="Thumbnail 4" class="thumbnail rounded" onclick="changeImage(event, this.src)">
-                </div>
-            </div>
 
-            <!-- Product Details -->
-            <div class="col-md-6">
-                <h2 class="mb-3">Premium Wireless Headphones</h2>
-                <p class="text-muted mb-4">SKU: WH1000XM4</p>
-                <div class="mb-3">
-                    <span class="h4 me-2">$349.99</span>
-                    <span class="text-muted"><s>$399.99</s></span>
-                </div>
-                <div class="mb-3">
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <i class="bi bi-star-half text-warning"></i>
-                    <span class="ms-2">4.5 (120 reviews)</span>
-                </div>
-                <p class="mb-4">
-                    Experience premium sound quality and industry-leading noise cancellation with these wireless
-                    headphones. Perfect for music lovers and frequent travelers.
-                </p>
-
-                <div class="mb-4">
-                    <label for="quantity" class="form-label">Quantity:</label>
-                    <input type="number" class="form-control" id="quantity" value="1" min="1" style="width: 80px;">
-                </div>
-                <button class="btn btn-success btn-lg mb-3 me-2">
-                    <i class="bi bi-cart-plus"></i> Add to Cart
-                </button>
-
-                <div class="mt-4">
-                    <h5>Key Features:</h5>
-                    <ul>
-                        <li>Industry-leading noise cancellation</li>
-                        <li>30-hour battery life</li>
-                        <li>Touch sensor controls</li>
-                        <li>Speak-to-chat technology</li>
-                    </ul>
+<main id="content" class="py-5">
+    <div class="container">
+        <div class="product-container">
+            <div class="row">
+                <!-- Product Images -->
+                <div class="col-lg-6 mb-4">
+                    <div class="product-image-container text-center">
+                        <img src="~/@Model.ImageUrl" class="img-fluid rounded product-image mb-3" id="mainImage"
+                             style="max-height: 400px; width: auto; border: 1px solid #dee2e6;" />
+                    </div>
                 </div>
 
+                <!-- Product Details -->
+                <div class="col-lg-6">
+                    <div class="product-header">
+                        <h1 class="mb-2">@Model.Name</h1>
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-secondary me-2">@Model.Category.CategoryName</span>
+                            <span class="text-muted"><i class="fas fa-building me-1"></i>@Model.CompanyName</span>
+                        </div>
+                    </div>
 
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center">
+                            <span class="price-tag">@Model.Price.ToString("0.00") دينار اردني</span>
+                            @if (Model.Stock > 10)
+                            {
+                                <span class="stock-status in-stock">متوفر (@Model.Stock)</span>
+                            }
+                            else if (Model.Stock > 0)
+                            {
+                                <span class="stock-status low-stock">كمية محدودة (@Model.Stock)</span>
+                            }
+                            else
+                            {
+                                <span class="stock-status out-of-stock">غير متوفر</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="product-description mb-4">
+                        <h5 class="mb-3">الوصف:</h5>
+                        <p>@Model.Description</p>
+                    </div>
+
+                    <form method="post" asp-action="AddToCart" class="mt-4">
+                        @if (Model.Stock > 0)
+                        {
+                            <div class="mb-4">
+                                <label for="quantity" class="form-label fw-bold">الكمية:</label>
+                                <input type="number" class="form-control quantity-control"
+                                       id="quantity" name="quantity" value="1"
+                                       min="1" max="@Model.Stock" />
+                            </div>
+
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-success btn-add-to-cart">
+                                <i class="fas fa-cart-plus me-2"></i> إضافة إلى السلة
+                            </button>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning">
+                                هذا المنتج غير متوفر حالياً
+                            </div>
+                        }
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-
 </main>
-
-
-@section Scripts {
-    <script src="~/js/product.js"></script>
-}

@@ -5,6 +5,8 @@
         public User User { get; set; }
         public List<Order> Orders { get; set; }
         public List<RecyclingRequest> RecyclingRequests { get; set; }
+        public List<Subscription> ActiveSubscriptions { get; set; } // إضافة هذه القائمة
+
         public bool IsOwner { get; set; }
         public List<Company> Companies { get; set; }
 

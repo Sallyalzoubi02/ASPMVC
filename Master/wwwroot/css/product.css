@@ -1,17 +1,34 @@
 ﻿.product-image {
-    max-height: 400px;
-    object-fit: cover;
+    max-height: 500px;
+    width: auto;
+    object-fit: contain;
+    margin: 0 auto;
+    display: block;
+    transition: transform 0.3s ease;
 }
 
-.thumbnail {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.3s ease;
+.product-image-container {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #eee;
 }
 
-    .thumbnail:hover, .thumbnail.active {
-        opacity: 1;
+.product-image:hover {
+    transform: scale(1.03);
+}
+
+.quantity-control {
+    width: 100px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .product-image {
+        max-height: 300px;
     }
+
+    .price-tag {
+        font-size: 1.5rem;
+    }
+}

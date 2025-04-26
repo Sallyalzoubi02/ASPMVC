@@ -1,0 +1,190 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model RecyclingRequestVm
+
+<div class="payment-step">
+    <h4 class="mb-4 text-center">معلومات الدفع</h4>
+
+    <!-- اختيار طريقة الدفع -->
+    <div id="paymentSection" class="mb-4 d-none">
+        <label class="form-label">طريقة الدفع</label>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="PaymentMethod" id="cashPayment"
+                   value="cash" checked="@(!Model.IsExpress)">
+            <label class="form-check-label" for="cashPayment">
+                الدفع عند الاستلام
+            </label>
+        </div>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="radio" name="PaymentMethod" id="cardPayment"
+                   value="credit" checked="@Model.IsExpress">
+            <label class="form-check-label" for="cardPayment">
+                بطاقة ائتمان
+            </label>
+        </div>
+        <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+    </div>
+
+    <!-- معلومات البطاقة (تظهر فقط عند اختيار بطاقة ائتمان) -->
+    <div id="cardInfoSection" class="@(Model.IsExpress ? "" : "d-none")">
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label class="form-label">رقم البطاقة</label>
+                <input type="text" class="form-control card-input"
+                       placeholder="1234 5678 9012 3456" maxlength="19">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">تاريخ الانتهاء</label>
+                <input type="text" class="form-control card-input"
+                       placeholder="MM/YY" maxlength="5">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">CVV</label>
+                <input type="password" class="form-control card-input"
+                       placeholder="123" maxlength="3">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">اسم صاحب البطاقة</label>
+            <input type="text" class="form-control" placeholder="كما هو مدون على البطاقة">
+        </div>
+    </div>
+
+    <!-- ملخص الطلب -->
+    <div class="order-summary mt-4 p-3 bg-light rounded">
+        <h5 class="text-center mb-3">ملخص الطلب</h5>
+        <div class="d-flex justify-content-between mb-2">
+            <span>عدد العناصر:</span>
+            <span id="summaryQuantity">@Model.Quantity</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span>نوع التسليم:</span>
+            <span id="summaryDeliveryType">@(Model.IsExpress ? "سريع" : "عادي")</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span>تكلفة التسليم:</span>
+            <span id="summaryDeliveryCost">@(Model.IsExpress ? "5 د.أ" : "مجاني")</span>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between fw-bold">
+            <span>المجموع:</span>
+            <span id="summaryTotal">@(Model.IsExpress ? "5 د.أ" : "مجاني")</span>
+        </div>
+    </div>
+
+    <!-- تأكيد الموافقة على الشروط -->
+    <div class="form-check mt-4">
+        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+        <label class="form-check-label" for="agreeTerms">
+            أوافق على <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">الشروط والأحكام</a>
+        </label>
+    </div>
+</div>
+
+<!-- Modal للشروط والأحكام -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">الشروط والأحكام</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @await Html.PartialAsync("_TermsAndConditions")
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // تبديل معلومات البطاقة عند تغيير طريقة الدفع
+        const paymentMethods = document.querySelectorAll('input[name="PaymentMethod"]');
+        const cardInfoSection = document.getElementById('cardInfoSection');
+
+        paymentMethods.forEach(method => {
+            method.addEventListener('change', function() {
+                cardInfoSection.classList.toggle('d-none', this.value !== 'CreditCard');
+            });
+        });
+
+        // تنسيق رقم البطاقة تلقائياً
+        const cardInputs = document.querySelectorAll('.card-input');
+        cardInputs.forEach(input => {
+            input.addEventListener('input', function(e) {
+                if (this.placeholder.includes('MM/YY')) {
+                    this.value = formatExpiryDate(this.value);
+                } else if (this.placeholder.includes('1234')) {
+                    this.value = formatCardNumber(this.value);
+                }
+            });
+        });
+    });
+
+    function formatCardNumber(value) {
+        return value.replace(/\s?/g, '').replace(/(\d{4})/g, '$1 ').trim();
+    }
+
+    function formatExpiryDate(value) {
+        return value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2');
+    }
+    const expressCheckbox = document.getElementById('expressDelivery');
+    const paymentSection = document.getElementById('paymentSection');
+    const paymentMethods = document.getElementsByName('PaymentMethod'); // لاحظ الفرق هون
+
+    expressCheckbox.addEventListener('change', function () {
+        if (this.checked) {
+            paymentSection.classList.remove('d-none');
+            paymentMethods.forEach(method => {
+                method.required = true;
+            });
+        } else {
+            paymentSection.classList.add('d-none');
+            paymentMethods.forEach(method => {
+                method.required = false;
+                method.checked = false; // نلغي الاختيار
+            });
+        }
+    });
+
+
+</script>
+
+<style>
+    .payment-step {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .card-input {
+        background-position: left 10px center;
+        padding-left: 40px;
+        background-repeat: no-repeat;
+    }
+
+    #cashPayment + label::before {
+        content: "\f53a"; /* FontAwesome cash icon */
+        font-family: "Font Awesome 6 Free";
+        margin-left: 8px;
+    }
+
+    #cardPayment + label::before {
+        content: "\f09d"; /* FontAwesome credit-card icon */
+        font-family: "Font Awesome 6 Free";
+        margin-left: 8px;
+    }
+
+    .order-summary {
+        border: 1px solid #ddd;
+    }
+</style>

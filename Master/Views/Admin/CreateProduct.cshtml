@@ -1,0 +1,115 @@
+﻿@model Master.Models.Product
+
+@{
+    ViewData["Title"] = "إضافة منتج جديد";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-plus-circle me-2"></i>@ViewData["Title"]
+            </h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="CreateProduct" enctype="multipart/form-data">
+                <div  class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span  class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="control-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span  class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Price" class="control-label"></label>
+                            <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                            <span  class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="Stock" class="control-label"></label>
+                            <input asp-for="Stock" class="form-control" type="number" />
+                            <span  class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="CompanyName" class="control-label"></label>
+                            <input asp-for="CompanyName" class="form-control" />
+                            <span class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="CategoryId" class="control-label"></label>
+                            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.Categories">
+                                <option value="">-- اختر الفئة --</option>
+                            </select>
+                            <span class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="control-label">صورة المنتج</label>
+                            <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                            <small class="text-muted">الحد الأقصى لحجم الصورة: 5MB</small>
+                        </div>
+                        <div id="imagePreview" class="mb-3"></div>
+                    </div>
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-success me-2">
+                        <i class="fas fa-save me-1"></i>حفظ المنتج
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>إلغاء
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    
+
+    <script>
+        // // التحقق من حجم الصورة قبل الرفع
+        // $('input[type="file"]').change(function() {
+        //     var file = this.files[0];
+        //     if (file && file.size > 5 * 1024 * 1024) { // 5MB
+        //         alert('حجم الصورة يجب أن يكون أقل من 5MB');
+        //         $(this).val('');
+        //     }
+        // });
+
+                document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+            if (this.files && this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').innerHTML =
+                        '<img src="' + e.target.result + '" class="img-thumbnail mt-2" style="max-height: 200px;">';
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+         document.addEventListener('DOMContentLoaded', function() {
+            createAnimatedCircles();
+
+        }
+
+
+    </script>
+
+}

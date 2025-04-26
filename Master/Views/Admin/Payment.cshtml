@@ -1,0 +1,75 @@
+﻿@model IEnumerable<Master.Models.Payment>
+
+@{
+    ViewData["Title"] = "الفواتير";
+
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 text-success">
+        <i class="fas fa-file-invoice-dollar me-2"></i>@ViewData["Title"]
+    </h2>
+    
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                المبلغ
+            </th>
+            <th>
+                طريقة الدفع
+            </th>
+            <th>
+                الحالة
+            </th>
+            <th>
+                موعد الدفعة
+            </th>
+            <th>
+                المدفوع
+            </th>
+            <th>
+                العميل
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentMethod)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaymentType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.Name)
+            </td>
+            @* <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td> *@
+        </tr>
+}
+    </tbody>
+</table>
+@section Scripts {
+    <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            createAnimatedCircles();
+
+        }
+    </script>
+}

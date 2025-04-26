@@ -27,7 +27,19 @@ public partial class RecyclingRequest
 
     public DateTime RequestedDate { get; set; }
 
+    public int? PaymentId { get; set; }
+
+    public bool? DeliveryStatus { get; set; }
+
+    public string? Location { get; set; }
+
+    public decimal? Latitude { get; set; }
+
+    public decimal? Longitude { get; set; }
+
     public virtual ICollection<Delivery> Deliveries { get; set; } = new List<Delivery>();
+
+    public virtual Payment? Payment { get; set; }
 
     public virtual User? User { get; set; }
 }

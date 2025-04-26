@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Master.Models;
 
-public partial class MyDbContext : DbContext
+public partial class MyDBContext : DbContext
 {
-    public MyDbContext()
+    public MyDBContext()
     {
     }
 
-    public MyDbContext(DbContextOptions<MyDbContext> options)
+    public MyDBContext(DbContextOptions<MyDBContext> options)
         : base(options)
     {
     }
@@ -175,12 +175,10 @@ public partial class MyDbContext : DbContext
                 .HasColumnName("created_at");
             entity.Property(e => e.DeliveryAddress)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("delivery_address");
             entity.Property(e => e.DeliveryTime).HasColumnName("delivery_time");
             entity.Property(e => e.OrderStatus)
                 .HasMaxLength(50)
-                .IsUnicode(false)
                 .HasDefaultValue("Pending")
                 .HasColumnName("order_status");
             entity.Property(e => e.PaymentId).HasColumnName("payment_id");
@@ -294,28 +292,29 @@ public partial class MyDbContext : DbContext
                 .HasColumnName("created_at");
             entity.Property(e => e.ImageUrl)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("image_url");
-            entity.Property(e => e.ItemCondition)
-                .HasMaxLength(50)
-                .IsUnicode(false);
+            entity.Property(e => e.ItemCondition).HasMaxLength(50);
+            entity.Property(e => e.Latitude).HasColumnType("decimal(10, 7)");
+            entity.Property(e => e.Longitude).HasColumnType("decimal(10, 7)");
             entity.Property(e => e.MaterialName)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("material_name");
             entity.Property(e => e.MaterialType)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("material_type");
             entity.Property(e => e.Notes)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("notes");
+            entity.Property(e => e.PaymentId).HasColumnName("payment_id");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.RequestedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.Payment).WithMany(p => p.RecyclingRequests)
+                .HasForeignKey(d => d.PaymentId)
+                .HasConstraintName("FK_RecyclingRequests_Payments");
 
             entity.HasOne(d => d.User).WithMany(p => p.RecyclingRequests)
                 .HasForeignKey(d => d.UserId)
@@ -327,19 +326,30 @@ public partial class MyDbContext : DbContext
             entity.HasKey(e => e.Id).HasName("subscriptions_id_primary");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.DayOfWeek)
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("day_of_week");
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.Latitude).HasColumnType("decimal(10, 7)");
             entity.Property(e => e.Location)
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("location");
+            entity.Property(e => e.Longitude).HasColumnType("decimal(10, 7)");
+            entity.Property(e => e.MaterialType).HasMaxLength(50);
             entity.Property(e => e.Notes)
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("notes");
             entity.Property(e => e.PaymentId).HasColumnName("payment_id");
+            entity.Property(e => e.PaymentMethod).HasMaxLength(50);
+            entity.Property(e => e.Quantity).HasMaxLength(50);
+            entity.Property(e => e.StartDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
             entity.Property(e => e.SubscriptionType)
                 .HasMaxLength(50)
                 .IsUnicode(false)

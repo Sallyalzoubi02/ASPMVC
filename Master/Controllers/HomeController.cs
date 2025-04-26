@@ -10,9 +10,9 @@ namespace Master.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly MyDbContext Db;
+        private readonly MyDBContext Db;
 
-        public HomeController(ILogger<HomeController> logger , MyDbContext context )
+        public HomeController(ILogger<HomeController> logger , MyDBContext context )
         {
             _logger = logger;
             Db = context;
@@ -51,6 +51,10 @@ namespace Master.Controllers
                 return RedirectToAction("Sign", new { formType = "login" });
             }
 
+            if (email == "admin@athar.com" && password == "admin")
+            {
+                return RedirectToAction("Index", "Admin");
+            }
             // محاولة العثور على المستخدم
             var user = Db.Users.SingleOrDefault(u => u.Email == email);
 

@@ -1,0 +1,142 @@
+﻿@model IEnumerable<Master.Models.User>
+
+@{
+    ViewData["Title"] = "العملاء";
+    Layout = "_AdminLayout";
+}
+
+@section Styles {
+    <style>
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            background-color: #fff;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(33, 40, 50, 0.15);
+            border-radius: 0.35rem;
+            overflow: hidden;
+        }
+
+            .table th {
+                background-color: #d1e7dd;
+                color: #0f5132;
+                padding: 1rem;
+                text-align: right;
+                vertical-align: middle;
+                border-bottom: 2px solid #198754;
+            }
+
+            .table td {
+                padding: 0.75rem;
+                vertical-align: middle;
+                border-top: 1px solid #dee2e6;
+            }
+
+            .table tr:hover {
+                background-color: rgba(25, 135, 84, 0.05);
+            }
+
+            .table a {
+                color: #198754;
+                text-decoration: none;
+                margin: 0 5px;
+            }
+
+                .table a:hover {
+                    color: #0f5132;
+                    text-decoration: underline;
+                }
+
+        td img {
+            width: 100px;
+        }
+    </style>
+}
+
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 text-success">
+        <i class="fas fa-users me-2"></i>@ViewData["Title"]
+    </h2>
+   
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+               الاسم
+            </th>
+            <th>
+                الإيميل
+            </th>
+            <th>
+                الهاتق
+            </th>
+            <th>
+                المدينة
+            </th>
+            <th>
+                العنوان
+            </th>
+            <th>
+                نوع المستخدم
+            </th>
+            <th>
+                تاريخ الميلاد
+            </th>
+            <th>
+                الجنس
+            </th>
+            <th>
+                النقاط
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BirthDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Points)
+            </td>
+           @*  <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td> *@
+        </tr>
+}
+    </tbody>
+</table>
+@section Scripts {
+    <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            createAnimatedCircles();
+
+        }
+    </script>
+}

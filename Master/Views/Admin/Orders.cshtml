@@ -1,0 +1,201 @@
+﻿@model IEnumerable<Master.Models.Order>
+
+@{
+    ViewData["Title"] = "الطلبات";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 text-success">
+            <i class="fas fa-shopping-cart me-2"></i>@ViewData["Title"]
+        </h2>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-success">
+                        <tr>
+                            <th>رقم الطلب</th>
+                            <th>حالة الطلب</th>
+                            <th>المبلغ</th>
+                            <th>تاريخ الطلب</th>
+                            <th>حالة الدفع</th>
+                            <th>العميل</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>#@item.Id</td>
+                                <td>
+                                    <span class="badge @GetStatusBadgeClass(item.OrderStatus)">
+                                        @item.OrderStatus
+                                    </span>
+                                </td>
+                                <td>@item.TotalAmount.ToString("0.00") JD</td>
+                                <td>@item.CreatedAt</td>
+                                <td>
+                                    @if (item.Payment?.Status == "بانتظار الدفع")
+                                    {
+                                        <form id="statusForm-@item.Id" asp-action="UpdateStatus" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <select name="PaymentStatus" class="form-select form-select-sm"
+                                                    onchange="this.form.submit()">
+                                                <option selected value="بانتظار الدفع">بانتظار الدفع</option>
+                                                <option value="تم الدفع">تم الدفع</option>
+                                            </select>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">@item.Payment?.Status</span>
+                                    }
+                                </td>
+                                <td>@item.User?.Name</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-success"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#orderModal-@item.Id">
+                                        <i class="fas fa-eye"></i> التفاصيل
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal لعرض تفاصيل الطلب -->
+@foreach (var item in Model)
+{
+    <div class="modal fade" id="orderModal-@item.Id" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">تفاصيل الطلب #@item.Id</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-user me-2"></i> معلومات العميل</h6>
+                            <p><strong>الاسم:</strong> @item.User?.Name</p>
+                            <p><strong>الهاتف:</strong> @item.Phone</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-map-marker-alt me-2"></i> معلومات الشحن</h6>
+                            <p><strong>العنوان:</strong> @item.Address1</p>
+                            <p><strong>العنوان الثانوي:</strong> @(item.Address2 ?? "غير متوفر")</p>
+                            <p><strong>موعد التوصيل:</strong> @(item.DeliveryTime.ToString("yyyy-MM-dd") ?? "غير محدد")</p>
+                        </div>
+                    </div>
+
+                    <h6><i class="fas fa-boxes me-2"></i> المنتجات</h6>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>الصورة</th>
+                                    <th>المنتج</th>
+                                    <th>الكمية</th>
+                                    <th>السعر</th>
+                                    <th>المجموع</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var orderItem in item.OrderItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(orderItem.Product?.ImageUrl))
+                                            {
+                                                <img src="~/@orderItem.Product.ImageUrl" width="50" height="50" class="img-thumbnail">
+                                            }
+                                            else
+                                            {
+                                                <div class="no-image">لا يوجد صورة</div>
+                                            }
+                                        </td>
+                                        <td>@orderItem.Product?.Name</td>
+                                        <td>@orderItem.Quantity</td>
+                                        <td>@orderItem.Price.ToString("0.00") JD</td>
+                                        <td>@((orderItem.Quantity * orderItem.Price).ToString("0.00")) JD</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-info-circle me-2"></i> معلومات إضافية</h6>
+                            <p>
+                                <strong>حالة الطلب:</strong> <span class="badge @GetStatusBadgeClass(item.OrderStatus)">
+                                    @item.OrderStatus
+                                </span>
+                            </p>
+                            <p>
+                                <strong>حالة الدفع:</strong> <span class="badge @(item.Payment?.Status == "تم الدفع" ? "bg-success" : "bg-warning")">
+                                    @item.Payment?.Status
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h5>الإجمالي: <span class="text-success">@item.TotalAmount.ToString("0.00") JD</span></h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                    <button type="button" class="btn btn-success">طباعة الفاتورة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@functions {
+    string GetStatusBadgeClass(string status)
+    {
+        switch (status)
+        {
+            case "مكتمل": return "bg-success";
+            case "قيد التجهيز": return "bg-primary";
+            case "ملغي": return "bg-danger";
+            default: return "bg-secondary";
+        }
+    }
+}
+
+@section Styles {
+    <style>
+        .no-image {
+            width: 50px;
+            height: 50px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            createAnimatedCircles();
+
+        }
+    </script>
+}

@@ -1,0 +1,225 @@
+﻿@model IEnumerable<Master.Models.Category>
+
+@{
+    ViewData["Title"] = "إدارة الأصناف";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    @if (TempData["DeleteError"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["DeleteError"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 text-success">
+            <i class="fas fa-tags me-2"></i>@ViewData["Title"]
+        </h2>
+        <a asp-action="CreateCategory" class="btn btn-success">
+            <i class="fas fa-plus me-2"></i>إضافة صنف جديد
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="fas fa-info-circle fa-3x mb-3 text-success"></i>
+            <h4>لا توجد أصناف مسجلة</h4>
+            <a asp-action="CreateCategory" class="btn btn-success mt-3">
+                <i class="fas fa-plus me-1"></i>إضافة أول صنف
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card border-success shadow-sm h-100">
+                        <div class="card-header bg-success text-white d-flex justify-content-between">
+                            <h5 class="mb-0">
+                                <i class="fas fa-tag me-2"></i>@item.CategoryName
+                            </h5>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <button class="dropdown-item text-success" data-bs-toggle="modal" data-bs-target="#editCategoryModal-@item.Id">
+                                            <i class="fas fa-edit "></i>تعديل
+                                        </button>
+
+                                    </li>
+                                    
+                                    <li>
+                                        <a class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.Id">
+                                            <i class="fas fa-trash-alt"></i> حذف
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success-light text-success">
+                                    <i class="fas fa-boxes me-1"></i>
+                                    @(item.Products?.Count ?? 0) منتج
+                                </span>
+                                <a class="btn btn-sm btn-outline-success" data-bs-toggle="modal" 
+                                data-bs-target="#categoryModal-@item.Id">
+                                    عرض التفاصيل
+                                </a>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="modal fade" id="deleteModal-@item.Id" tabindex="-1" aria-labelledby="deleteModalLabel-@item.Id" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="deleteModalLabel-@item.Id">
+                                    <i class="fas fa-exclamation-triangle me-2"></i> تأكيد الحذف
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <p>هل أنت متأكد أنك تريد حذف الصنف "<strong>@item.CategoryName</strong>"؟</p>
+                                <p class="text-danger fw-bold">هذا الإجراء لا يمكن التراجع عنه!</p>
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                                <form asp-action="DeleteCategory" asp-route-id="@item.Id" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger">نعم، احذف</button>
+                                </form>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Edit Modal -->
+                <div class="modal fade" id="editCategoryModal-@item.Id" tabindex="-1" aria-labelledby="editCategoryModalLabel-@item.Id" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <form asp-action="EditCategory" method="post">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title" id="editCategoryModalLabel-@item.Id">
+                                        <i class="fas fa-edit me-2"></i>تعديل الصنف
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="Id" value="@item.Id" />
+                                    <div class="mb-3">
+                                        <label for="CategoryName" class="form-label">اسم الصنف</label>
+                                        <input type="text" class="form-control" name="CategoryName" value="@item.CategoryName" required />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success">حفظ التغييرات</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Modal -->
+                <div class="modal fade" id="categoryModal-@item.Id" tabindex="-1" aria-labelledby="categoryModalLabel-@item.Id" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title" id="categoryModalLabel-@item.Id">
+                                    <i class="fas fa-info-circle me-2"></i>تفاصيل الصنف
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h5><i class="fas fa-tag me-2 text-success"></i>@item.CategoryName</h5>
+                                <p>
+                                    <i class="fas fa-boxes me-1 text-success"></i>
+                                    عدد المنتجات: <strong>@(item.Products?.Count ?? 0)</strong>
+                                </p>
+                                <hr />
+                                @if (item.Products != null && item.Products.Any())
+                                {
+                                    <ul class="list-group">
+                                        @foreach (var product in item.Products)
+                                        {
+                                            <li class="list-group-item">
+                                                <i class="fas fa-box text-success me-2"></i>
+                                                @product.Name
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">لا توجد منتجات في هذا الصنف.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+    }
+</div>
+
+
+
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+        .bg-success-light {
+            background-color: rgba(25, 135, 84, 0.1);
+        }
+
+        .dropdown-menu {
+            border: 1px solid rgba(25, 135, 84, 0.2);
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(25, 135, 84, 0.05);
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            createAnimatedCircles();
+
+        }
+    </script>
+}

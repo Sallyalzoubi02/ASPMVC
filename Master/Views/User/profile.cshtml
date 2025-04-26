@@ -7,81 +7,81 @@
 @section Styles {
     <style>
         .profile-header {
-            background-color: #1a8754;
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
+        background-color: #1a8754;
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
         }
 
         .profile-img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border: 5px solid white;
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border: 5px solid white;
         }
 
         .eco-points {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .eco-badge {
-            color: white;
+        color: white;
         }
 
         .nav-pills .nav-link.active {
-            background-color: #1a8754 !important;
-            color: white !important;
+        background-color: #1a8754 !important;
+        color: white !important;
         }
 
         .nav-pills .nav-link {
-            color: #1a8754 !important;
+        color: #1a8754 !important;
         }
 
         .recycling-history img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
         }
 
         .progress {
-            height: 25px;
+        height: 25px;
         }
 
         /* تنسيق خاص لتبويب كلمة السر */
         #password .form-control {
-            margin-bottom: 1rem;
+        margin-bottom: 1rem;
         }
 
         #password .btn {
-            min-width: 120px;
+        min-width: 120px;
         }
 
         /* رسائل التحذير */
         .invalid-feedback {
-            display: none;
-            color: #dc3545;
+        display: none;
+        color: #dc3545;
         }
 
         .is-invalid ~ .invalid-feedback {
-            display: block;
+        display: block;
         }
 
         .bg-yellow {
-            background-color: #d4b24e;
+        background-color: #d4b24e;
         }
     </style>
 
 }
 
-    <!-- Header -->
+<!-- Header -->
 <!-- Header -->
 <header class="profile-header text-center">
     <div class="container">
         <img src="@(!string.IsNullOrEmpty(Model.User.Image) ? Model.User.Image : Url.Content("~/image/icon.jpg"))"
-             alt="الصورة الشخصية" class="profile-img rounded-circle mb-3">
+        alt="الصورة الشخصية" class="profile-img rounded-circle mb-3">
         <h1>@Model.User.Name</h1>
 
         @if (Model.IsOwner && Model.Companies.Any())
@@ -104,52 +104,52 @@
     </div>
 </header>
 
-    <div class="container mb-5">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-lg-4">
-                <div class="card mb-4">
-                    <div class="card-body text-center">
-                    <img src="~/image/icon.jpg" alt="الصورة الشخصية" class="rounded-circle mb-3" width="100">
-                        <h5 class="card-title">أحمد محمد</h5>
-                        <p class="text-muted mb-1">ahmed@example.com</p>
-                        <p class="text-muted mb-4">+966 50 123 4567</p>
+<div class="container mb-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <img src="@(!string.IsNullOrEmpty(Model.User.Image) ? Model.User.Image : Url.Content("~/image/icon.jpg"))" alt="الصورة الشخصية" class="rounded-circle mb-3" width="100">
+                    <h5 class="card-title">@Model.User.Name</h5>
+                    <p class="text-muted mb-1">@Model.User.Email</p>
+                    <p class="text-muted mb-4">@Model.User.Phone</p>
 
-                        <div class="d-flex justify-content-center mb-2">
-                            <button class="btn btn-outline-primary ms-2">
-                                <i class="fas fa-user-edit ms-1"></i>
-                                تعديل
-                            </button>
-                            <button class="btn btn-outline-danger">
-                                <i class="fas fa-sign-out-alt ms-1"></i> تسجيل
-                                خروج
-                            </button>
-                        </div>
+                    <div class="d-flex justify-content-center mb-2">
+                        <button class="btn btn-outline-primary ms-2" data-bs-target="#settings">
+                            <i class="fas fa-user-edit ms-1"></i>
+                            تعديل
+                        </button>
+                        <button class="btn btn-outline-danger">
+                            <i class="fas fa-sign-out-alt ms-1"></i> تسجيل
+                            خروج
+                        </button>
                     </div>
                 </div>
+            </div>
 
-                <!-- Eco Points -->
-                <div class="card mb-4 eco-points">
-                    <div class="card-body text-center">
-                        <h5 class="card-title"><i class="fas fa-recycle ms-2"></i>نقاطي البيئية</h5>
-                        <h2 class="display-4">1,250</h2>
-                        <p class="text-muted">استبدل النقاط بخصومات</p>
+            <!-- Eco Points -->
+            <div class="card mb-4 eco-points">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="fas fa-recycle ms-2"></i>نقاطي البيئية</h5>
+                    <h2 class="display-4">@Model.User.Points</h2>
+                    <p class="text-muted">استبدل النقاط بخصومات</p>
 
-                        <div class="progress mb-3">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 65%"
-                                 aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <p>65% للوصول للمستوى التالي (البلاتيني)</p>
-
-                        <button class="btn btn-success"><i class="fas fa-gift ms-1"></i> استبدال</button>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @Model.User.Points%"
+                             aria-valuenow="@Model.User.Points" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                </div>
+                    <p>65% للوصول للمستوى التالي ()</p>
 
-                <!-- Recycling Stats -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-chart-bar ms-2"></i>إحصائيات التدوير</h5>
-                        <ul class="list-group list-group-flush">
+                    <button class="btn btn-success"><i class="fas fa-gift ms-1"></i> استبدال</button>
+                </div>
+            </div>
+
+            <!-- Recycling Stats -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-chart-bar ms-2"></i>إحصائيات التدوير</h5>
+                    <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             العناصر المعاد تدويرها
                             <span class="badge bg-success rounded-pill">@Model.TotalRecycledItems كغ</span>
@@ -162,66 +162,82 @@
                             عدد الطلبات
                             <span class="badge bg-success rounded-pill">@Model.TotalOrders</span>
                         </li>
-                        </ul>
-                    </div>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <!-- Main Content -->
-            <div class="col-lg-8">
-                <ul class="nav nav-pills mb-4" id="profileTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="orders-tab" data-bs-toggle="pill"
-                                data-bs-target="#orders" type="button" role="tab">
-                            طلباتي
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="recycling-tab" data-bs-toggle="pill"
-                                data-bs-target="#recycling" type="button" role="tab">
-                            سجل التدوير
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="addresses-tab" data-bs-toggle="pill"
-                                data-bs-target="#addresses" type="button" role="tab">
-                            العناوين
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings"
-                                type="button" role="tab">
-                            الإعدادات
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="password-tab" data-bs-toggle="pill" data-bs-target="#password"
-                                type="button" role="tab">
-                            تغيير كلمة السر
-                        </button>
-                    </li>
-                </ul>
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <ul class="nav nav-pills mb-4" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="orders-tab" data-bs-toggle="pill"
+                    data-bs-target="#orders" type="button" role="tab">
+                        طلباتي
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="recycling-tab" data-bs-toggle="pill"
+                    data-bs-target="#recycling" type="button" role="tab">
+                        سجل التدوير
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="subscriptions-tab" data-bs-toggle="pill"
+                    data-bs-target="#subscriptions" type="button" role="tab">
+                        اشتراكاتي
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="addresses-tab" data-bs-toggle="pill"
+                    data-bs-target="#addresses" type="button" role="tab">
+                        العناوين
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings"
+                    type="button" role="tab">
+                        الإعدادات
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="password-tab" data-bs-toggle="pill" data-bs-target="#password"
+                    type="button" role="tab">
+                        تغيير كلمة السر
+                    </button>
+                </li>
+            </ul>
 
-                <div class="tab-content" id="profileTabsContent">
-                    <!-- Orders Tab -->
-                    <div class="tab-pane fade show active" id="orders" role="tabpanel">
-                        <h4 class="mb-4">الطلبات الأخيرة</h4>
+            <div class="tab-content" id="profileTabsContent">
+                <!-- Orders Tab -->
+                <div class="tab-pane fade show active" id="orders" role="tabpanel">
+                    <h4 class="mb-4">الطلبات الأخيرة</h4>
 
-                    @foreach (var order in Model.Orders)
+                    @{
+                        var displayedOrders = Model.Orders
+                                .OrderByDescending(o => o.CreatedAt)
+                                .Take(3).ToList();
+                        var hasMoreOrders = Model.Orders.Count > 3;
+                    }
+
+                    @foreach (var order in displayedOrders)
                     {
                         <div class="card mb-3">
                             <div class="card-header d-flex justify-content-between bg-light">
                                 <span>طلب رقم #EC-@order.Id</span>
                                 <span class="badge @GetOrderStatusBadgeClass(order.OrderStatus)">
-                                    @GetOrderStatusText(order.OrderStatus)
+                                    @order.OrderStatus
                                 </span>
                             </div>
                             <div class="card-body">
                                 @if (order.OrderItems != null && order.OrderItems.Any())
                                 {
-                                    @foreach (var item in order.OrderItems)
+                                    var displayedItems = order.OrderItems.Take(2).ToList();
+                                    var hasMoreItems = order.OrderItems.Count > 2;
+
+                                    @foreach (var item in displayedItems)
                                     {
-                                        @if (item.Product != null) // التحقق من وجود المنتج
+                                        @if (item.Product != null)
                                         {
                                             <div class="row mb-3">
                                                 <div class="col-md-2">
@@ -234,10 +250,16 @@
                                                 </div>
                                                 <div class="col-md-4 text-start">
                                                     <p>@item.Price.ToString("N2") دينار اردني</p>
-                                                    
                                                 </div>
                                             </div>
                                         }
+                                    }
+
+                                    @if (hasMoreItems)
+                                    {
+                                        <div class="text-center my-2">
+                                            <span class="text-muted">لمزيد من التفاصيل</span>
+                                        </div>
                                     }
                                 }
                                 <hr>
@@ -251,21 +273,84 @@
                         </div>
                     }
 
-                    @if (Model.Orders.Count > 5)
+                    @if (hasMoreOrders)
                     {
-                        <button class="btn btn-outline-success">عرض جميع الطلبات</button>
+                        <div id="moreOrders" style="display:none;">
+                            @foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt).Skip(3))
+                            {
+                                <div class="card mb-3">
+                                    <div class="card-header d-flex justify-content-between bg-light">
+                                        <span>طلب رقم #EC-@order.Id</span>
+                                        <span class="badge @GetOrderStatusBadgeClass(order.OrderStatus)">
+                                            (@order.OrderStatus)
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        @if (order.OrderItems != null && order.OrderItems.Any())
+                                        {
+                                            var displayedItems = order.OrderItems.Take(2).ToList();
+                                            var hasMoreItems = order.OrderItems.Count > 2;
+
+                                            @foreach (var item in displayedItems)
+                                            {
+                                                @if (item.Product != null)
+                                                {
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-2">
+                                                            <img src="@(item.Product.ImageUrl ?? "/images/default-product.png")"
+                                                                 alt="المنتج" class="img-fluid">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <h5>@item.Product.Name</h5>
+                                                            <p class="text-muted">الكمية: @item.Quantity</p>
+                                                        </div>
+                                                        <div class="col-md-4 text-start">
+                                                            <p>@item.Price.ToString("N2") دينار اردني</p>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+
+                                            @if (hasMoreItems)
+                                            {
+                                                <div class="text-center my-2">
+                                                    <span class="text-muted">...</span>
+                                                </div>
+                                            }
+                                        }
+                                        <hr>
+                                        <div class="d-flex justify-content-between">
+                                            <p class="mb-0">تاريخ الطلب: @order.CreatedAt</p>
+                                            <p class="mb-0 fw-bold">المجموع: @order.TotalAmount.ToString("N2") دينار اردني</p>
+                                            <a asp-action="OrderDetails" asp-route-id="@order.Id"
+                                               class="btn btn-sm btn-outline-success">التفاصيل</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <button id="showMoreOrders" class="btn btn-outline-success" onclick="toggleMoreOrders()">عرض المزيد من الطلبات</button>
                     }
-                    @if (Model.Orders.Count == 0){
+                    @if (Model.Orders.Count == 0)
+                    {
                         <h5>لا يوجد طلبات</h5>
-
                     }
-                    </div>
+                </div>
 
-                    <!-- Recycling History Tab -->
-                    <div class="tab-pane fade" id="recycling" role="tabpanel">
-                        <h4 class="mb-4">سجل التدوير</h4>
-@* 
-                    @foreach (var request in Model.RecyclingRequests)
+                <!-- Recycling History Tab -->
+                <div class="tab-pane fade" id="recycling" role="tabpanel">
+                    <h4 class="mb-4">سجل التدوير</h4>
+
+                    @{
+                        var displayedRequests = Model.RecyclingRequests?
+                        .OrderByDescending(r => r.RequestedDate) // من الأحدث إلى الأقدم
+                        .Take(3)
+                        .ToList();
+
+                        var hasMoreRequests = Model.RecyclingRequests?.Count > 3;
+                    }
+
+                    @foreach (var request in displayedRequests)
                     {
                         <div class="card mb-3">
                             <div class="card-body">
@@ -275,15 +360,15 @@
                                     </div>
                                     <div class="col-md-5">
                                         <h5>@request.MaterialType</h5>
-                                        <p class="text-muted mb-1">تاريخ التدوير: @request.RequestDate.ToString("dd MMMM yyyy")</p>
-                                        <p class="text-muted">الوزن: @request.Weight كغ</p>
+                                        <p class="text-muted mb-1">تاريخ التدوير: @request.RequestedDate</p>
+                                        <p class="text-muted">الكمية: @request.Quantity قطعة</p>
                                     </div>
                                     <div class="col-md-3">
                                         <p class="mb-1">
                                             <i class="fas fa-co2 text-success ms-1"></i>
-                                            ثاني أكسيد الكربون الموفّر: @(request.Weight * 1.75) كغ
+                                            ثاني أكسيد الكربون الموفّر: @(request.Quantity * 1.75)
                                         </p>
-                                        <p><i class="fas fa-leaf text-success ms-1"></i> النقاط: @request.PointsEarned</p>
+                                        <p><i class="fas fa-leaf text-success ms-1"></i> النقاط: @request.User.Points</p>
                                     </div>
                                     <div class="col-md-2 text-start">
                                         <button class="btn btn-sm btn-outline-success">تفاصيل</button>
@@ -291,20 +376,95 @@
                                 </div>
                             </div>
                         </div>
-                    } *@
-
-                    @if (Model.RecyclingRequests != null && Model.RecyclingRequests.Count > 3)
-                    {
-                        <button class="btn btn-outline-success">عرض كل سجل التدوير</button>
                     }
-                    @if (Model.RecyclingRequests != null && Model.RecyclingRequests.Count == 0)
+
+                    @if (hasMoreRequests)
+                    {
+                        <div id="moreRecycling" style="display:none;">
+                            @foreach (var request in Model.RecyclingRequests.OrderByDescending(r => r.RequestedDate).Skip(3))
+                            {
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="row recycling-history align-items-center">
+                                            <div class="col-md-2 text-center">
+                                                <img src="@request.ImageUrl" alt="العنصر المعاد تدويره" class="rounded">
+                                            </div>
+                                            <div class="col-md-5">
+                                                <h5>@request.MaterialType</h5>
+                                                <p class="text-muted mb-1">تاريخ التدوير: @request.RequestedDate</p>
+                                                <p class="text-muted">الكمية: @request.Quantity قطعة</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <p class="mb-1">
+                                                    <i class="fas fa-co2 text-success ms-1"></i>
+                                                    ثاني أكسيد الكربون الموفّر: @(request.Quantity * 1.75)
+                                                </p>
+                                                <p><i class="fas fa-leaf text-success ms-1"></i> النقاط: @request.User.Points</p>
+                                            </div>
+                                            <div class="col-md-2 text-start">
+                                                <button class="btn btn-sm btn-outline-success">تفاصيل</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <button id="showMoreRecycling" class="btn btn-outline-success" onclick="toggleMoreRecycling()">عرض المزيد من سجل التدوير</button>
+                    }
+                    @if (Model.RecyclingRequests == null || Model.RecyclingRequests.Count == 0)
                     {
                         <h5>لا يوجد طلبات تدوير</h5>
-
                     }
-                    </div>
+                </div>
 
-                
+                <!-- في تبويب الطلبات أو قسم جديد -->
+                <div class="tab-pane fade" id="subscriptions" role="tabpanel">
+                    <h4 class="mb-4">اشتراكاتي</h4>
+
+                    @if (Model.ActiveSubscriptions.Any())
+                    {
+                        foreach (var sub in Model.ActiveSubscriptions)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-header d-flex justify-content-between bg-light">
+                                    <span>اشتراك رقم #SUB-@sub.Id</span>
+                                    <span class="badge bg-success">نشط</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5>@GetSubscriptionTypeText(sub.SubscriptionType)</h5>
+                                            <p class="text-muted">يوم التسليم: @GetDayOfWeekText(sub.DayOfWeek)</p>
+                                            <p class="text-muted">وقت التسليم: @sub.Time.ToString("hh\\:mm")</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="text-muted">الموقع: @sub.Location</p>
+                                            <p class="text-muted">تاريخ البدء: @sub.StartDate.ToString("yyyy-MM-dd")</p>
+                                            @if (!string.IsNullOrEmpty(sub.Notes))
+                                            {
+                                                <p class="text-muted">ملاحظات: @sub.Notes</p>
+                                            }
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-end">
+                                        <button class="btn btn-danger btn-sm"
+                                                onclick="cancelSubscription(@sub.Id)">
+                                            إلغاء الاشتراك
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            ليس لديك أي اشتراكات نشطة حالياً.
+                            <a asp-action="Subscribe" class="alert-link">اشترك الآن</a>
+                        </div>
+                    }
+                </div>
 
                     <!-- Addresses Tab -->
                 <div class="tab-pane fade" id="addresses" role="tabpanel">
@@ -434,7 +594,33 @@
     
 @section Scripts {
     <link rel="stylesheet" href="~/css/profile.js" />
-    
+    @functions {
+    string GetSubscriptionTypeText(string type)
+    {
+        return type switch
+        {
+            "daily" => "اشتراك يومي",
+            "weekly" => "اشتراك أسبوعي",
+            "monthly" => "اشتراك شهري",
+            _ => type
+        };
+    }
+
+    string GetDayOfWeekText(string day)
+    {
+        return day switch
+        {
+            "Sunday" => "الأحد",
+            "Monday" => "الاثنين",
+            "Tuesday" => "الثلاثاء",
+            "Wednesday" => "الأربعاء",
+            "Thursday" => "الخميس",
+            "Friday" => "الجمعة",
+            "Saturday" => "السبت",
+            _ => day
+        };
+    }
+}
     @functions {
     string GetUserBadge(int? points)
     {
@@ -451,24 +637,65 @@
     {
         return status switch
         {
-            "delivered" => "bg-success",
-            "shipped" => "bg-warning text-dark",
-            "processing" => "bg-info",
-            "cancelled" => "bg-danger",
+            "تم التوصيل" => "bg-success",
+            "تم الشحن" => "bg-warning text-dark",
+            "جاري المعالجة" => "bg-info",
             _ => "bg-secondary"
         };
     }
 
-    string GetOrderStatusText(string status)
-    {
-        return status switch
-        {
-            "delivered" => "تم التوصيل",
-            "shipped" => "تم الشحن",
-            "processing" => "قيد المعالجة",
-            "cancelled" => "ملغى",
-            _ => status
-        };
-    }
+   
 }
+<script>
+        // في ملف subscribe.js أو في قسم الـ Scripts
+    function cancelSubscription(subId) {
+        if (confirm('هل أنت متأكد من رغبتك في إلغاء الاشتراك؟')) {
+            fetch(`/Subscription/Cancel/${subId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload(); // إعادة تحميل الصفحة لعرض التحديث
+                } else {
+                    alert('حدث خطأ أثناء محاولة إلغاء الاشتراك');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('حدث خطأ أثناء الاتصال بالخادم');
+            });
+        }
+    }
+</script>
+<script>
+    function toggleMoreOrders() {
+        const moreOrders = document.getElementById('moreOrders');
+        const btn = document.getElementById('showMoreOrders');
+
+        if (moreOrders.style.display === 'none') {
+            moreOrders.style.display = 'block';
+            btn.textContent = 'عرض عدد أقل من الطلبات';
+        } else {
+            moreOrders.style.display = 'none';
+            btn.textContent = 'عرض المزيد من الطلبات';
+        }
+    }
+
+    function toggleMoreRecycling() {
+        const moreRecycling = document.getElementById('moreRecycling');
+        const btn = document.getElementById('showMoreRecycling');
+
+        if (moreRecycling.style.display === 'none') {
+            moreRecycling.style.display = 'block';
+            btn.textContent = 'عرض عدد أقل من سجل التدوير';
+        } else {
+            moreRecycling.style.display = 'none';
+            btn.textContent = 'عرض المزيد من سجل التدوير';
+        }
+    }
+</script>
 }

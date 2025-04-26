@@ -71,7 +71,7 @@
     <div id="card-container" class="d-flex my-5 flex-wrap justify-content-center gap-3 hidden animate align-items-center">
         @foreach (var product in Model)
         {
-            <div class="card" style="max-width: 250px; height:470px">
+            <a href="@Url.Action("ProductDetails", new { id = product.Id })" class="card" style="max-width: 250px; height:470px; text-decoration: none; color: inherit;">
                 <img src="~/@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">@product.Name</h5>
@@ -91,7 +91,7 @@
                         </button>
                     </form>
                 </div>
-            </div>
+            </a>
         }
     </div>
 

@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="~/css/sub.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
-        /* تنسيقات مخصصة */
         .subscribe-container {
             background-color: #f8f9fa;
             min-height: 100vh;
@@ -17,11 +16,10 @@
             border-radius: 15px;
         }
 
-        
         .btn-green:hover {
-                background-color: #fff;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .form-control, .form-select {
@@ -30,10 +28,10 @@
             border: 1px solid #ced4da;
         }
 
-        .form-control:focus, .form-select:focus {
+            .form-control:focus, .form-select:focus {
                 border-color: #28a745;
                 box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
-        }
+            }
 
         .laz {
             color: white;
@@ -59,15 +57,16 @@
             border-radius: 10px;
             margin-bottom: 20px;
             border: 2px solid white;
-            background-color: #f8f9fa; /* خلفية للخريطة */
+            background-color: #f8f9fa;
         }
 
         #typeS, #day, #type, #quantity, #city, #paymentMethod {
-            background-position: left 0.75rem center; /* يحرك السهم إلى اليسار */
-            padding-left: 2rem; /* تعديل المساحة لعدم تطابق النص مع السهم */
-            padding-right: 0.75rem; /* تعديل المساحة للجانب الأيمن */
-            direction: rtl; /* لجعل النص يبدأ من اليمين (اختياري) */
+            background-position: left 0.75rem center;
+            padding-left: 2rem;
+            padding-right: 0.75rem;
+            direction: rtl;
         }
+
         .back-btn {
             transition: all 0.3s;
         }
@@ -77,20 +76,17 @@
                 transform: scale(1.1);
             }
 
-        /* تنسيقات الخيارات */
         .form-label {
             color: white;
             margin-bottom: 8px;
         }
 
-        /* تنسيقات قسم الدفع */
         #cardInfo {
             background-color: rgba(255, 255, 255, 0.1);
             padding: 15px;
             border-radius: 10px;
         }
 
-        /* تأثيرات الظهور */
         .animate {
             opacity: 0;
             transition: opacity 0.5s ease;
@@ -100,7 +96,6 @@
                 opacity: 1;
             }
 
-        /* تنسيق السعر الإجمالي */
         .total-price {
             font-size: 1.5rem;
             color: white;
@@ -112,203 +107,253 @@
     </style>
 }
 
-    <div class="container my-5">
-        <div class="row justify-content-center">
+<div class="container my-5">
+    <div class="row justify-content-center">
         <div class="text-start mb-4">
-            <button onclick="back()" class="back-btn  text-success" style="border: none; background: none;">
+            <button onclick="back()" class="back-btn text-success" style="border: none; background: none;">
                 <i class="fas fa-arrow-circle-left fa-3x"></i>
             </button>
         </div>
-            <div class="col-lg-10">
-            <!-- زر الرجوع -->
-           
-                <div class="row align-items-center">
+        <div class="col-lg-10">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class="rounded text-white p-4 p-md-5 form-container bg-success">
+                        <form asp-action="Create" method="post" class="w-100" id="f-container">
 
-               
-                    <!-- نموذج الاشتراك -->
-                    <div class="col-md-12">
-                        <div class="rounded text-white p-4 p-md-5 form-container bg-success">
-                            <form action="" class="w-100" id="f-container">
-                                <h2 class="laz text-center mb-4">الإشتراك الدوري مع أثـر</h2>
+                            <h2 class="laz text-center mb-4">خطة الإشتراك</h2>
 
-                                <!-- معلومات الشخصية -->
-                                <div class="row mb-4">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="fullName" class="form-label">الاسم الكامل</label>
-                                        <input type="text" class="form-control" id="fullName" placeholder="أدخل اسمك الكامل" required />
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="phone" class="form-label">رقم الهاتف</label>
-                                        <input type="tel" class="form-control" id="phone" placeholder="أدخل رقم هاتفك" required />
-                                    </div>
-                                </div>
-
-                                <h2 class="laz text-center mb-4">خطة الإشتراك</h2>
-
-                                <!-- تفاصيل الاشتراك -->
-                                <div class="row mb-4">
-                                    <div class="col-md-4 mb-3">
-                                        <label for="typeS" class="form-label">نوع الإشتراك</label>
-                                        <select class="form-select" id="typeS" required>
-                                            <option value="" disabled selected>اختر نوع الاشتراك</option>
-                                            <option value="daily">يومي - 29.99 ر.س</option>
-                                            <option value="weekly">اسبوعي - 99.99 ر.س</option>
-                                            <option value="monthly">شهري - 299.99 ر.س</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="time" class="form-label">وقت التسليم</label>
-                                        <input type="time" class="form-control" id="time" required />
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="day" class="form-label">يوم التسليم</label>
-                                        <select class="form-select" id="day" required>
-                                            <option value="" disabled selected>اختر يوم التسليم</option>
-                                            <option value="sunday">الاحد</option>
-                                            <option value="Monday">اثنين</option>
-                                            <option value="Tuesday">ثلاثاء</option>
-                                            <option value="Wednesday">اربعاء</option>
-                                            <option value="Thursday">خميس</option>
-                                            <option value="Friday">جمعة</option>
-                                            <option value="Saturday">سبت</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <!-- نوع المواد -->
-                                <div class="row mb-4">
-                                    <div class="col-md-4 mb-3">
-                                        <label for="type" class="form-label">نوع المواد</label>
-                                        <select class="form-select" id="type" required>
-                                            <option value="" disabled selected>اختر نوع المواد</option>
-                                            <option value="glass">زجاج</option>
-                                            <option value="plastic">بلاستيك</option>
-                                            <option value="fabric">قماش</option>
-                                            <option value="iron">حديد</option>
-                                            <option value="wood">خشب</option>
-                                            <option value="mix">مختلفة</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="quantity" class="form-label">الكمية</label>
-                                        <select class="form-select" id="quantity" required>
-                                            <option value="" disabled selected>اختر الكمية</option>
-                                            <option value="few">قليلة (+0 ر.س)</option>
-                                            <option value="mid">متوسطة (+10 ر.س)</option>
-                                            <option value="lg">كبيرة (+20 ر.س)</option>
-                                            <option value="xlg">كبيرة جداً (+30 ر.س)</option>
-                                            <option value="IDK">لا استطيع التقييم (+15 ر.س)</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="city" class="form-label">المحافظة</label>
-                                        <select class="form-select" id="city" required>
-                                            <option value="" disabled selected>اختر المحافظة</option>
-                                            <option value="Amman">عمان</option>
-                                            <option value="Irbid">اربد</option>
-                                            <option value="Jerash">جرش</option>
-                                            <option value="Ajloun">عجلون</option>
-                                            <option value="M'aan">معان</option>
-                                            <option value="Aqaba">العقبة</option>
-                                            <option value="Altafelah">الطفيلة</option>
-                                            <option value="Alkarak">الكرك</option>
-                                            <option value="Salt">السلط</option>
-                                            <option value="Madaba">مأدبا</option>
-                                            <option value="Zarqa">الزرقاء</option>
-                                            <option value="Almafraq">المفرق</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <!-- خريطة الموقع -->
-                                <div class="mb-4">
-                                    <label for="map" class="form-label">حدد موقع الاستلام</label>
-                                    <div id="map"></div>
-                                    <input type="hidden" id="latitude" name="latitude" />
-                                    <input type="hidden" id="longitude" name="longitude" />
-                                </div>
-
-                                <!-- الملاحظات -->
-                                <div class="mb-4">
-                                    <label for="notes" class="form-label">ملاحظات إضافية</label>
-                                    <textarea id="notes" rows="4" class="form-control" placeholder="اترك ملاحظاتك هنا..."></textarea>
-                                </div>
-
-                                <!-- طريقة الدفع -->
-                                <div class="mb-4">
-                                    <label for="paymentMethod" class="form-label">طريقة الدفع</label>
-                                <select id="paymentMethod" id="paymentMethod" class="form-select w-50" required>
-                                        <option value="" disabled selected>اختر طريقة الدفع</option>
-                                        <option value="cash">عند التسليم</option>
-                                        <option value="card">بطاقة ائتمان</option>
+                            <div class="row mb-4">
+                                <div class="col-md-4 mb-3">
+                                    <label for="typeS" class="form-label">نوع الإشتراك</label>
+                                    <select class="form-select" id="typeS" name="SubscriptionType" required>
+                                        <option value="" disabled selected>اختر نوع الاشتراك</option>
+                                        <option value="daily">يومي - 29.99 ر.س</option>
+                                        <option value="weekly">اسبوعي - 99.99 ر.س</option>
+                                        <option value="monthly">شهري - 299.99 ر.س</option>
                                     </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="time" class="form-label">وقت التسليم</label>
+                                    <input type="time" class="form-control" id="time" name="Time" required />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="day" class="form-label">يوم التسليم</label>
+                                    <select class="form-select" id="day" name="DayOfWeek" required>
+                                        <option value="" disabled selected>اختر يوم التسليم</option>
+                                        <option value="sunday">الاحد</option>
+                                        <option value="Monday">اثنين</option>
+                                        <option value="Tuesday">ثلاثاء</option>
+                                        <option value="Wednesday">اربعاء</option>
+                                        <option value="Thursday">خميس</option>
+                                        <option value="Friday">جمعة</option>
+                                        <option value="Saturday">سبت</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                                    <!-- معلومات البطاقة (تظهر عند اختيار بطاقة ائتمان) -->
-                                    <div id="cardInfo" class="mt-3 p-3 rounded" style="display: none; background-color: rgba(255,255,255,0.1)">
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label for="cardNumber" class="form-label">رقم البطاقة</label>
-                                                <input type="text" id="cardNumber" class="form-control" placeholder="أدخل رقم البطاقة" />
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label for="cardExpiry" class="form-label">تاريخ انتهاء البطاقة</label>
-                                                <input type="month" id="cardExpiry" class="form-control" placeholder="شهر/سنة" />
-                                            </div>
+                            <div class="row mb-4">
+                                <div class="col-md-4 mb-3">
+                                    <label for="type" class="form-label">نوع المواد</label>
+                                    <select class="form-select" id="type" name="MaterialType" required>
+                                        <option value="" disabled selected>اختر نوع المواد</option>
+                                        <option value="glass">زجاج</option>
+                                        <option value="plastic">بلاستيك</option>
+                                        <option value="fabric">قماش</option>
+                                        <option value="iron">حديد</option>
+                                        <option value="wood">خشب</option>
+                                        <option value="mix">مختلفة</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="quantity" class="form-label">الكمية</label>
+                                    <select class="form-select" id="quantity" name="Quantity" required>
+                                        <option value="" disabled selected>اختر الكمية</option>
+                                        <option value="few">قليلة (+0 ر.س)</option>
+                                        <option value="mid">متوسطة (+10 ر.س)</option>
+                                        <option value="lg">كبيرة (+20 ر.س)</option>
+                                        <option value="xlg">كبيرة جداً (+30 ر.س)</option>
+                                        <option value="IDK">لا استطيع التقييم (+15 ر.س)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="city" class="form-label">المحافظة</label>
+                                    <select class="form-select" id="city" name="City" required>
+                                        <option value="" disabled selected>اختر المحافظة</option>
+                                        <option value="Amman">عمان</option>
+                                        <option value="Irbid">اربد</option>
+                                        <option value="Jerash">جرش</option>
+                                        <option value="Ajloun">عجلون</option>
+                                        <option value="M'aan">معان</option>
+                                        <option value="Aqaba">العقبة</option>
+                                        <option value="Altafelah">الطفيلة</option>
+                                        <option value="Alkarak">الكرك</option>
+                                        <option value="Salt">السلط</option>
+                                        <option value="Madaba">مأدبا</option>
+                                        <option value="Zarqa">الزرقاء</option>
+                                        <option value="Almafraq">المفرق</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="map" class="form-label">حدد موقع الاستلام</label>
+                                <div id="map" ></div>
+                                <input type="hidden" id="location" name="Location" />
+
+                                <input type="hidden" id="latitude" name="latitude" />
+                                <input type="hidden" id="longitude" name="longitude" />
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="notes" class="form-label">ملاحظات إضافية</label>
+                                <textarea id="notes" name="Notes" rows="4" class="form-control" placeholder="اترك ملاحظاتك هنا..."></textarea>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="paymentMethod" class="form-label">طريقة الدفع</label>
+                                <select id="paymentMethod" class="form-select w-50" name="PaymentMethod" required>
+                                    <option value="" disabled selected>اختر طريقة الدفع</option>
+                                    <option value="cash">عند التسليم</option>
+                                    <option value="card">بطاقة ائتمان</option>
+                                </select>
+
+                                <div id="cardInfo" class="mt-3 p-3 rounded" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="cardNumber" class="form-label">رقم البطاقة</label>
+                                            <input type="text" id="cardNumber" class="form-control" placeholder="أدخل رقم البطاقة" />
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <label for="cardCVV" class="form-label">رمز التحقق (CVV)</label>
-                                                <input type="text" id="cardCVV" class="form-control" placeholder="أدخل رمز التحقق" />
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <label for="cardholderName" class="form-label">اسم صاحب البطاقة</label>
-                                                <input type="text" id="cardholderName" class="form-control" placeholder="اسم صاحب البطاقة" />
-                                            </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="cardExpiry" class="form-label">تاريخ انتهاء البطاقة</label>
+                                            <input type="month" id="cardExpiry" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="cardCVV" class="form-label">رمز التحقق (CVV)</label>
+                                            <input type="text" id="cardCVV" class="form-control" />
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="cardholderName" class="form-label">اسم صاحب البطاقة</label>
+                                            <input type="text" id="cardholderName" class="form-control" />
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- السعر الإجمالي -->
-                                <div class="text-center mb-3">
-                                    <p class="h4">المجموع: <span id="total" class="fw-bold total-price">0.00 ر.س</span></p>
-                                </div>
+                            <div class="text-center mb-3">
+                                <p class="h4">المجموع: <span id="total" class="fw-bold total-price">0.00 ر.س</span></p>
+                            </div>
 
-                                <!-- زر التأكيد -->
-                                <div class="text-center mt-4">
-                                    <button type="button" id="confirmBtn" class="btn btn-lg btn-green">
-                                        <i class="fas fa-check-circle me-2"></i> تأكيد الاشتراك
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                            <div class="text-center mt-4">
+                                <button type="submit" id="confirmBtn" class="btn btn-lg btn-green">
+                                    <i class="fas fa-check-circle me-2"></i> تأكيد الاشتراك
+                                </button>
+                            </div>
+                        </form>
                     </div>
-
-                
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 @section Scripts {
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="~/js/subscribe.js"></script>
     <script>
-        // جعل العناصر تظهر بسلاسة
         document.addEventListener("DOMContentLoaded", () => {
-            setTimeout(() => {
-                document.getElementById('content').classList.add('visible');
-                document.getElementById('content').classList.remove('hidden');
-            }, 100);
+            const subscriptionSelect = document.getElementById("typeS");
+            const quantitySelect = document.getElementById("quantity");
+            const totalSpan = document.getElementById("total");
+            const daySelect = document.getElementById("day");
+            const paymentSelect = document.getElementById("paymentMethod");
+            const cardInfo = document.getElementById("cardInfo");
 
-            // تبديل معلومات البطاقة عند تغيير طريقة الدفع
-            document.getElementById('paymentMethod').addEventListener('change', function() {
-                const cardInfo = document.getElementById('cardInfo');
-                cardInfo.style.display = this.value === 'card' ? 'block' : 'none';
+            function calculateTotal() {
+                let total = 0;
+
+                const subPrices = { "daily": 29.99, "weekly": 99.99, "monthly": 299.99 };
+                const quantityPrices = { "few": 0, "mid": 10, "lg": 20, "xlg": 30, "IDK": 15 };
+
+                const subValue = subscriptionSelect.value;
+                const quantityValue = quantitySelect.value;
+
+                if (subPrices[subValue]) total += subPrices[subValue];
+                if (quantityPrices[quantityValue]) total += quantityPrices[quantityValue];
+
+                totalSpan.textContent = `${total.toFixed(2)} ر.س`;
+            }
+
+            function handleDayField() {
+                if (subscriptionSelect.value === "daily") {
+                    daySelect.disabled = true;
+                    daySelect.innerHTML = `<option value="All" selected>كل الأيام</option>`;
+                } else {
+                    daySelect.disabled = false;
+                    daySelect.innerHTML = `
+                        <option value="" disabled selected>اختر يوم التسليم</option>
+                        <option value="Sunday">الأحد</option>
+                        <option value="Monday">الاثنين</option>
+                        <option value="Tuesday">الثلاثاء</option>
+                        <option value="Wednesday">الأربعاء</option>
+                        <option value="Thursday">الخميس</option>
+                        <option value="Friday">الجمعة</option>
+                        <option value="Saturday">السبت</option>
+                    `;
+                }
+            }
+
+            subscriptionSelect.addEventListener("change", () => {
+                calculateTotal();
+                handleDayField();
             });
-        });
 
-        function back() {
-            window.history.back();
-        }
+            quantitySelect.addEventListener("change", calculateTotal);
+
+            paymentSelect.addEventListener("change", () => {
+                cardInfo.style.display = (paymentSelect.value === "card") ? "block" : "none";
+            });
+
+            // Initial run
+            calculateTotal();
+            handleDayField();
+
+            // Map initialization
+            setTimeout(() => {
+                const mapElement = document.getElementById('map');
+                if (!mapElement) return;
+
+                if (window.getComputedStyle(mapElement).height === '0px') {
+                    mapElement.style.height = '200px';
+                }
+
+                let defaultLat = 31.9539, defaultLng = 35.9106;
+                const map = L.map('map').setView([defaultLat, defaultLng], 10);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                let marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+                marker.on('dragend', function () {
+                    const position = marker.getLatLng();
+                    document.getElementById('latitude').value = position.lat;
+                    document.getElementById('longitude').value = position.lng;
+                });
+
+                document.getElementById('latitude').value = defaultLat;
+                document.getElementById('longitude').value = defaultLng;
+
+                map.on('click', function (e) {
+                    marker.setLatLng(e.latlng);
+                    document.getElementById('latitude').value = e.latlng.lat;
+                    document.getElementById('longitude').value = e.latlng.lng;
+                    document.getElementById('location').value = `Latitude: ${e.latlng.lat}, Longitude: ${e.latlng.lng}`;
+                    console.log(`Latitude: ${e.latlng.lat}, Longitude: ${e.latlng.lng}`);
+                });
+
+                map.invalidateSize();
+            }, 500);
+        });
     </script>
+
 }

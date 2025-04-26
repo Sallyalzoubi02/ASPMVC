@@ -1,0 +1,179 @@
+﻿@model IEnumerable<Master.Models.Product>
+
+@{
+    ViewData["Title"] = "إدارة المنتجات";
+    Layout = "_AdminLayout";
+}
+
+@section Styles {
+    <style>
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            background-color: #fff;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(33, 40, 50, 0.15);
+            border-radius: 0.35rem;
+            overflow: hidden;
+        }
+
+            .table th {
+                background-color: #d1e7dd;
+                color: #0f5132;
+                padding: 1rem;
+                text-align: right;
+                vertical-align: middle;
+                border-bottom: 2px solid #198754;
+            }
+
+            .table td {
+                padding: 0.75rem;
+                vertical-align: middle;
+                border-top: 1px solid #dee2e6;
+            }
+
+            .table tr:hover {
+                background-color: rgba(25, 135, 84, 0.05);
+            }
+
+            .table a {
+                color: #198754;
+                text-decoration: none;
+                margin: 0 5px;
+            }
+
+                .table a:hover {
+                    color: #0f5132;
+                    text-decoration: underline;
+                }
+
+                td img {
+                    width:100px;
+                }
+    </style>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0 text-success">
+        <i class="fas fa-box-open me-2"></i>@ViewData["Title"]
+    </h2>
+    <a asp-action="CreateProduct" class="btn btn-success">
+        <i class="fas fa-plus me-2"></i>إضافة منتج جديد
+    </a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                اسم المنتج
+            </th>
+            <th>
+                الوصف
+            </th>
+            <th>
+                السعر
+            </th>
+            <th>
+                الكمية
+            </th>
+            <th>
+                الشركة
+            </th>
+            <th>
+                الصورة
+            </th>
+            <th>
+                النوع
+            </th>
+            <th>
+                التصنيف
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stock)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyName)
+            </td>
+            <td>
+                    <img src="~/@Html.DisplayFor(modelItem => item.ImageUrl)" />
+            </td>
+
+
+				@if  (item.Type == true)
+				{
+					<td>منتجات معاد تدويرها</td>
+				}
+                else{
+                    <td>منتجات صديقة للبيئة</td>
+                }
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.CategoryName)
+            </td>
+            <td>
+                <div class="btn-group btn-group-sm" role="group">
+                    <a asp-action="EditProduct" asp-route-id="@item.Id" class="btn btn-outline-success" title="تعديل">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a asp-action="DetailsProduct" asp-route-id="@item.Id" class="btn btn-outline-success" title="تفاصيل">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <form method="post" asp-action="DeleteProduct" asp-route-id="@item.Id" id="delete-form-@item.Id" style="display:inline;">
+                        <button type="button" class="btn btn-outline-danger" onclick="confirmDelete(@item.Id)">
+                            <i class="fas fa-trash"></i> 
+                        </button>
+                    </form>
+                </div>
+            </td>
+
+        </tr>
+}
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: "لن تتمكن من استعادة هذا المنتج!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'نعم، احذفه!',
+                cancelButtonText: 'إلغاء',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-form-${id}`).submit();
+                }
+            });
+        }
+
+         // <<< تأكد إنها مغلقة
+
+          document.addEventListener('DOMContentLoaded', function() {
+            createAnimatedCircles();
+
+        }
+    </script>
+
+}
+

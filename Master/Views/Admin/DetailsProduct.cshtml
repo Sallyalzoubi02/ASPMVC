@@ -1,0 +1,91 @@
+﻿@model Master.Models.Product
+
+@{
+    ViewData["Title"] = "تفاصيل المنتج";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-info-circle me-2"></i>@ViewData["Title"]
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Name)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Name)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Description)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Description)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Price)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Price) JD</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Stock)</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Stock > 10)
+                            {
+                                <span class="badge bg-success">@Model.Stock متوفر</span>
+                            }
+                            else if (Model.Stock > 0)
+                            {
+                                <span class="badge bg-warning">@Model.Stock محدود</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">نفذ من المخزن</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.CompanyName)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.CompanyName)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Category)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Category.CategoryName)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => model.CreatedAt)</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.CreatedAt)</dd>
+
+                        <dt class="col-sm-4">الصورة</dt>
+                        <dd class="col-sm-8">
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <img src="~/@Model.ImageUrl" class="img-thumbnail" style="max-height: 150px;" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">لا توجد صورة</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a asp-action="EditProduct" asp-route-id="@Model.Id" class="btn btn-success me-2">
+                    <i class="fas fa-edit me-1"></i>تعديل
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>العودة للقائمة
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            createAnimatedCircles();
+
+        }
+    </script>
+}
