@@ -373,17 +373,87 @@ namespace Master.Controllers
                 _dbContext.SaveChanges();
             }
 
-            return RedirectToAction("Index"); // أو اسم صفحة عرض الطلبات
+            return RedirectToAction("Orders"); // أو اسم صفحة عرض الطلبات
         }
 
         //---------------------------Recycling---------------------------
 
         public ActionResult Recycling()
         {
-            var recycling = _dbContext.RecyclingRequests.Include(u => u.User).ToList();
+            var recycling = _dbContext.RecyclingRequests.Include(u => u.User).Include(p => p.Payment).ToList();
             return View(recycling);
         }
+        [HttpPost]
+        public IActionResult UpdateDeliveryStatus(int id, bool delstatus)
+        {
+            var recyclingRequest = _dbContext.RecyclingRequests.FirstOrDefault(o => o.Id == id);
+            if (recyclingRequest != null)
+            {
+                recyclingRequest.DeliveryStatus = delstatus;
+                _dbContext.RecyclingRequests.Update(recyclingRequest);
+                _dbContext.SaveChanges();
+            }
 
+            return RedirectToAction("Recycling"); // أو اسم صفحة عرض الطلبات
+        }
+
+        //---------------------------VolunteerApplication-----------------
+
+
+        public ActionResult VolunteerApplication()
+        {
+            var vol = _dbContext.VolunteerApplications
+                        .ToList();
+            if (vol.IsNullOrEmpty())
+            {
+                ViewBag.IsNull = true;
+                return View(vol);
+            }
+
+            return View(vol);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateVolStatus(int id, string volstatus)
+        {
+            var vol = _dbContext.VolunteerApplications.FirstOrDefault(o => o.Id == id);
+            if (vol != null)
+            {
+                vol.Status = volstatus;
+                _dbContext.VolunteerApplications.Update(vol);
+                _dbContext.SaveChanges();
+            }
+
+            return RedirectToAction("VolunteerApplication"); // أو اسم صفحة عرض الطلبات
+        }
+
+        //---------------------------EmploymentApplication-----------------------------
+        public ActionResult EmploymentApplication()
+        {
+            var vol = _dbContext.EmploymentApplications
+                        .ToList();
+            if (vol.IsNullOrEmpty())
+            {
+                ViewBag.IsNull = true;
+                return View(vol);
+            }
+
+            return View(vol);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateEmpStatus(int id, string volstatus)
+        {
+            var vol = _dbContext.EmploymentApplications.FirstOrDefault(o => o.Id == id);
+            if (vol != null)
+            {
+                vol.Status = volstatus;
+                _dbContext.EmploymentApplications.Update(vol);
+                _dbContext.SaveChanges();
+            }
+
+            return RedirectToAction("EmploymentApplication"); // أو اسم صفحة عرض الطلبات
+        }
 
     }
 }

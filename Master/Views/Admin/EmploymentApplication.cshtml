@@ -1,7 +1,7 @@
-﻿@model IEnumerable<Master.Models.User>
+﻿@model IEnumerable<Master.Models.EmploymentApplication>
 
 @{
-    ViewData["Title"] = "العملاء";
+    ViewData["Title"] = "طلبات التوظيف";
     Layout = "_AdminLayout";
 }
 
@@ -58,37 +58,43 @@
     <h2 class="mb-0 text-success">
         <i class="fas fa-users me-2"></i>@ViewData["Title"]
     </h2>
-   
+
 </div>
 <table class="table">
     <thead>
         <tr>
             <th>
-               الاسم
+                الاسم
             </th>
             <th>
-                الإيميل
+                رقم الهوية
             </th>
             <th>
                 الهاتف
             </th>
             <th>
+                البريد الالكتروني
+            </th>
+            <th>
                 المدينة
             </th>
             <th>
-                العنوان
+                الحي
             </th>
             <th>
-                نوع المستخدم
+                الخبرة
             </th>
             <th>
-                تاريخ الميلاد
+                الوظيفة
             </th>
             <th>
-                الجنس
+                الرسالة
             </th>
             <th>
-                النقاط
+                تاريخ التقديم
+            </th>
+            <th>
+                حالة الطلب
             </th>
             <th></th>
         </tr>
@@ -97,46 +103,69 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.FullName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Email)
+                @Html.DisplayFor(modelItem => item.NationalId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Phone)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.City)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Location)
+                @Html.DisplayFor(modelItem => item.District)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserType)
+                @Html.DisplayFor(modelItem => item.ExperienceYears)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BirthDate)
+                @Html.DisplayFor(modelItem => item.Position)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Gender)
+                @Html.DisplayFor(modelItem => item.MotivationText)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Points)
+                @Html.DisplayFor(modelItem => item.ApplicationDate)
             </td>
-           @*  <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td> *@
+            <td>
+                    @if (item.Status == "Pending")
+                    {
+                        <form id="statusForm-@item.Id" asp-action="UpdateEmpStatus" method="post">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <select name="volstatus" class="form-select form-select-sm"
+                                    onchange="this.form.submit()">
+                                <option selected value="Pending">Pending</option>
+                                <option value="مقبول">مقبول</option>
+                                <option value="مرفوض">مرفوض</option>
+
+                            </select>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="badge @GetStatusBadgeClass(@item.Status)">@item.Status</span>
+                    }
+            </td>
+            <td>
+                <a asp-action="Reply" asp-route-id="@item.Id">Reply</a>
+            </td>
         </tr>
 }
     </tbody>
 </table>
-@section Scripts {
-    <script>
-         document.addEventListener('DOMContentLoaded', function() {
-            createAnimatedCircles();
-
+@functions {
+    string GetStatusBadgeClass(string status)
+    {
+        switch (status)
+        {
+            case "مقبول": return "bg-success";
+            case "مرفوض": return "bg-danger";
+            default: return "bg-secondary";
         }
-    </script>
+    }
 }

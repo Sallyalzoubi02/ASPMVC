@@ -23,9 +23,13 @@ public partial class MyDBContext : DbContext
 
     public virtual DbSet<Company> Companies { get; set; }
 
+    public virtual DbSet<Contact> Contacts { get; set; }
+
     public virtual DbSet<Coupon> Coupons { get; set; }
 
     public virtual DbSet<Delivery> Deliveries { get; set; }
+
+    public virtual DbSet<EmploymentApplication> EmploymentApplications { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
 
@@ -40,6 +44,8 @@ public partial class MyDBContext : DbContext
     public virtual DbSet<Subscription> Subscriptions { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<VolunteerApplication> VolunteerApplications { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -118,6 +124,19 @@ public partial class MyDBContext : DbContext
                 .HasConstraintName("company_owner_id_foreign");
         });
 
+        modelBuilder.Entity<Contact>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Contacts__3214EC07D47F5EA7");
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.FirstName).HasMaxLength(50);
+            entity.Property(e => e.LastName).HasMaxLength(50);
+            entity.Property(e => e.Subject).HasMaxLength(100);
+        });
+
         modelBuilder.Entity<Coupon>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Coupons__3214EC07C433F978");
@@ -157,6 +176,25 @@ public partial class MyDBContext : DbContext
             entity.HasOne(d => d.Request).WithMany(p => p.Deliveries)
                 .HasForeignKey(d => d.RequestId)
                 .HasConstraintName("deliveries_request_id_foreign");
+        });
+
+        modelBuilder.Entity<EmploymentApplication>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Employme__3214EC07DFF79FF1");
+
+            entity.Property(e => e.ApplicationDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.City).HasMaxLength(50);
+            entity.Property(e => e.District).HasMaxLength(50);
+            entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.FullName).HasMaxLength(100);
+            entity.Property(e => e.NationalId).HasMaxLength(20);
+            entity.Property(e => e.Phone).HasMaxLength(20);
+            entity.Property(e => e.Position).HasMaxLength(100);
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .HasDefaultValue("Pending");
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -411,6 +449,25 @@ public partial class MyDBContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("user_type");
+        });
+
+        modelBuilder.Entity<VolunteerApplication>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Voluntee__3214EC074ECF57F2");
+
+            entity.Property(e => e.ApplicationDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.AvailabilityDays).HasMaxLength(100);
+            entity.Property(e => e.City).HasMaxLength(50);
+            entity.Property(e => e.District).HasMaxLength(50);
+            entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.FullName).HasMaxLength(100);
+            entity.Property(e => e.NationalId).HasMaxLength(20);
+            entity.Property(e => e.Phone).HasMaxLength(20);
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .HasDefaultValue("Pending");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -49,7 +49,7 @@ hr {
 }
 
 .bg-plain {
-    background: linear-gradient(to right,rgba(255, 255, 255, 0.3),rgba(255, 255, 255, 0.3)), url(../img/Contactus-Mockup.png);
+    background: linear-gradient(to right,rgba(255, 255, 255, 0.3),rgba(255, 255, 255, 0.3)), url(../image/Contactus-Mockup.png);
     background-repeat: repeat;
 }
 

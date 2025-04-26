@@ -1,7 +1,7 @@
-﻿@model IEnumerable<Master.Models.User>
+﻿@model IEnumerable<Master.Models.VolunteerApplication>
 
 @{
-    ViewData["Title"] = "العملاء";
+    ViewData["Title"] = "طلبات التطوع";
     Layout = "_AdminLayout";
 }
 
@@ -73,22 +73,27 @@
                 الهاتف
             </th>
             <th>
+                العمر
+            </th>
+            <th>
                 المدينة
             </th>
             <th>
-                العنوان
+               الحي
+            </th>
+            
+            <th>
+                ايام التفرغ
+            </th>
+            
+            <th>
+                الرسالة
             </th>
             <th>
-                نوع المستخدم
+                المهارات
             </th>
             <th>
-                تاريخ الميلاد
-            </th>
-            <th>
-                الجنس
-            </th>
-            <th>
-                النقاط
+                حالة الطلب
             </th>
             <th></th>
         </tr>
@@ -97,7 +102,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.FullName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Email)
@@ -105,29 +110,49 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Phone)
             </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Age)
+                </td>
             <td>
                 @Html.DisplayFor(modelItem => item.City)
             </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.District)
+                </td>
+            
             <td>
-                @Html.DisplayFor(modelItem => item.Location)
+                @Html.DisplayFor(modelItem => item.AvailabilityDays)
+            </td>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.MotivationText)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UserType)
+                @Html.DisplayFor(modelItem => item.Skills)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BirthDate)
+                    @if (item.Status == "Pending")
+                    {
+                        <form id="statusForm-@item.Id" asp-action="UpdateVolStatus" method="post">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <select name="volstatus" class="form-select form-select-sm"
+                                    onchange="this.form.submit()">
+                                <option selected value="Pending">Pending</option>
+                                <option value="مقبول">مقبول</option>
+                                <option value="مرفوض">مرفوض</option>
+
+                            </select>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">@item.Status</span>
+                    }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Gender)
+                <a asp-action="reply" asp-route-id="@item.Id">Reply</a> 
+                
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Points)
-            </td>
-           @*  <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td> *@
         </tr>
 }
     </tbody>

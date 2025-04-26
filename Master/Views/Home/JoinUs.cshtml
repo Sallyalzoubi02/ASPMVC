@@ -31,6 +31,7 @@
                     <div class="tab-pane fade show active" id="employee" role="tabpanel">
                         <h3 class="mb-4 text-center"><i class="fas fa-briefcase ms-2"></i> طلب توظيف</h3>
                         <form id="employeeForm">
+                            @Html.AntiForgeryToken()
                             <div class="row mb-3">
                                 <div class="col-md-6 mb-3">
                                     <label for="empFullName" class="form-label required-field">الاسم الكامل</label>
@@ -58,11 +59,18 @@
                                     <label for="empCity" class="form-label required-field">المدينة</label>
                                     <select class="form-select" id="empCity" required>
                                         <option value="" selected disabled>اختر المدينة</option>
-                                        <option value="الرياض">الرياض</option>
-                                        <option value="جدة">جدة</option>
-                                        <option value="الدمام">الدمام</option>
-                                        <option value="مكة">مكة</option>
-                                        <option value="المدينة">المدينة</option>
+                                        <option value="عمان">عمان</option>
+                                        <option value="إربد">إربد</option>
+                                        <option value="الزرقاء">الزرقاء</option>
+                                        <option value="البلقاء">البلقاء</option>
+                                        <option value="مادبا">مادبا</option>
+                                        <option value="الكرك">الكرك</option>
+                                        <option value="الطفيلة">الطفيلة</option>
+                                        <option value="معان">معان</option>
+                                        <option value="العقبة">العقبة</option>
+                                        <option value="جرش">جرش</option>
+                                        <option value="عجلون">عجلون</option>
+                                        <option value="المفرق">المفرق</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -105,6 +113,7 @@
                     <div class="tab-pane fade" id="volunteer" role="tabpanel">
                         <h3 class="mb-4 text-center"><i class="fas fa-hand-holding-heart ms-2"></i> طلب تطوع</h3>
                         <form id="volunteerForm">
+                            @Html.AntiForgeryToken()
                             <div class="row mb-3">
                                 <div class="col-md-6 mb-3">
                                     <label for="volFullName" class="form-label required-field">الاسم الكامل</label>
@@ -132,11 +141,18 @@
                                     <label for="volCity" class="form-label required-field">المدينة</label>
                                     <select class="form-select" id="volCity" required>
                                         <option value="" selected disabled>اختر المدينة</option>
-                                        <option value="الرياض">الرياض</option>
-                                        <option value="جدة">جدة</option>
-                                        <option value="الدمام">الدمام</option>
-                                        <option value="مكة">مكة</option>
-                                        <option value="المدينة">المدينة</option>
+                                        <option value="عمان">عمان</option>
+                                        <option value="إربد">إربد</option>
+                                        <option value="الزرقاء">الزرقاء</option>
+                                        <option value="البلقاء">البلقاء</option>
+                                        <option value="مادبا">مادبا</option>
+                                        <option value="الكرك">الكرك</option>
+                                        <option value="الطفيلة">الطفيلة</option>
+                                        <option value="معان">معان</option>
+                                        <option value="العقبة">العقبة</option>
+                                        <option value="جرش">جرش</option>
+                                        <option value="عجلون">عجلون</option>
+                                        <option value="المفرق">المفرق</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">

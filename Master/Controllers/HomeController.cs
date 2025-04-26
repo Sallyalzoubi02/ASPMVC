@@ -28,6 +28,48 @@ namespace Master.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Contact(Contact model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    Db.Contacts.Add(model);
+                    await Db.SaveChangesAsync();
+
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        // إذا كان الطلب AJAX
+                        return Json(new { success = true });
+                    }
+
+                    return RedirectToAction(nameof(Contact));
+                }
+                catch (Exception ex)
+                {
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return Json(new { success = false, error = ex.Message });
+                    }
+
+                    ModelState.AddModelError("", "حدث خطأ أثناء محاولة إرسال الرسالة: " + ex.Message);
+                }
+            }
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                    .Select(e => e.ErrorMessage)
+                                    .ToList();
+                return Json(new { success = false, errors = errors });
+            }
+
+            return View(model);
+        }
+
+
         public IActionResult About()
         {
             return View();
