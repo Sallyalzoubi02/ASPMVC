@@ -5,7 +5,34 @@
     Layout = "_AdminLayout";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+    <style>
+
+        .no-image {
+            width: 50px;
+            height: 50px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+    <style>
+        #mapContainer {
+            height: 500px !important;
+            width: 100% !important;
+        }
+
+        .leaflet-container {
+            background: #fff !important;
+        }
+    </style>
+}
 
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -46,7 +73,8 @@
                                 <td>@item.Notes</td>
                                 <td>@item.User?.Name</td>
                                 <td>
-                                    @if (item.Latitude.HasValue && item.Longitude.HasValue)
+                                    
+                                    @if (item.Latitude.HasValue && item.Longitude.HasValue) 
                                     {
                                         <button class="btn btn-sm btn-outline-primary show-map-btn"
                                                 data-latitude="@item.Latitude"
@@ -118,129 +146,108 @@
 }
 
 <!-- Map Modal -->
-<div class="modal fade" id="mapModal" tabindex="-1" role="dialog" aria-labelledby="mapModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="mapModalLabel">موقع التسليم</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div id="mapContainer" style="height: 500px; width: 100%;"></div>
-                <div id="locationAddress" class="mt-2 font-weight-bold"></div>
+            <div class="modal-body p-0">
+                <div id="mapContainer" style="height: 500px;"></div>
+                <div id="locationAddress" class="p-3"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">إغلاق</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
             </div>
         </div>
     </div>
 </div>
 
-@section Styles {
-    <style>
 
-        .no-image {
-            width: 50px;
-            height: 50px;
-            background: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            color: #6c757d;
-            border: 1px solid #dee2e6;
-        }
-    </style>
-    <style>
-        #mapContainer {
-            height: 500px !important;
-            width: 100% !important;
-        }
-
-        .leaflet-container {
-            background: #fff !important;
-        }
-    </style>
-}
 @section Scripts {
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <script>
-        // متغيرات عامة
         let map;
         let marker;
 
-        // دالة لتهيئة الخريطة
         function initMap(lat, lng, location) {
-            if (!map) {
-                map = L.map('mapContainer', {
-                    preferCanvas: true, // للأداء الأفضل مع العديد من العلامات
-                    zoomControl: true
-                }).setView([lat, lng], 15);
+            const container = document.getElementById('mapContainer');
+            if (!container) return;
 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                    maxZoom: 19
-                }).addTo(map);
-            } else {
-                map.setView([lat, lng], 15);
+            if (map) {
+                map.remove();
             }
 
-            // إزالة الماركر القديم إذا وجد
+            map = L.map('mapContainer').setView([lat, lng], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(map);
+
             if (marker) {
                 map.removeLayer(marker);
             }
 
-            // إضافة ماركر جديد مع أيقونة مخصصة
-            const customIcon = L.icon({
-                iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41]
-            });
-
-            marker = L.marker([lat, lng], {icon: customIcon}).addTo(map)
+            marker = L.marker([lat, lng]).addTo(map)
                 .bindPopup(`<b>${location}</b>`)
                 .openPopup();
 
             $('#locationAddress').text(location);
+
+            setTimeout(() => {
+                map.invalidateSize();
+                map.setView([lat, lng], 15);
+            }, 300);
         }
 
-        // عند تحميل الصفحة
-        $(document).ready(function() {
-            // عند النقر على زر الخريطة
-            $(document).on('click', '.show-map-btn', function() {
-                const latitude = parseFloat($(this).data('latitude'));
-                const longitude = parseFloat($(this).data('longitude'));
-                const location = $(this).data('location');
+        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('show-map-btn') ||
+                    e.target.closest('.show-map-btn')) {
+                    const btn = e.target.classList.contains('show-map-btn') ?
+                              e.target : e.target.closest('.show-map-btn');
+                    const latitude = parseFloat(btn.dataset.latitude);
+                    const longitude = parseFloat(btn.dataset.longitude);
+                    const location = btn.dataset.location;
 
-                // تخزين البيانات في المودال قبل فتحه
-                $('#mapModal').data('lat', latitude)
-                            .data('lng', longitude)
-                            .data('loc', location);
-            });
+                    const modal = new bootstrap.Modal(document.getElementById('mapModal'));
+                    modal.show();
 
-            // عند فتح المودال
-            $('#mapModal').on('shown.bs.modal', function() {
-                const lat = $(this).data('lat');
-                const lng = $(this).data('lng');
-                const loc = $(this).data('loc');
-
-                if (lat && lng) {
-                    initMap(lat, lng, loc);
+                    // تخزين البيانات في العنصر مباشرة
+                    document.getElementById('mapModal').dataset.lat = latitude;
+                    document.getElementById('mapModal').dataset.lng = longitude;
+                    document.getElementById('mapModal').dataset.loc = location;
                 }
             });
 
-            // تنظيف عند إغلاق المودال
-            $('#mapModal').on('hidden.bs.modal', function() {
-                if (marker) {
-                    map.removeLayer(marker);
+            const mapModal = document.getElementById('mapModal');
+            if (mapModal) {
+                mapModal.addEventListener('shown.bs.modal', function() {
+                    const lat = parseFloat(this.dataset.lat);
+                    const lng = parseFloat(this.dataset.lng);
+                    const loc = this.dataset.loc;
+
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        initMap(lat, lng, loc);
+                    } else {
+                        console.error('إحداثيات غير صالحة:', lat, lng);
+                        document.getElementById('locationAddress').textContent =
+                            'لا يمكن عرض الخريطة - إحداثيات غير صالحة';
+                    }
+                });
+
+                mapModal.addEventListener('hidden.bs.modal', function() {
+                    if (map) {
+                        map.remove();
+                        map = null;
+                    }
                     marker = null;
-                }
-                $(this).removeData();
-            });
+                });
+            }
         });
     </script>
 }

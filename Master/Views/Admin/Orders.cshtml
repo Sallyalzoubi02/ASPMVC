@@ -155,7 +155,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
-                    <button type="button" class="btn btn-success">طباعة الفاتورة</button>
+                    <button type="button" class="btn btn-success" onclick="printInvoice('orderModal-@item.Id')">طباعة الفاتورة</button>
                 </div>
             </div>
         </div>
@@ -193,9 +193,22 @@
 
 @section Scripts {
     <script>
-         document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             createAnimatedCircles();
+        });
 
+                function printInvoice(modalId) {
+            var modal = document.getElementById(modalId);
+            var originalContents = document.body.innerHTML;
+            var printContents = modal.querySelector('.modal-content').innerHTML;
+
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
         }
     </script>
 }
+
+
+
