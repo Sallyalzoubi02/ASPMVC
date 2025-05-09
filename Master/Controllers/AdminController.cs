@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,6 +23,81 @@ namespace Master.Controllers
         // GET: AdminController
         public ActionResult Index()
         {
+            // إحصائيات العملاء
+            var clientsCount = _dbContext.Users.Count();
+
+            // إحصائيات المبيعات
+            var salesCount = _dbContext.Orders.Count();
+
+            // إحصائيات الإيرادات
+            var revenue = _dbContext.Payments.Where(p => p.Status == "تم الدفع")?.Sum(p => p.Amount) ?? 0;
+
+            // حساب النمو (نسبة الزيادة في المبيعات هذا الشهر مقارنة بالشهر الماضي)
+            var currentMonthSales = _dbContext.Orders
+                .Count(o => o.CreatedAt.HasValue &&
+                           o.CreatedAt.Value.Month == DateTime.Now.Month &&
+                           o.CreatedAt.Value.Year == DateTime.Now.Year);
+
+            var lastMonthSales = _dbContext.Orders
+                .Count(o => o.CreatedAt.HasValue &&
+                           o.CreatedAt.Value.Month == DateTime.Now.AddMonths(-1).Month &&
+                           o.CreatedAt.Value.Year == DateTime.Now.AddMonths(-1).Year);
+
+            var growthPercentage = lastMonthSales > 0 ?
+                ((currentMonthSales - lastMonthSales) * 100 / lastMonthSales) :
+                (currentMonthSales > 0 ? 100 : 0);
+
+            // بيانات المبيعات الشهرية للرسم البياني
+            var monthlySalesData = _dbContext.Orders
+                .Where(o => o.CreatedAt.HasValue && o.CreatedAt.Value.Year == DateTime.Now.Year)
+                .AsEnumerable() // للانتقال إلى العمليات على مستوى الذاكرة
+                .GroupBy(o => o.CreatedAt.Value.Month)
+                .Select(g => new {
+                    Month = g.Key,
+                    Sales = g.Count()
+                })
+                .OrderBy(x => x.Month)
+                .ToList();
+
+            // ملء البيانات لجميع الأشهر (حتى لو لم يكن هناك مبيعات)
+            var allMonthsData = Enumerable.Range(1, 12)
+                .Select(month => new {
+                    Month = month,
+                    Sales = monthlySalesData.FirstOrDefault(m => m.Month == month)?.Sales ?? 0
+                })
+                .ToList();
+
+            // أفضل المنتجات مبيعاً
+            var topProducts = _dbContext.OrderItems
+                .Include(oi => oi.Product)
+                .GroupBy(oi => oi.Product)
+                .Select(g => new {
+                    Product = g.Key,
+                    SalesCount = g.Sum(oi => oi.Quantity),
+                    Revenue = g.Sum(oi => oi.Quantity * oi.Product.Price)
+                })
+                .OrderByDescending(x => x.SalesCount)
+                .Take(5)
+                .ToList();
+
+            // أحدث الطلبات
+            var latestOrders = _dbContext.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .OrderByDescending(o => o.CreatedAt)
+                .Take(3)
+                .ToList();
+
+            // تمرير البيانات إلى العرض
+            ViewBag.ClientsCount = clientsCount;
+            ViewBag.SalesCount = salesCount;
+            ViewBag.Revenue = revenue;
+            ViewBag.GrowthPercentage = growthPercentage;
+            ViewBag.MonthlySales = allMonthsData;
+            ViewBag.TopProducts = topProducts;
+            ViewBag.LatestOrders = latestOrders;
+
             return View();
         }
 
@@ -314,7 +390,7 @@ namespace Master.Controllers
 
         public ActionResult Users()
         {
-            var users = _dbContext.Users.ToList();
+            var users = _dbContext.Users.Where(x => x.UserType != "admin").ToList();
             if (users.IsNullOrEmpty())
             {
                 ViewBag.IsNull = true;
@@ -370,6 +446,20 @@ namespace Master.Controllers
             {
                 pay.Status = PaymentStatus;
                 _dbContext.Payments.Update(pay);
+                _dbContext.SaveChanges();
+            }
+
+            return RedirectToAction("Orders"); // أو اسم صفحة عرض الطلبات
+        }
+
+        [HttpPost]
+        public IActionResult UpdateOrderStatus(int id, string OrderStatus)
+        {
+            var order = _dbContext.Orders.FirstOrDefault(o => o.Id == id);
+            if (order != null)
+            {
+                order.OrderStatus = OrderStatus;
+                _dbContext.Orders.Update(order);
                 _dbContext.SaveChanges();
             }
 
@@ -455,5 +545,100 @@ namespace Master.Controllers
             return RedirectToAction("EmploymentApplication"); // أو اسم صفحة عرض الطلبات
         }
 
+        
+
+        [HttpPost]
+        public async Task<IActionResult> SendReply(
+    int id,
+    string email,
+    string status,
+    string replyMessage,
+    [FromServices] EmailService emailService)
+        {
+            try
+            {
+                // تحديث حالة الطلب في قاعدة البيانات
+                var application = await _dbContext.EmploymentApplications.FindAsync(id);
+                if (application == null)
+                {
+                    return Json(new { success = false, message = "لم يتم العثور على الطلب" });
+                }
+
+                application.Status = status;
+                await _dbContext.SaveChangesAsync();
+
+                // إرسال البريد الإلكتروني
+                string subject = $"حالة طلب التوظيف - {status}";
+                string emailBody = $@"
+            <h2>مرحباً {application.FullName},</h2>
+            <p>شكراً لتقديمك طلب توظيف معنا.</p>
+            <p>حالة طلبك: <strong>{status}</strong></p>
+            <p>رسالتنا لك:</p>
+            <div style='background-color:#f8f9fa; padding:15px; border-radius:5px;'>
+                {replyMessage}
+            </div>
+            <p>مع تحياتنا،<br/>فريق التوظيف</p>";
+
+
+                await emailService.SendEmailAsync(email, subject, emailBody);
+
+                TempData["ToastrMessage"] = "تم إرسال الرد بنجاح";
+                TempData["ToastrType"] = "success";
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                TempData["ToastrMessage"] = "حدث خطأ أثناء الإرسال";
+                TempData["ToastrType"] = "error";
+                return Json(new { success = false });
+            }
+        }
+
+
+        //------------------------------------subscribtion---------------------------------------
+
+        public ActionResult subscription()
+        {
+            var sub = _dbContext.Subscriptions.Include(x=>x.User)
+                        .ToList();
+            if (sub.IsNullOrEmpty())
+            {
+                ViewBag.IsNull = true;
+                return View(sub);
+            }
+
+            return View(sub);
+        }
+
+
+
+        //--------------------------------Vouchers-------------------------------------------------
+        public ActionResult Voucher()
+        {
+            var now = DateTime.Now; // التاريخ والوقت الحالي
+            var vouchers = _dbContext.Coupons.ToList();
+
+            if (vouchers.IsNullOrEmpty())
+            {
+                ViewBag.IsNull = true;
+                return View(vouchers);
+            }
+
+            // التحقق من كل كوبون وتحديث حالته إذا لزم الأمر
+            foreach (var voucher in vouchers)
+            {
+                if (voucher.ExpiryDate < now && voucher.IsActive)
+                {
+                    voucher.IsActive = false;
+                    // يمكنك إضافة حفظ التغييرات هنا إذا أردت تحديث قاعدة البيانات
+                    // _dbContext.SaveChanges();
+                }
+            }
+
+            // إذا كنت تريد حفظ جميع التغييرات مرة واحدة بعد الحلقة
+            _dbContext.SaveChanges();
+
+            return View(vouchers);
+        }
     }
 }

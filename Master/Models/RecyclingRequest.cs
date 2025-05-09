@@ -37,8 +37,6 @@ public partial class RecyclingRequest
 
     public decimal? Longitude { get; set; }
 
-    public virtual ICollection<Delivery> Deliveries { get; set; } = new List<Delivery>();
-
     public virtual Payment? Payment { get; set; }
 
     public virtual User? User { get; set; }

@@ -27,8 +27,6 @@ public partial class MyDBContext : DbContext
 
     public virtual DbSet<Coupon> Coupons { get; set; }
 
-    public virtual DbSet<Delivery> Deliveries { get; set; }
-
     public virtual DbSet<EmploymentApplication> EmploymentApplications { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
@@ -145,37 +143,11 @@ public partial class MyDBContext : DbContext
             entity.Property(e => e.DiscountPercentage).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.ExpiryDate).HasColumnType("datetime");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
-        });
 
-        modelBuilder.Entity<Delivery>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("deliveries_id_primary");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.DeliveryTime).HasColumnName("delivery_time");
-            entity.Property(e => e.Location)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("location");
-            entity.Property(e => e.PaidDelivery).HasColumnName("paid_delivery");
-            entity.Property(e => e.PaymentId).HasColumnName("payment_id");
-            entity.Property(e => e.Phone)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("phone");
-            entity.Property(e => e.ReceiverName)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("receiver_name");
-            entity.Property(e => e.RequestId).HasColumnName("request_id");
-
-            entity.HasOne(d => d.Payment).WithMany(p => p.Deliveries)
-                .HasForeignKey(d => d.PaymentId)
-                .HasConstraintName("deliveries_payment_id_foreign");
-
-            entity.HasOne(d => d.Request).WithMany(p => p.Deliveries)
-                .HasForeignKey(d => d.RequestId)
-                .HasConstraintName("deliveries_request_id_foreign");
+            entity.HasOne(d => d.User).WithMany(p => p.Coupons)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Coupons_Users");
         });
 
         modelBuilder.Entity<EmploymentApplication>(entity =>

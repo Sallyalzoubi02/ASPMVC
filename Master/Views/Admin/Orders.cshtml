@@ -33,10 +33,25 @@
                             <tr>
                                 <td>#@item.Id</td>
                                 <td>
-                                    <span class="badge @GetStatusBadgeClass(item.OrderStatus)">
-                                        @item.OrderStatus
-                                    </span>
+                                    @if (@item.OrderStatus != "تم التوصيل")
+                                    {
+                                        <form id="statusForm-@item.Id" asp-action="UpdateOrderStatus" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <select name="OrderStatus" class="form-select form-select-sm" onchange="this.form.submit()">
+                                                <option value="جاري المعالجة" selected="@(item.OrderStatus == "جاري المعالجة")">جاري المعالجة</option>
+                                                <option value="تم الشحن" selected="@(item.OrderStatus == "تم الشحن")">تم الشحن</option>
+                                                <option value="تم التوصيل" selected="@(item.OrderStatus == "تم التوصيل")">تم التوصيل</option>
+                                            </select>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge @GetStatusBadgeClass(item.OrderStatus)">
+                                            @item.OrderStatus
+                                        </span>
+                                    }
                                 </td>
+                                
                                 <td>@item.TotalAmount.ToString("0.00") JD</td>
                                 <td>@item.CreatedAt</td>
                                 <td>
@@ -167,9 +182,10 @@
     {
         switch (status)
         {
-            case "مكتمل": return "bg-success";
-            case "قيد التجهيز": return "bg-primary";
-            case "ملغي": return "bg-danger";
+            case "تم التوصيل": return "bg-success";
+            case "جاري المعالجة": return "bg-primary";
+            case "تم الشحن": return "bg-warning";
+            case "لم يتم التوصيل": return "bg-danger";
             default: return "bg-secondary";
         }
     }

@@ -60,6 +60,18 @@
     </h2>
 
 </div>
+@if (TempData["ToastrMessage"] != null)
+{
+    <div class="alert alert-@TempData["ToastrType"]">
+        @TempData["ToastrMessage"]
+    </div>
+      
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    
+}
 <table class="table">
     <thead>
         <tr>
@@ -152,12 +164,55 @@
                     }
             </td>
             <td>
-                <a asp-action="Reply" asp-route-id="@item.Id">Reply</a>
+                <button class="btn btn-sm text-success reply-btn"
+                        data-id="@item.Id"
+                        data-email="@item.Email"
+                        data-status="@item.Status"
+                        data-toggle="modal"
+                        data-target="#replyModal">
+                    الرد
+                </button>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+
+<!-- Reply Modal -->
+<div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replyModalLabel">إرسال رد</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-action="SendReply" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="applicationId" />
+                    <input type="hidden" name="email" id="applicationEmail" />
+                    <input type="hidden" name="status" id="applicationStatus" />
+
+                    <div class="form-group">
+                        <label>حالة الطلب:</label>
+                        <input type="text" id="statusDisplay" class="form-control" disabled />
+                    </div>
+
+                    <div class="form-group">
+                        <label>الرسالة:</label>
+                        <textarea name="replyMessage" id="replyMessage" class="form-control" rows="5" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">إرسال</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @functions {
     string GetStatusBadgeClass(string status)
     {
@@ -168,4 +223,70 @@
             default: return "bg-secondary";
         }
     }
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // فتح المودال - النسخة المعدلة
+            $(document).on('click', '.reply-btn', function() {
+                try {
+                    var $btn = $(this);
+                    var id = $btn.data('id');
+                    var email = $btn.data('email');
+                    var status = $btn.data('status');
+
+                    $('#applicationId').val(id);
+                    $('#applicationEmail').val(email);
+                    $('#applicationStatus').val(status);
+                    $('#statusDisplay').val(status);
+                    $('#replyMessage').val('');
+
+                    var modal = new bootstrap.Modal(document.getElementById('replyModal'));
+                    modal.show();
+                } catch (e) {
+                    console.error('Error opening modal:', e);
+                    toastr.error('حدث خطأ في فتح نافذة الرد');
+                }
+            });
+
+            // إرسال النموذج - النسخة المعدلة
+            $('#replyModal form').on('submit', function(e) {
+                e.preventDefault();
+
+                try {
+                    var form = $(this);
+                    $.ajax({
+                        url: form.attr('action'),
+                        method: form.attr('method'),
+                        data: form.serialize(),
+                        beforeSend: function() {
+                            $('#replyModal .btn-primary').prop('disabled', true);
+                        },
+                        success: function(response) {
+                            if(response && response.success) {
+                                $('#replyModal').modal('hide');
+                                toastr.success(response.message || 'تم الإرسال بنجاح');
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 1500);
+                            } else {
+                                toastr.error(response.message || 'حدث خطأ غير متوقع');
+                            }
+                        },
+                        error: function(xhr) {
+                            toastr.error('خطأ في الاتصال بالخادم: ' + xhr.statusText);
+                        },
+                        complete: function() {
+                            $('#replyModal .btn-primary').prop('disabled', false);
+                        }
+                    });
+                } catch (e) {
+                    console.error('Error submitting form:', e);
+                    toastr.error('حدث خطأ في إرسال النموذج');
+                    $('#replyModal .btn-primary').prop('disabled', false);
+                }
+            });
+        });
+    </script>
 }

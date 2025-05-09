@@ -29,8 +29,8 @@
         </div>
         <div class="card-body">
             <p><strong>تاريخ الطلب:</strong> @Model.CreatedAt</p>
-            <p><strong>الحالة:</strong> <span class="badge @GetStatusBadge(Model.OrderStatus)">@GetStatusText(Model.OrderStatus)</span></p>
-            <p><strong>المجموع:</strong> @Model.TotalAmount.ToString("N2") ر.س</p>
+            <p><strong>الحالة:</strong> <span class="badge @GetStatusBadge(Model.OrderStatus)">@Model.OrderStatus</span></p>
+            <p><strong>المجموع:</strong> @Model.TotalAmount.ToString("N2") دينار أردني</p>
         </div>
     </div>
 
@@ -55,7 +55,6 @@
     }
 
     <div class="mt-3">
-        <a asp-action="Reorder" asp-route-orderId="@Model.Id" class="btn btn-success">إعادة الطلب</a>
         <a asp-action="Profile" class="btn btn-secondary">العودة إلى الملف الشخصي</a>
     </div>
 </div>
@@ -63,21 +62,15 @@
 @functions {
     string GetStatusBadge(string status)
     {
-        return status switch
+        switch (status)
         {
-            "delivered" => "bg-success",
-            "shipped" => "bg-warning text-dark",
-            _ => "bg-secondary"
-        };
+            case "تم التوصيل": return "bg-success";
+            case "جاري المعالجة": return "bg-primary";
+            case "تم الشحن": return "bg-warning";
+            case "لم يتم التوصيل": return "bg-danger";
+            default: return "bg-secondary";
+        }
     }
 
-    string GetStatusText(string status)
-    {
-        return status switch
-        {
-            "delivered" => "تم التوصيل",
-            "shipped" => "في الطريق",
-            _ => "قيد المعالجة"
-        };
-    }
+    
 }

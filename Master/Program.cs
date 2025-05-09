@@ -1,10 +1,12 @@
-﻿using Master.Models;
+﻿using Master.Extensions;
+using Master.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 
 builder.Services.AddDbContext<MyDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectionString")));
@@ -18,6 +20,10 @@ builder.Services.AddCors(options =>
                .AllowAnyHeader();
     });
 });
+
+
+builder.Services.AddTransient<EmailService>();
+builder.Services.AddScoped<EcoPointsService>();
 
 // ثم بعد var app = builder.Build();
 

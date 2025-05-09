@@ -1,0 +1,314 @@
+﻿@model IEnumerable<Master.Models.Subscription>
+
+@{
+    ViewData["Title"] = "الإشتراكات";
+    Layout = "_AdminLayout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #mapContainer {
+            height: 500px !important;
+            width: 100% !important;
+        }
+
+        .leaflet-container {
+            background: #fff !important;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .badge {
+            font-size: 0.85rem;
+            padding: 0.35em 0.65em;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 text-success">
+            <i class="fas fa-star me-2"></i>@ViewData["Title"]
+        </h2>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-success">
+                        <tr>
+                            <th>المشترك</th>
+                            <th>نوع الاشتراك</th>
+                            <th>يوم الاستلام</th>
+                            <th>الوقت</th>
+                            <th>ملاحظات</th>
+                            <th>حالة الاشتراك</th>
+                            <th>تاريخ البدء</th>
+                            <th>تاريخ الانتهاء</th>
+                            <th>نوع المواد</th>
+                            <th>الكمية</th>
+                            <th>المدينة</th>
+                            <th>الموقع</th>
+                            <th>طريقة الدفع</th>
+                            <th>العمليات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@(item.User?.Name ?? "غير محدد")</td>
+                                <td>@GetSubscriptionTypeArabic(item.SubscriptionType)</td>
+                                <td>@GetDayArabic(item.DayOfWeek)</td>
+                                <td>@item.Time</td>
+                                <td>@(string.IsNullOrEmpty(item.Notes)? "لا يوجد" : item.Notes)</td>
+                                <td>
+                                    <span class="badge @(item.IsActive ? "bg-success" : "bg-secondary")">
+                                        @(item.IsActive ? "نشط" : "غير نشط")
+                                    </span>
+                                </td>
+                                <td>@item.StartDate.ToString("yyyy/MM/dd")</td>
+                                <td>@(item.EndDate.HasValue ? item.EndDate.Value.ToString("yyyy/MM/dd") : "غير محدد")</td>
+                                <td>@GetMaterialTypeArabic(item.MaterialType)</td>
+                                <td>@GetQuantityArabic(item.Quantity)</td>
+                                <td>@GetCityArabic(item.City)</td>
+                                <td>
+                                    @if (item.Latitude.HasValue && item.Longitude.HasValue)
+                                    {
+                                        <button class="btn btn-sm btn-outline-primary show-map-btn"
+                                                data-latitude="@item.Latitude"
+                                                data-longitude="@item.Longitude"
+                                                data-location="@item.Location"
+                                                data-toggle="modal"
+                                                data-target="#mapModal">
+                                            <i class="fas fa-map-marker-alt"></i> عرض الخريطة
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">لا توجد إحداثيات</span>
+                                    }
+                                </td>
+                                <td>@GetPaymentMethodArabic(item.PaymentMethod)</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Map Modal -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mapModalLabel">موقع التسليم</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="mapContainer" style="height: 500px;"></div>
+                <div id="locationAddress" class="p-3"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map;
+        let marker;
+
+        function initMap(lat, lng, location) {
+            const container = document.getElementById('mapContainer');
+            if (!container) return;
+
+            if (map) {
+                map.remove();
+            }
+
+            map = L.map('mapContainer').setView([lat, lng], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            marker = L.marker([lat, lng]).addTo(map)
+                .bindPopup(`<b>${location}</b>`)
+                .openPopup();
+
+            $('#locationAddress').text(location);
+
+            setTimeout(() => {
+                map.invalidateSize();
+                map.setView([lat, lng], 15);
+            }, 300);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('show-map-btn') ||
+                    e.target.closest('.show-map-btn')) {
+                    const btn = e.target.classList.contains('show-map-btn') ?
+                              e.target : e.target.closest('.show-map-btn');
+                    const latitude = parseFloat(btn.dataset.latitude);
+                    const longitude = parseFloat(btn.dataset.longitude);
+                    const location = btn.dataset.location;
+
+                    const modal = new bootstrap.Modal(document.getElementById('mapModal'));
+                    modal.show();
+
+                    // تخزين البيانات في العنصر مباشرة
+                    document.getElementById('mapModal').dataset.lat = latitude;
+                    document.getElementById('mapModal').dataset.lng = longitude;
+                    document.getElementById('mapModal').dataset.loc = location;
+                }
+            });
+
+            const mapModal = document.getElementById('mapModal');
+            if (mapModal) {
+                mapModal.addEventListener('shown.bs.modal', function() {
+                    const lat = parseFloat(this.dataset.lat);
+                    const lng = parseFloat(this.dataset.lng);
+                    const loc = this.dataset.loc;
+
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        initMap(lat, lng, loc);
+                    } else {
+                        console.error('إحداثيات غير صالحة:', lat, lng);
+                        document.getElementById('locationAddress').textContent =
+                            'لا يمكن عرض الخريطة - إحداثيات غير صالحة';
+                    }
+                });
+
+                mapModal.addEventListener('hidden.bs.modal', function() {
+                    if (map) {
+                        map.remove();
+                        map = null;
+                    }
+                    marker = null;
+                });
+            }
+        });
+    </script>
+}
+
+@functions {
+    string GetSubscriptionTypeArabic(string type)
+    {
+        switch (type?.ToLower())
+        {
+            case "daily" : return "يومي";
+            case "weekly": return "أسبوعي";
+            case "monthly": return "شهري";
+            case "yearly": return "سنوي";
+            default: return type ?? "غير محدد";
+        }
+    }
+
+    string GetDayArabic(string day)
+    {
+        switch (day?.ToLower())
+        {
+            case "all": return "جميع الأيام";
+            case "sunday": return "الأحد";
+            case "monday": return "الإثنين";
+            case "tuesday": return "الثلاثاء";
+            case "wednesday": return "الأربعاء";
+            case "thursday": return "الخميس";
+            case "friday": return "الجمعة";
+            case "saturday": return "السبت";
+            
+            default: return day ?? "غير محدد";
+        }
+    }
+
+    string GetQuantityArabic(string quantity)
+    {
+        switch (quantity?.ToLower())
+        {
+            
+            case "few": return "قليلة";
+            case "mid": return "متوسطة";
+            case "lg": return "كبيرة";
+            case "xlg": return "كبيرة جداً";
+            case "idk": return "لا استطيع التقييم";
+            default: return quantity ?? "غير محدد";
+        }
+    }
+
+    string GetMaterialTypeArabic(string type)
+    {
+        switch (type?.ToLower())
+        {
+            case "plastic": return "بلاستيك";
+            case "paper": return "ورق";
+            case "iron": return "معادن";
+            case "glass": return "زجاج";
+            case "fabric": return "قماش";
+            case "wood": return "خشب";
+            case "mix": return "مختلفة";
+            default: return type ?? "غير محدد";
+        }
+    }
+
+    string GetCityArabic(string city)
+    {
+        switch (city?.ToLower())
+        {
+            case "amman": return "عمان";
+            case "zarqa": return "الزرقاء";
+            case "irbid": return "إربد";
+            case "aqaba": return "العقبة";
+            case "maan": return "معان";
+            case "madaba": return "مادبا";
+            case "karak": return "الكرك";
+            case "tafilah": return "الطفيلة";
+            case "mafraq": return "المفرق";
+            case "jerash": return "جرش";
+            case "ajloun": return "عجلون";
+            case "salt": return "السلط";
+            default: return city ?? "غير محدد";
+        }
+    }
+
+    string GetPaymentMethodArabic(string method)
+    {
+        switch (method?.ToLower())
+        {
+            case "cash": return "نقدي";
+            case "card": return "بطاقة ائتمان";
+            
+            default: return method ?? "غير محدد";
+        }
+    }
+}

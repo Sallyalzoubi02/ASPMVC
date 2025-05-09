@@ -19,6 +19,22 @@ html::-webkit-scrollbar-thumb {
     border-radius: 5rem;
 }
 
+.btn-link {
+    --bs-btn-font-weight: 400;
+    --bs-btn-color: #198754 !important;
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-color: #198754 !important;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-color: #198754 !important;
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-disabled-color: #6c757d;
+    --bs-btn-disabled-border-color: transparent;
+    --bs-btn-box-shadow: 0 0 0 #000;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    text-decoration: underline;
+}
+
 
 .payment-container {
     background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);

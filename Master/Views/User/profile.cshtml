@@ -20,6 +20,43 @@
         border: 5px solid white;
         }
 
+        .profile-image-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-image-container:hover img {
+            opacity: 0.7;
+            transform: scale(1.05);
+        }
+
+        .profile-image-container .edit-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+                height: 91%;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .profile-image-container:hover .edit-overlay {
+            opacity: 1;
+        }
+
+        .hidden-file-input {
+            display: none;
+        }
+    
+
         .eco-points {
         background-color: #f8f9fa;
         border-radius: 10px;
@@ -110,7 +147,20 @@
         <div class="col-lg-4">
             <div class="card mb-4">
                 <div class="card-body text-center">
-                    <img src="@(!string.IsNullOrEmpty(Model.User.Image) ? Model.User.Image : Url.Content("~/image/icon.jpg"))" alt="الصورة الشخصية" class="rounded-circle mb-3" width="100">
+                    <div class="profile-image-container" onclick="document.getElementById('fileInput').click()">
+                        <img src="@(!string.IsNullOrEmpty(Model.User.Image) ? Model.User.Image : Url.Content("~/image/icon.jpg"))"
+                             alt="الصورة الشخصية"
+                             class="rounded-circle mb-3"
+                             width="100"
+                             height="100"
+                             id="profileImage">
+
+                        <div class="edit-overlay">
+                            <span>تعديل الصورة</span>
+                        </div>
+
+                        <input type="file" id="fileInput" class="hidden-file-input" accept="image/*" onchange="uploadImage(this)">
+                    </div>
                     <h5 class="card-title">@Model.User.Name</h5>
                     <p class="text-muted mb-1">@Model.User.Email</p>
                     <p class="text-muted mb-4">@Model.User.Phone</p>
@@ -133,15 +183,44 @@
                 <div class="card-body text-center">
                     <h5 class="card-title"><i class="fas fa-recycle ms-2"></i>نقاطي البيئية</h5>
                     <h2 class="display-4">@Model.User.Points</h2>
-                    <p class="text-muted">استبدل النقاط بخصومات</p>
+                    <p class="text-muted">استبدل كل 100 نقطة بخصم 15%</p>
 
                     <div class="progress mb-3">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: @Model.User.Points%"
-                             aria-valuenow="@Model.User.Points" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div class="progress-bar bg-success" role="progressbar"
+                             style="width: @(Model.User.Points % 100)%"
+                             aria-valuenow="@(Model.User.Points % 100)"
+                             aria-valuemin="0"
+                             aria-valuemax="100"></div>
                     </div>
-                    <p>65% للوصول للمستوى التالي ()</p>
 
-                    <button class="btn btn-success"><i class="fas fa-gift ms-1"></i> استبدال</button>
+                    @if (Model.User.Points >= 100)
+                    {
+                        <form asp-action="RedeemPoints" method="post" onsubmit="return confirm('هل أنت متأكد من رغبتك في استبدال 100 نقطة بخصم 15%؟');">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-gift ms-1"></i> استبدال النقاط
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p>تحتاج @(100 - (Model.User.Points % 100)) نقطة للوصول للاستبدال القادم</p>
+                        <button class="btn btn-secondary" disabled>
+                            <i class="fas fa-gift ms-1"></i> استبدال النقاط
+                        </button>
+                    }
+
+                    <!-- عرض آخر كوبون تم الحصول عليه -->
+                    @{
+                        var lastCoupon = Model.User.Coupons?.OrderByDescending(c => c.ExpiryDate).FirstOrDefault();
+                    }
+                    @if (lastCoupon != null)
+                    {
+                        <div class="mt-3 p-2 bg-light rounded">
+                            <p class="mb-1">آخر كوبون حصلت عليه:</p>
+                            <strong>@lastCoupon.Code</strong>
+                            <p class="mb-0">خصم @lastCoupon.DiscountPercentage% حتى @lastCoupon.ExpiryDate?.ToString("yyyy-MM-dd")</p>
+                        </div>
+                    }
                 </div>
             </div>
 
@@ -152,11 +231,11 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             العناصر المعاد تدويرها
-                            <span class="badge bg-success rounded-pill">@Model.TotalRecycledItems كغ</span>
+                            <span class="badge bg-success rounded-pill">@Model.TotalRecycledItems </span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             ثاني أكسيد الكربون الموفّر
-                            <span class="badge bg-success rounded-pill">@Model.TotalCO2Saved.ToString("0.00") كغ</span>
+                            <span class="badge bg-success rounded-pill">@Model.TotalCO2Saved.ToString("0.00") </span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             عدد الطلبات
@@ -417,7 +496,7 @@
                     }
                 </div>
 
-                <!-- في تبويب الطلبات أو قسم جديد -->
+                <!-- في تبويب اشتراكاتي أو قسم جديد -->
                 <div class="tab-pane fade" id="subscriptions" role="tabpanel">
                     <h4 class="mb-4">اشتراكاتي</h4>
 
@@ -650,7 +729,7 @@
         // في ملف subscribe.js أو في قسم الـ Scripts
     function cancelSubscription(subId) {
         if (confirm('هل أنت متأكد من رغبتك في إلغاء الاشتراك؟')) {
-            fetch(`/Subscription/Cancel/${subId}`, {
+            fetch(`/User/Cancel/${subId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -659,7 +738,7 @@
             })
             .then(response => {
                 if (response.ok) {
-                    location.reload(); // إعادة تحميل الصفحة لعرض التحديث
+                    alert('تم الغاء الاشتراك');
                 } else {
                     alert('حدث خطأ أثناء محاولة إلغاء الاشتراك');
                 }
@@ -670,6 +749,44 @@
             });
         }
     }
+
+    $(document).ready(function() {
+    // عرض رسائل النجاح أو الخطأ
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <text>
+        Swal.fire({
+            icon: 'success',
+            title: 'نجاح',
+            text: '@Html.Raw(TempData["SuccessMessage"])',
+            confirmButtonText: 'حسناً'
+        });
+        </text>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <text>
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: '@Html.Raw(TempData["ErrorMessage"])',
+            confirmButtonText: 'حسناً'
+        });
+        </text>
+    }
+    
+    // تحديث شريط التقدم
+    function updateProgressBar() {
+        const points = @Model.User.Points;
+        const progress = points % 100;
+        $('.progress-bar')
+            .css('width', progress + '%')
+            .attr('aria-valuenow', progress)
+            .text(progress + '%');
+    }
+    
+    updateProgressBar();
+});
 </script>
 <script>
     function toggleMoreOrders() {
@@ -695,6 +812,44 @@
         } else {
             moreRecycling.style.display = 'none';
             btn.textContent = 'عرض المزيد من سجل التدوير';
+        }
+    }
+</script>
+
+<script>
+    function uploadImage(input) {
+        if (input.files && input.files[0]) {
+            // عرض معاينة الصورة قبل التحميل
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                document.getElementById('profileImage').src = e.target.result;
+            }
+
+            reader.readAsDataURL(input.files[0]);
+
+            // إنشاء FormData وإرسال الملف
+            var formData = new FormData();
+            formData.append('file', input.files[0]);
+
+            fetch('/User/UploadProfileImage', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    // تحديث مصدر الصورة بالمسار الجديد إذا لزم الأمر
+                    // document.getElementById('profileImage').src = data.imagePath;
+                    alert('تم تحديث الصورة بنجاح');
+                } else {
+                    alert('حدث خطأ أثناء رفع الصورة');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('حدث خطأ في الاتصال');
+            });
         }
     }
 </script>

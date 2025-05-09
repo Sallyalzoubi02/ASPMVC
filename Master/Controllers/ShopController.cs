@@ -251,7 +251,7 @@ namespace Master.Controllers
                 PaymentId = payment.Id,
                 OrderStatus = "جاري المعالجة",
                 DeliveryAddress = model.Address1 + " " + model.Address2,
-                DeliveryTime = DateTime.Now.AddHours(72),
+                DeliveryTime = DateTime.Now.AddDays(5),
                 TotalAmount = totalAmount,
                 CreatedAt = DateTime.Now,
                 Address1 = model.Address1,
@@ -273,7 +273,7 @@ namespace Master.Controllers
                     Price = item.TotalPrice ?? (item.UnitPrice * item.Quantity)
                 };
                 var product = _db.Products.Find(item.ProductId);
-                product.Stock -= 1;
+                product.Stock -= item.Quantity;
                 _db.Products.Update(product);
                 _db.OrderItems.Add(orderItem);
             }

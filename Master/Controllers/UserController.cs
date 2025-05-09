@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Claims;
+using Master.Extensions;
 using Master.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,13 @@ namespace Master.Controllers
     public class UserController : Controller
     {
         private readonly MyDBContext myDb;
+        private readonly EcoPointsService _ecoPointsService;
 
-        public UserController(MyDBContext myDbContext)
+        public UserController(MyDBContext myDbContext , EcoPointsService ecoPointsService)
         {
             myDb = myDbContext;
+            _ecoPointsService = ecoPointsService;
+
         }
 
         public IActionResult add()
@@ -81,6 +85,34 @@ namespace Master.Controllers
             }
 
             return "/uploads/" + uniqueFileName;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadProfileImage(IFormFile file)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                    return Json(new { success = false, message = "لم يتم اختيار ملف" });
+
+                var imagePath = await SaveUploadedFile(file);
+
+                // هنا يمكنك حفظ مسار الصورة في قاعدة البيانات للمستخدم الحالي
+                var userId = HttpContext.Session.GetInt32("UserId");
+
+                var user =  myDb.Users.FirstOrDefault(u => u.Id == userId);
+                ;
+                user.Image = imagePath;
+
+                myDb.Users.Update(user);
+                myDb.SaveChanges();
+
+                return Json(new { success = true, imagePath = imagePath });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
         private decimal CalculateExpressFee(string city)
@@ -239,6 +271,29 @@ namespace Master.Controllers
                 // Log the error
                 return StatusCode(500, "An error occurred while processing your request");
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RedeemPoints()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return Unauthorized();
+
+            var coupon = await _ecoPointsService.RedeemPoints(userId.Value);
+
+            if (coupon != null)
+            {
+                TempData["SuccessMessage"] = $"تم استبدال النقاط بنجاح! كود الخصم: {coupon.Code} (خصم {coupon.DiscountPercentage}%) صالح حتى {coupon.ExpiryDate?.ToString("yyyy-MM-dd")}";
+            }
+            else
+            {
+                var user = await myDb.Users.FindAsync(userId.Value);
+                var remainingPoints = _ecoPointsService.GetRemainingPointsForNextReward(user?.Points ?? 0);
+
+                TempData["ErrorMessage"] = $"ليس لديك نقاط كافية للاستبدال. تحتاج {remainingPoints} نقطة إضافية";
+            }
+
+            return RedirectToAction("Profile");
         }
     }
 }

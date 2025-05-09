@@ -19,8 +19,6 @@ public partial class Payment
 
     public string PaymentType { get; set; } = null!;
 
-    public virtual ICollection<Delivery> Deliveries { get; set; } = new List<Delivery>();
-
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual ICollection<RecyclingRequest> RecyclingRequests { get; set; } = new List<RecyclingRequest>();
