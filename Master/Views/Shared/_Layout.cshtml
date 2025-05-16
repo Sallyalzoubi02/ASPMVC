@@ -59,25 +59,56 @@
                                     <a class="nav-link" asp-controller="Recycling" asp-action="Create">دور العناصر</a>
                                 </li>
                             }
-                            <li class="nav-item dropdown position-relative">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                                   aria-expanded="false" id="usericon">
-                                    <i class="fa-solid fa-user"></i>
+                            <li class="nav-item dropdown">
+                                @{
+                                    var isLogged = Context.Session.GetString("logged") == "true";
+                                    var hasIncompleteCompany = Context.Session.GetString("IncompleteCompany") == "true";
+                                    var UserType = Context.Session.GetString("UserType") == "company";
+                                }
+
+                                <a class="nav-link dropdown-toggle" href="#" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false" id="usericon">
+                                    
+                                    <span class="position-relative d-inline-block" style="width: 24px; height: 24px;">
+                                        @if (hasIncompleteCompany && UserType)
+                                        {
+                                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-warning border border-light rounded-circle"
+                                                  style="z-index: 10;">
+                                                <span class="visually-hidden">تنبيه</span>
+                                            </span>
+                                        }
+                                        <i class="fa-solid fa-user fa-lg"></i>
+                                    </span>
                                 </a>
-                                <ul class="dropdown-menu" id="dropdown-menu">
-                                    @if (Context.Session.GetString("logged") == "true")
+
+                                <ul class="dropdown-menu text-end" id="dropdown-menu">
+                                    @if (isLogged)
                                     {
-                                        <li><a class="dropdown-item" asp-controller="User" asp-action="profile">الصفحة الشخصية</a></li>
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="User" asp-action="profile">
+                                                الصفحة الشخصية
+                                                @if (hasIncompleteCompany && UserType)
+                                                {
+                                                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-warning border border-light rounded-circle"
+                                                          style="z-index: 10;">
+                                                        <span class="visually-hidden">تنبيه</span>
+                                                    </span>
+                                                }
+                                            </a>
+                                        </li>
+
                                         <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" asp-controller="User" asp-action="Logout">تسجيل خروج</a></li>
                                     }
                                     else
                                     {
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Sign" asp-route-formType="login">تسجيل الدخول</a></li>
+                                        <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" asp-controller="Home" asp-action="Sign" asp-route-formType="register">إنشاء حساب</a></li>
                                     }
                                 </ul>
                             </li>
+
 
                         </ul>
                     </div>

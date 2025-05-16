@@ -1,11 +1,41 @@
 ﻿@model Master.Models.UserProfileViewModel
 @{
     ViewData["Title"] = "profile";
+    var hasIncompleteCompany = Context.Session.GetString("IncompleteCompany") == "true";
+    var UserType = Context.Session.GetString("UserType") == "company";
+
 }
 
 
 @section Styles {
     <style>
+
+        /* تنسيق كروت الكوبونات */
+        .coupon-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid #1a8754;
+        }
+
+            .coupon-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+
+            .coupon-card.expired {
+                border-left-color: #6c757d;
+                opacity: 0.8;
+            }
+
+        /* زر النسخ */
+        .copy-coupon {
+            transition: all 0.2s ease;
+        }
+
+            .copy-coupon:hover {
+                background-color: #1a8754 !important;
+                color: white !important;
+            }
+
         .profile-header {
         background-color: #1a8754;
         color: white;
@@ -262,6 +292,12 @@
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="coupons-tab" data-bs-toggle="pill"
+                            data-bs-target="#coupons" type="button" role="tab">
+                         كوبوناتي
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
                     <button class="nav-link" id="subscriptions-tab" data-bs-toggle="pill"
                     data-bs-target="#subscriptions" type="button" role="tab">
                         اشتراكاتي
@@ -274,9 +310,16 @@
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings"
-                    type="button" role="tab">
+                    <button class="nav-link position-relative" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings"
+                            type="button" role="tab">
                         الإعدادات
+                        @if (hasIncompleteCompany && UserType)
+                        {
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-warning border border-light rounded-circle"
+                                  style="z-index: 10;">
+                                <span class="visually-hidden">تنبيه</span>
+                            </span>
+                        }
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -600,6 +643,14 @@
                 <div class="tab-pane fade" id="settings" role="tabpanel">
                     <h4 class="mb-4">إعدادات الحساب</h4>
                     
+                    @if (hasIncompleteCompany && UserType){
+                        <div class="alert alert-warning py-2 px-3 my-2" role="alert">
+                            ⚠️ الرجاء إكمال معلومات الحساب. (اسم الشركة)
+                        </div>
+                    }
+
+                    
+
                     <form asp-action="UpdateProfile" method="post">
                         <div class="row mb-4">
                             <div class="col-md-6 mb-3">
@@ -633,6 +684,37 @@
                             <button type="submit" class="btn btn-success">حفظ التغييرات</button>
                         </div>
                     </form>
+                    @if (Model.IsOwner)
+                    {
+                        if (Model.Companies.Any())
+                        {
+                            var company = Model.Companies.First();
+
+                            <h3 class="mt-4">بيانات الشركة</h3>
+                            <form asp-action="UpdateCompany" method="post">
+                                <input type="hidden" name="Id" value="@company.Id" />
+
+                                <div class="mb-3">
+                                    <label class="form-label">اسم الشركة</label>
+                                    <input type="text" name="CompanyName" class="form-control" value="@company.CompanyName" required />
+                                </div>
+                                <button type="submit" class="btn btn-primary">حفظ</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <h3 class="mt-4">إضافة اسم الشركة </h3>
+                            <form asp-action="CreateCompany" method="post">
+                                <div class="mb-3">
+                                    <label class="form-label">اسم الشركة</label>
+                                    <input type="text" name="CompanyName" class="form-control" required />
+                                </div>
+                                <button type="submit" class="btn btn-success">حفظ الشركة</button>
+                            </form>
+                        }
+                    }
+
+
                 </div>
 
                     <!-- Password Change Tab -->
@@ -665,6 +747,54 @@
                         </div>
                     </form>
                     </div>
+                <!-- Coupon Tab -->
+
+                <div class="tab-pane fade" id="coupons" role="tabpanel">
+                    <h4 class="mb-4">كوبونات الخصم الخاصة بي</h4>
+
+                    @if (Model.UserCoupons.Any())
+                    {
+                        <div class="row">
+                            @foreach (var coupon in Model.UserCoupons)
+                            {
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 @(coupon.ExpiryDate < DateTime.Now ? "bg-light" : "")">
+                                        <div class="card-header d-flex justify-content-between">
+                                            <span>كود: <strong>@coupon.Code</strong></span>
+                                            <span class="badge @(coupon.ExpiryDate < DateTime.Now ? "bg-secondary" : "bg-success")">
+                                                @(coupon.ExpiryDate < DateTime.Now ? "منتهي" : "فعال")
+                                            </span>
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">خصم @coupon.DiscountPercentage%</h5>
+                                            <p class="card-text">
+                                                <i class="fas fa-calendar-alt ms-1"></i>
+                                                صلاحية حتى: @coupon.ExpiryDate?.ToString("yyyy-MM-dd")
+                                            </p>
+                                            <p class="card-text">
+                                                <i class="fas fa-info-circle ms-1"></i>
+                                                يمكن استخدام هذا الكوبون عند الشراء
+                                            </p>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <button class="btn btn-outline-primary copy-coupon   @(coupon.ExpiryDate > DateTime.Now ? "enabled" : "disabled")"
+                                                    data-code="@coupon.Code">
+                                                <i class="fas fa-copy ms-1"></i> نسخ الكود
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            ليس لديك أي كوبونات حالياً.
+                            <a href="#eco-points" class="alert-link">استبدل نقاطك للحصول على كوبونات خصم</a>
+                        </div>
+                    }
+                </div>
                 </div>
             </div>
         </div>
@@ -672,7 +802,7 @@
 
     
 @section Scripts {
-    <link rel="stylesheet" href="~/css/profile.js" />
+    <link rel="stylesheet" href="~/js/profile.js" />
     @functions {
     string GetSubscriptionTypeText(string type)
     {
@@ -852,5 +982,30 @@
             });
         }
     }
+
+
+
+        $(document).on('click', '.copy-coupon', function() {
+            const code = $(this).data('code');
+            navigator.clipboard.writeText(code).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم النسخ!',
+                    text: 'تم نسخ كود الخصم: ' + code,
+                    confirmButtonText: 'حسناً'
+                });
+            });
+        });
+
+        // تنسيق الكوبونات المنتهية
+        $(document).ready(function() {
+            $('.card').each(function() {
+                const expiryDate = new Date($(this).find('.card-text i.fa-calendar-alt').parent().text().split(': ')[1]);
+                if (new Date() > expiryDate) {
+                    $(this).find('.card-header').addClass('text-muted');
+                    $(this).find('.card-title').addClass('text-muted');
+                }
+            });
+        });
 </script>
 }

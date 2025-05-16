@@ -24,7 +24,8 @@ namespace Master.Extensions
                 Code = GenerateCouponCode(),
                 DiscountPercentage = 15.00m, // خصم 15%
                 ExpiryDate = DateTime.Now.AddMonths(1), // ينتهي بعد شهر
-                IsActive = true
+                IsActive = true,
+                UserId = userId
             };
 
             _db.Coupons.Add(coupon);

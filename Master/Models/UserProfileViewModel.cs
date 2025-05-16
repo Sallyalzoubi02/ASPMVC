@@ -14,5 +14,10 @@
         public int TotalRecycledItems => RecyclingRequests?.Sum(r => r.Quantity) ?? 0;
         public double TotalCO2Saved => RecyclingRequests?.Sum(r => r.Quantity * 1.75) ?? 0;
         public int TotalOrders => Orders?.Count ?? 0;
+
+        public List<Coupon> UserCoupons { get; set; } = new List<Coupon>();
+
+        public List<Company> Company { get; set; }
+
     }
 }

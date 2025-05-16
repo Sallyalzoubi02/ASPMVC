@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json; // لتحويل الجلسة إلى JSON
 using Master.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace Master.Controllers
 {
@@ -20,6 +21,21 @@ namespace Master.Controllers
 
         public IActionResult Index()
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId != null) {
+                var user = Db.Users
+                .Include(u => u.Companies)
+                .FirstOrDefault(u => u.Id == userId);
+
+                if (user == null) return NotFound();
+
+                // التحقق إذا فيه شركة وبياناتها ناقصة (هنا مثال بسيط)
+                bool incompleteCompanyInfo = !(user.Companies.Any(u => u.OwnerId == user.Id));
+                HttpContext.Session.SetString("IncompleteCompany", incompleteCompanyInfo ? "true" : "false");
+
+            }
+
+            
             return View();
         }
 
@@ -168,6 +184,7 @@ namespace Master.Controllers
 
                 HttpContext.Session.SetString("logged", "true");
                 HttpContext.Session.SetInt32("UserId", user.Id);
+                HttpContext.Session.SetString("UserType", user.UserType);
 
                 return RedirectToAction("index", "Home");
             }

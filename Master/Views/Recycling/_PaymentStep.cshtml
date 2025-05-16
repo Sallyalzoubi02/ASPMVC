@@ -69,6 +69,10 @@
             <span id="summaryDeliveryType">@(Model.IsExpress ? "سريع" : "عادي")</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
+            <span>طريقة الدفع:</span>
+            <span id="summaryPaymentMethod">@(Model.PaymentMethod == "credit" ? "بطاقة ائتمان" : "الدفع عند الاستلام")</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
             <span>تكلفة التسليم:</span>
             <span id="summaryDeliveryCost">@(Model.IsExpress ? "5 د.أ" : "مجاني")</span>
         </div>
@@ -107,14 +111,18 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function() {
         // تبديل معلومات البطاقة عند تغيير طريقة الدفع
         const paymentMethods = document.querySelectorAll('input[name="PaymentMethod"]');
         const cardInfoSection = document.getElementById('cardInfoSection');
 
         paymentMethods.forEach(method => {
             method.addEventListener('change', function() {
-                cardInfoSection.classList.toggle('d-none', this.value !== 'CreditCard');
+                // التعديل الرئيسي هنا: تغيير 'CreditCard' إلى 'credit' لتطابق قيمة الزر
+                cardInfoSection.classList.toggle('d-none', this.value !== 'credit');
+
+                // إضافة: تحديث ملخص طريقة الدفع
+                updatePaymentMethodSummary(this.value);
             });
         });
 
@@ -128,8 +136,33 @@
                     this.value = formatCardNumber(this.value);
                 }
             });
+
+            // إضافة: منع إدخال أحرف غير رقمية
+            input.addEventListener('keydown', function(e) {
+                if (!/\d|Backspace|Delete|Arrow/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
         });
     });
+
+    // دالة مساعدة لتحديث ملخص طريقة الدفع
+    function updatePaymentMethodSummary(method) {
+        const summaryElement = document.getElementById('summaryPaymentMethod');
+        if (summaryElement) {
+            summaryElement.textContent = method === 'credit' ? 'بطاقة ائتمان' : 'الدفع عند الاستلام';
+        }
+    }
+
+    // دالة تنسيق رقم البطاقة (باقية كما هي)
+    function formatCardNumber(value) {
+        return value.replace(/\s?/g, '').replace(/(\d{4})/g, '$1 ').trim();
+    }
+
+    // دالة تنسيق تاريخ الانتهاء (باقية كما هي)
+    function formatExpiryDate(value) {
+        return value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2');
+    }
 
     function formatCardNumber(value) {
         return value.replace(/\s?/g, '').replace(/(\d{4})/g, '$1 ').trim();

@@ -97,6 +97,7 @@ hr {
     font-size: 32px !important;
     --bs-border-radius: 7.375rem;
     width: 50%;
+    text-align: center;
 }
 
 .text {
@@ -190,6 +191,7 @@ hr {
     justify-content: center;
     transform: rotateY(180deg);
     padding: 20px;
+    font-size:24px;
 }
 
 .s3 .container-fluid .row {
@@ -244,11 +246,7 @@ hr {
     border-radius: 170px !important;
 }
 
-.btn-outline {
-    color: #fff !important; /* Text color black */
-    background-color: #000; /* Background color white */
-    border: 1px solid #fff; /* Border color black */
-}
+
 
     .btn-outline:hover,
     .btn-outline:focus,
@@ -262,6 +260,24 @@ hr {
     background-color: #002e18 !important;
     color: #fff;
 }
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rotate-earth {
+    animation: spin 20s linear infinite;
+}
+
+    .rotate-earth:hover {
+        animation-play-state: paused;
+    }
 
 @media screen and (max-width: 426px) {
     /* Reorder columns for small screens */

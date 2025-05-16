@@ -1,176 +1,230 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "About";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/about.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 }
 
 <main id="content">
 
-    <header class="mb-5 hidden animate">
-        <div class="aboutBG d-flex align-items-center justify-content-start p-5">
-            <h1 class="laz size text-light">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;من <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; نحن؟
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title animate__animated animate__fadeInDown">
+                من <span>نحن؟</span>
             </h1>
+            <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">
+                نصنع التغيير من خلال إعادة التدوير المستدام
+            </p>
         </div>
     </header>
 
-    <section class="s1 my-5 p-5 d-flex justify-content-center align-items-center hidden animate">
-        <div class="container-fluid ">
-            <div class="row w-100">
-                <div class="col-md-6">
-                    <h2 class="laz">
-                        من نحن
-                    </h2>
-                    <p class="text-par">
-                        مرحبًا بكم في <strong>أثر،</strong>
-                        وجهتكم الموثوقة لإعادة التدوير والمساهمة في بناء مستقبل أكثر استدامة!
-                        نحن منصة ويب مبتكرة تجمع بين الأفراد الراغبين في التخلص من المواد القابلة للتدوير بطريقة مسؤولة وبين الجهات المهتمة بإعادة التدوير أو إعادة الاستخدام. هدفنا هو تسهيل عملية إعادة التدوير وتحفيز الأفراد على الانضمام إلى رحلة الحفاظ على البيئة، مع توفير مكافآت تشجيعية لكل مشارك.
-                    </p>
+    <!-- About Section -->
+    <section class="about-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img src="~/image/about2.jpg" class="about-img img-fluid rounded shadow-lg animate__animated animate__fadeInLeft" alt="">
                 </div>
-                <div class="col-md-6 position-relative">
-                    <img src="~/image/about8.jpg" class="m2" alt="">
-                    <img src="~/image/about3.jpg" class="m1" alt="">
+                <div class="col-lg-6">
+                    <h2 class="section-title animate__animated animate__fadeInRight">من نحن</h2>
+                    <p class="about-text animate__animated animate__fadeInRight animate__delay-1s">
+                        نحن منصة رائدة في مجال إعادة التدوير، نعمل على ربط الأفراد بجهود الاستدامة من خلال حلول مبتكرة. نساهم في خلق مجتمع واع بيئيًا من خلال تمكين الأفراد والشركات من المشاركة الفعالة في الاقتصاد الدائري.
+                    </p>
+                    <div class="stats-row mt-4">
+                        <div class="stat-item animate__animated animate__fadeInUp">
+                            <div class="stat-number" data-count="5000">0</div>
+                            <div class="stat-label">مستخدم نشط</div>
+                        </div>
+                        <div class="stat-item animate__animated animate__fadeInUp animate__delay-1s">
+                            <div class="stat-number" data-count="120">0</div>
+                            <div class="stat-label">شريك إعادة تدوير</div>
+                        </div>
+                        <div class="stat-item animate__animated animate__fadeInUp animate__delay-2s">
+                            <div class="stat-number" data-count="50">0</div>
+                            <div class="stat-label">طن مواد معاد تدويرها</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-
-
-    <section class="s1 my-5 d-flex justify-content-center align-items-center hidden animate">
-        <div class="container-fluid bg-success text-light p-0">
-            <div class="row w-100">
-                <div class="col-md-6 ">
-                    <img src="~/image/about1.jpg" style="width: 100%;" alt="">
+    <!-- Mission Section -->
+    <section class="mission-section py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center mb-5 animate__animated animate__fadeInDown">مهمتنا</h2>
+            <div class="row mission-container">
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="mission-card animate__animated animate__fadeInLeft">
+                        <div class="mission-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h3 class="mission-title">تمكين الأفراد</h3>
+                        <p class="mission-text">نسهل عملية التخلص من المواد القابلة للتدوير بطرق مسؤولة</p>
+                    </div>
                 </div>
-
-                <div class="col-md-6 d-flex flex-column justify-content-center pe-5">
-                    <h2 class="laz">
-                        رؤيتنا
-                    </h2>
-                    <p class="text-par">
-                        أن نصبح الجسر الذي يربط المجتمع بجهود إعادة التدوير، حيث نعمل معًا على تقليل النفايات وتحويلها إلى موارد قيمة تساهم في تحسين كوكبنا.
-                    </p>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="mission-card animate__animated animate__fadeInLeft animate__delay-1s">
+                        <div class="mission-icon">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <h3 class="mission-title">دعم الشركات</h3>
+                        <p class="mission-text">نوفر مواد عالية الجودة لشركات إعادة التدوير</p>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="s1 p-5 my-5 d-flex justify-content-center align-items-center hidden animate">
-        <div class="container-fluid ">
-            <div class="row w-100">
-
-                <div class="col-md-6 ">
-                    <h2 class="laz">
-                        مهمتنا
-                    </h2>
-                    <p class="text-par ">
-                        <ul>
-                            <li class="text-par">تمكين الأفراد من التخلص من المواد القابلة للتدوير بسهولة وفاعلية.</li>
-                            <li class="text-par">دعم شركات إعادة التدوير بمواد ذات جودة لإعادة استخدامها.</li>
-                            <li class="text-par">تعزيز ثقافة الاستدامة والمحافظة على البيئة.</li>
-                            <li class="text-par">تقديم مكافآت تشجيعية لكل فرد يساهم في هذه المبادرة.</li>
-                        </ul>
-                    </p>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="mission-card animate__animated animate__fadeInLeft animate__delay-2s">
+                        <div class="mission-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3 class="mission-title">تعزيز الاستدامة</h3>
+                        <p class="mission-text">ننشر الوعي البيئي وثقافة الاستدامة</p>
+                    </div>
                 </div>
-                <div class="col-md-6 d-flex flex-column align-items-start position-relative">
-                    <img src="~/image/about2.jpg" class="m4" alt="">
-                    <img src="~/image/about7.webp" class="m3" alt="">
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-
-
-
-    <section class=" s1 my-5  d-flex justify-content-center align-items-center hidden animate">
-        <div class="container-fluid bg-success text-light p-0">
-            <div class="row w-100 me-0">
-                <div class="col-md-6 d-flex flex-column justify-content-center">
-                    <h2 class="laz me-5">
-                        مصادر دخلنا
-                    </h2>
-                    <p class=" text-par me-5">
-                        لضمان استدامة عملنا، نعتمد على مصادر دخل متنوعة، مثل:
-                        <ul class="text-par">
-                            <li>بيع المواد المُعاد تدويرها لشركات التصنيع.</li>
-                            <li>رسوم اشتراكات على خدمات مميزة.</li>
-                            <li>إعلانات مدفوعة لشركات صديقة للبيئة.</li>
-                            <li>شراكات مع منظمات بيئية.</li>
-                            <li>رسوم رمزية على بعض الخدمات.</li>
-                        </ul>
-                    </p>
-                </div>
-                <div class="col-md-6 p-0">
-                    <img src="~/image/about4.png" alt="" style="width: 100%;">
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <section class="s1 sMedia p-5  d-flex justify-content-center align-items-center mb-5 hidden animate">
-        <div class="container-fluid p-4">
-            <div class="row w-100">
-                <div class="col-md-6 d-flex flex-column align-items-start position-relative">
-                    <img src="~/image/about5.jpg" class="m5" alt="">
-                    <img src="~/image/about6.jpg" class="m6" alt="">
-                </div>
-                <div class="col-md-6 ">
-                    <h2 class="laz">
-                        كيف نعمل؟
-                    </h2>
-                    <p class="text-par">
-                        <ol>
-                            <li class="text-par">
-                                <strong class="text-par">تسجيل المواد:</strong>
-                                يمكن للمستخدمين رفع بيانات المواد التي يرغبون في التبرع بها، مثل النوع، الكمية، والموقع.
-                            </li>
-                            <li class="text-par">
-                                <strong class="text-par">الجمع أو الإسقاط:</strong>
-                                نحن نوفر فريقًا مختصًا لجمع المواد مباشرة من موقعك أو نحدد لك أماكن إسقاط قريبة.
-                            </li>
-                            <li class="text-par">
-                                <strong class="text-par">إعادة التدوير:</strong>
-                                يتم إرسال المواد إلى شركات إعادة التدوير المتخصصة لتحويلها إلى منتجات جديدة.
-                            </li>
-                            <li class="text-par">
-                                <strong class="text-par">المكافآت:</strong>
-                                نحفز مستخدمينا بمبلغ رمزي مقابل كل كيلوغرام من المواد التي يتم استلامها.
-                            </li>
-                        </ol>
-
-                    </p>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="mission-card animate__animated animate__fadeInLeft animate__delay-3s">
+                        <div class="mission-icon">
+                            <i class="fas fa-recycle"></i>
+                        </div>
+                        <h3 class="mission-title">تقديم المكافآت</h3>
+                        <p class="mission-text">نكافئ المشاركين في جهود إعادة التدوير</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="container-fluid mb-5 hidden animate">
-        <div class="row w-100">
-            <img src="~/image/line.png" class="rotate" width="100%" alt="">
-        </div>
-    </div>
-
-    <section class="s1 p-5  d-flex justify-content-center align-items-center hidden animate">
-        <div class="container-fluid p-4">
-            <h2 class="laz text-center">
-                رسالتنا لك
-            </h2>
-            <h2 class="text-center">
-                معًا يمكننا إحداث فرق حقيقي! انضم إلينا اليوم وساهم في بناء مستقبل أخضر ومستدام، حيث تتحول نفايات اليوم إلى موارد الغد.
-            </h2>
-
+    <!-- Employment Section -->
+    <section class="employment-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h2 class="section-title animate__animated animate__fadeInLeft">نوظف وندرب</h2>
+                    <p class="employment-text animate__animated animate__fadeInLeft animate__delay-1s">
+                        نؤمن بأهمية توفير فرص عمل مستدامة، لذلك نوظف وندرب العاملين في جمع المواد القابلة للتدوير، ونوفر لهم:
+                    </p>
+                    <ul class="employment-list animate__animated animate__fadeInLeft animate__delay-2s">
+                        <li><i class="fas fa-check-circle"></i> أدوات عمل آمنة ومعدات حديثة</li>
+                        <li><i class="fas fa-check-circle"></i> تدريب مستمر على أفضل الممارسات</li>
+                        <li><i class="fas fa-check-circle"></i> بيئة عمل صحية ومستدامة</li>
+                        <li><i class="fas fa-check-circle"></i> أجور عادلة وتأمينات اجتماعية</li>
+                        <li><i class="fas fa-check-circle"></i> فرص للتطور والنمو الوظيفي</li>
+                    </ul>
+                    <button class="btn btn-success mt-3 animate__animated animate__pulse animate__infinite">انضم إلى فريقنا</button>
+                </div>
+                <div class="col-lg-6 d-flex justify-content-center">
+                    <img src="~/image/about3.jpg" class="img-fluid rounded shadow-lg animate__animated animate__fadeInRight" alt="">
+                </div>
+            </div>
         </div>
     </section>
 
+    <!-- Process Section -->
+    <section class="process-section py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center mb-5 animate__animated animate__fadeInDown">كيف نعمل؟</h2>
+            <div class="process-steps">
+                <div class="process-step animate__animated animate__fadeInUp">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title">تسجيل المواد</h3>
+                        <p class="step-text">سجل المواد التي ترغب في إعادة تدويرها عبر المنصة</p>
+                    </div>
+                </div>
+                <div class="process-step animate__animated animate__fadeInUp animate__delay-1s">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title">الجمع أو النقل</h3>
+                        <p class="step-text">نقوم بجمع المواد من موقعك أو نوفر نقاط تجميع قريبة</p>
+                    </div>
+                </div>
+                <div class="process-step animate__animated animate__fadeInUp animate__delay-2s">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3 class="step-title">إعادة التدوير</h3>
+                        <p class="step-text">نرسل المواد لشركات متخصصة لتحويلها لمنتجات جديدة</p>
+                    </div>
+                </div>
+                <div class="process-step animate__animated animate__fadeInUp animate__delay-3s">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3 class="step-title">المكافآت</h3>
+                        <p class="step-text">تحصل على مكافآت مقابل كل كيلوغرام يتم إعادة تدويره</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <!-- CTA Section -->
+    <section class="cta-section py-5 text-center">
+        <div class="cta-overlay"></div>
+        <div class="container position-relative">
+            <h2 class="cta-title animate__animated animate__fadeInDown">كن جزءًا من التغيير</h2>
+            <p class="cta-text animate__animated animate__fadeInUp animate__delay-1s">
+                انضم إلينا اليوم وساهم في بناء مستقبل أكثر استدامة للأجيال القادمة
+            </p>
+            <button class="btn btn-lg btn-success animate__animated animate__pulse animate__infinite">ابدأ الآن</button>
+        </div>
+    </section>
 
 </main>
 
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+        // Counter Animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            const speed = 200;
 
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-count');
+                const count = +counter.innerText;
+                const increment = target / speed;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(animateCounters, 1);
+                } else {
+                    counter.innerText = target;
+                }
+            });
+        }
+
+        // Scroll Animation
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.animate__animated');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animation = entry.target.dataset.animate;
+                        if (animation) {
+                            entry.target.classList.add(animation);
+                        }
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            elements.forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            animateCounters();
+            animateOnScroll();
+        });
+
+        window.addEventListener('scroll', function() {
+            animateOnScroll();
+        });
+    </script>
+}

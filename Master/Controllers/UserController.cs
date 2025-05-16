@@ -26,50 +26,6 @@ namespace Master.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> AddRecyclingRequest([FromForm] RecyclingRequestVm requestDto)
-        //{
-        //    var userId = HttpContext.Session.GetInt32("UserId");
-        //    if (userId == null)
-        //        return Json(new { success = false, redirect = Url.Action("Login", "Auth") });
-
-        //    if (!ModelState.IsValid)
-        //    {
-        //        var errors = ModelState.Values.SelectMany(v => v.Errors)
-        //                            .Select(e => e.ErrorMessage)
-        //                            .ToList();
-        //        return Json(new { success = false, message = "بيانات غير صالحة", errors });
-        //    }
-
-        //    try
-        //    {
-        //        var requestedDateTime = DateTime.Parse($"{requestDto.RequestedDate} {requestDto.RequestedTime}");
-
-        //        if (requestedDateTime <= DateTime.Now)
-        //            return Json(new { success = false, message = "لا يمكن اختيار تاريخ في الماضي" });
-
-        //        // باقي كود معالجة البيانات...
-
-        //        await myDb.SaveChangesAsync();
-
-        //        return Json(new
-        //        {
-        //            success = true,
-        //            redirect = Url.Action("Profile"),
-        //            message = "تم إضافة الطلب بنجاح"
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Json(new
-        //        {
-        //            success = false,
-        //            message = "حدث خطأ أثناء حفظ البيانات",
-        //            error = ex.Message
-        //        });
-        //    }
-        //}
-
         private async Task<string> SaveUploadedFile(IFormFile file)
         {
             var uploadsFolder = Path.Combine("wwwroot", "uploads");
@@ -115,15 +71,15 @@ namespace Master.Controllers
             }
         }
 
-        private decimal CalculateExpressFee(string city)
-        {
-            return city switch
-            {
-                "Amman" => 5.00m,
-                "Irbid" => 7.00m,
-                _ => 10.00m
-            };
-        }
+        //private decimal CalculateExpressFee(string city)
+        //{
+        //    return city switch
+        //    {
+        //        "Amman" => 5.00m,
+        //        "Irbid" => 7.00m,
+        //        _ => 10.00m
+        //    };
+        //}
 
         public IActionResult profile()
         {
@@ -136,24 +92,36 @@ namespace Master.Controllers
                     .ThenInclude(oi => oi.Product)
                 .Include(u => u.RecyclingRequests)
                 .Include(u => u.Companies)
+                .Include(u => u.Coupons)
                 .FirstOrDefault(u => u.Id == userId);
 
             if (user == null) return NotFound();
+
+            // التحقق إذا فيه شركة وبياناتها ناقصة (هنا مثال بسيط)
+            bool incompleteCompanyInfo = !(user.Companies.Any(u=> u.OwnerId == user.Id));
+            HttpContext.Session.SetString("IncompleteCompany", incompleteCompanyInfo ? "true" : "false");
+
 
             var model = new UserProfileViewModel
             {
                 User = user,
                 Orders = user.Orders.ToList(),
                 RecyclingRequests = user.RecyclingRequests.ToList(),
-                IsOwner = user.UserType == "owner",
+                IsOwner = user.UserType == "company",
                 Companies = user.Companies.ToList(),
                 // إضافة اشتراكات المستخدم
                 ActiveSubscriptions = myDb.Subscriptions
                     .Where(s => s.UserId == userId && s.IsActive)
+                    .ToList(),
+               UserCoupons = user.Coupons
+                    .OrderByDescending(c => c.ExpiryDate)
                     .ToList()
             };
 
+            Console.WriteLine("IncompleteCompany = " + HttpContext.Session.GetString("IncompleteCompany"));
+
             return View(model);
+
         }
 
         [HttpPost]
@@ -176,6 +144,45 @@ namespace Master.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        public IActionResult CreateCompany(string CompanyName)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return Unauthorized();
+
+            var newCompany = new Company
+            {
+                CompanyName = CompanyName,
+                OwnerId = userId.Value
+            };
+
+            myDb.Companies.Add(newCompany);
+            myDb.SaveChanges();
+
+            TempData["SuccessMessage"] = "تم إنشاء الشركة بنجاح!";
+            return RedirectToAction("Profile");
+        }
+
+
+        [HttpPost]
+        public IActionResult UpdateCompany(Company model)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return Unauthorized();
+
+            var company = myDb.Companies.FirstOrDefault(c => c.Id == model.Id && c.OwnerId == userId);
+            if (company == null) return NotFound();
+
+            company.CompanyName = model.CompanyName;
+            
+
+            myDb.SaveChanges();
+
+            TempData["SuccessMessage"] = "تم تحديث بيانات الشركة بنجاح!";
+            return RedirectToAction("Profile");
+        }
+
+
         public IActionResult OrderDetails(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -195,7 +202,6 @@ namespace Master.Controllers
         {
             HttpContext.Session.Remove("logged");
             HttpContext.Session.Remove("UserId");
-            HttpContext.Session.Remove("UserName");
             Response.Cookies.Delete("UserId");
             return RedirectToAction("Index", "Home");
         }

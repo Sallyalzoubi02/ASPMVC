@@ -1,0 +1,8 @@
+﻿.input-group-text {
+    background-color: #f8f9fa;
+    color: #2c786c;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-right-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
+}

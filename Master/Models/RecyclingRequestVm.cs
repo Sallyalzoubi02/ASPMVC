@@ -15,7 +15,7 @@ namespace Master.Models
         [Required(ErrorMessage = "حقل مطلوب")]
         [Range(1, 100, ErrorMessage = "يجب أن تكون بين 1 و 100")]
         [Display(Name = "الكمية")]
-        public int Quantity { get; set; }
+        public int Quantity { get; set; } = 1;
 
         [Required(ErrorMessage = "حقل مطلوب")]
         [Display(Name = "حالة العنصر")]
