@@ -117,3 +117,44 @@ html::-webkit-scrollbar-thumb {
         background-color: #f0f5ff;
     }
 
+/* أنماط السلة الفارغة */
+.empty-cart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+.empty-cart-img {
+    width: 200px;
+    height: auto;
+    opacity: 0.7;
+    margin-bottom: 20px;
+}
+
+.empty-cart-container h4 {
+    color: #333;
+    font-weight: 600;
+}
+
+.empty-cart-container p {
+    font-size: 1.1rem;
+}
+
+.empty-cart-container .btn {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+}
+
+    .empty-cart-container .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+/* إخفاء أقسام الدفع عندما تكون السلة فارغة */
+tbody:has(.empty-cart-container) + .container {
+    display: none;
+}

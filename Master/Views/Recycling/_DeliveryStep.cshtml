@@ -37,10 +37,11 @@
     </div>
     <!-- خيار التوصيل السريع -->
     <div class="form-check mb-4">
-        <input asp-for="IsExpress" class="form-check-input" type="checkbox" id="expressDelivery" name="IsExpress" />
         <label class="form-check-label" for="expressDeliveryCheckbox">
             أريد خدمة توصيل سريع (+5 د.أ)
         </label>
+        <input asp-for="IsExpress" class="form-check-input" type="checkbox" id="expressDelivery" name="IsExpress" />
+        
     </div>
     <!-- المحافظة -->
     <div class="form-group mb-3">
@@ -68,11 +69,12 @@
     <div class="search-container mb-3">
         <label class="form-label">ابحث عن موقع التسليم</label>
         <div class="input-group">
-            <input type="text" id="locationSearch" class="form-control"
-                   placeholder="أدخل اسم الشارع أو المنطقة..." asp-for="LocationName">
-            <button id="searchButton" class="btn btn-primary" type="button">
+            <button id="searchButton" class="btn btn-success" type="button">
                 <i class="fas fa-search"></i> بحث
             </button>
+            <input type="text" id="locationSearch" class="form-control"
+                   placeholder="أدخل اسم الشارع أو المنطقة..." asp-for="LocationName">
+            
         </div>
         <div id="searchResults" class="search-results"></div>
     </div>

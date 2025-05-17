@@ -24,82 +24,107 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if (Model is List<Master.Models.CartItem> dbItems)
+                                    @{
+                                        var dbItems = Model as List<Master.Models.CartItem>;
+                                        var tempItems = Model as List<Master.Models.TempCartItem>;
+                                        bool isEmpty = (dbItems != null && dbItems.Count == 0) ||
+                                        (tempItems != null && tempItems.Count == 0);
+                                    }
+
+                                    @if (isEmpty)
                                     {
-                                        @foreach (var item in dbItems)
+                                        <tr>
+                                            <td colspan="4" class="text-center py-5">
+                                                <div class="empty-cart-container">
+                                                    <img src="~/image/empty-cart.png" class="empty-cart-img" alt="سلة فارغة">
+                                                    <h4 class="my-4">سلة التسوق فارغة</h4>
+                                                    <p class="text-muted mb-4">لم تقم بإضافة أي منتجات إلى سلة التسوق بعد</p>
+                                                    <a href="/Shop/Products" class="btn btn-success btn-lg">
+                                                        <i class="fas fa-shopping-bag me-2"></i> ابدأ التسوق الآن
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else{
+                                        if (dbItems != null)
                                         {
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="~/@item.Product.ImageUrl" class="img-fluid rounded-3" style="width: 120px;" alt="@item.Product.Name">
-                                                        <div class="flex-column ms-4">
-                                                            <p class="mb-2">@item.Product.Name</p>
-                                                            <p class="mb-0 text-muted">@item.Product.Description</p>
+                                            @foreach (var item in dbItems)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="~/@item.Product.ImageUrl" class="img-fluid rounded-3" style="width: 120px;" alt="@item.Product.Name">
+                                                            <div class="flex-column ms-4">
+                                                                <p class="mb-2">@item.Product.Name</p>
+                                                                <p class="mb-0 text-muted">@item.Product.Description</p>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <div class="d-flex flex-row justify-content-center">
-                                                        <button class="btn btn-link px-2" onclick="updateQuantity(@item.ProductId, -1, event)">
-                                                            <i class="fas fa-minus"></i>
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <div class="d-flex flex-row justify-content-center">
+                                                            <button class="btn btn-link px-2" onclick="updateQuantity(@item.ProductId, -1, event)">
+                                                                <i class="fas fa-minus"></i>
+                                                            </button>
+                                                            <input type="number"
+                                                                   class="form-control quantity-input"
+                                                                   value="@item.Quantity"
+                                                                   min="1"
+                                                                   style="width: 60px; text-align: center;"
+                                                                   data-price="@item.UnitPrice">
+                                                            <button class="btn btn-link px-2" onclick="updateQuantity(@item.ProductId, 1, event)">
+                                                                <i class="fas fa-plus "></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <p class="mb-0" style="font-weight: 500;">@(item.UnitPrice * item.Quantity) دينار أردني</p>
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <button class="btn btn-danger btn-sm" onclick="removeItem(@item.ProductId, event)">
+                                                            <i class="fas fa-trash"></i>
                                                         </button>
-                                                        <input type="number"
-                                                               class="form-control quantity-input"
-                                                               value="@item.Quantity"
-                                                               min="1"
-                                                               style="width: 60px; text-align: center;"
-                                                               data-price="@item.UnitPrice">
-                                                        <button class="btn btn-link px-2" onclick="updateQuantity(@item.ProductId, 1, event)">
-                                                            <i class="fas fa-plus "></i>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else if (tempItems != null)
+                                        {
+                                            @foreach (var item in tempItems)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="~/@item.ImageUrl" class="img-fluid rounded-3" style="width: 120px;" alt="@item.ProductName">
+                                                            <div class="flex-column ms-4">
+                                                                <p class="mb-2">@item.ProductName</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <div class="d-flex flex-row justify-content-center">
+                                                            <button class="btn btn-link px-2" onclick="updateTempQuantity(@item.ProductId, -1, event)">
+                                                                <i class="fas fa-minus"></i>
+                                                            </button>
+                                                            <input type="number" class="form-control quantity-input" value="@item.Quantity" min="1" style="width: 60px; text-align: center;" data-price="@item.Price">
+                                                            <button class="btn btn-link px-2" onclick="updateTempQuantity(@item.ProductId, 1, event)">
+                                                                <i class="fas fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <p class="mb-0" style="font-weight: 500;">@(item.Price * item.Quantity) دينار أردني</p>
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <button class="btn btn-danger btn-sm" onclick="removeTempItem(@item.ProductId, event)">
+                                                            <i class="fas fa-trash"></i>
                                                         </button>
-                                                    </div>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <p class="mb-0" style="font-weight: 500;">@(item.UnitPrice * item.Quantity) دينار أردني</p>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <button class="btn btn-danger btn-sm" onclick="removeItem(@item.ProductId, event)">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                </tr>
+                                            }
                                         }
                                     }
-                                    else if (Model is List<Master.Models.TempCartItem> tempItems)
-                                    {
-                                        @foreach (var item in tempItems)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="~/@item.ImageUrl" class="img-fluid rounded-3" style="width: 120px;" alt="@item.ProductName">
-                                                        <div class="flex-column ms-4">
-                                                            <p class="mb-2">@item.ProductName</p>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <div class="d-flex flex-row justify-content-center">
-                                                        <button class="btn btn-link px-2" onclick="updateTempQuantity(@item.ProductId, -1, event)">
-                                                            <i class="fas fa-minus"></i>
-                                                        </button>
-                                                        <input type="number" class="form-control quantity-input" value="@item.Quantity" min="1" style="width: 60px; text-align: center;" data-price="@item.Price">
-                                                        <button class="btn btn-link px-2" onclick="updateTempQuantity(@item.ProductId, 1, event)">
-                                                            <i class="fas fa-plus"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <p class="mb-0" style="font-weight: 500;">@(item.Price * item.Quantity) دينار أردني</p>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <button class="btn btn-danger btn-sm" onclick="removeTempItem(@item.ProductId, event)">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        }
-                                    }
+                                    
                                 </tbody>
                             </table>
                         }
@@ -262,35 +287,88 @@
             document.getElementById('total').textContent = total.toFixed(2) + ' دينار أردني';
         }
 
-        async function removeTempItem(productId, event) {
+                async function removeTempItem(productId, event) {
             event.preventDefault();
 
-            if (confirm('هل أنت متأكد من إزالة هذا المنتج؟')) {
-                try {
-                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                    const response = await fetch('/Shop/RemoveTempItem', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'RequestVerificationToken': token
-                        },
-                        body: JSON.stringify({
-                            ProductId: productId
-                        })
+            // استخدام SweetAlert للتأكيد
+            const { isConfirmed } = await Swal.fire({
+                title: 'إزالة المنتج',
+                text: 'هل أنت متأكد من رغبتك في إزالة هذا المنتج من السلة؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، أزل المنتج',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                reverseButtons: true
+            });
+
+            if (!isConfirmed) return;
+
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                // عرض تحميل أثناء الانتظار
+                Swal.fire({
+                    title: 'جاري المعالجة',
+                    html: 'يتم إزالة المنتج من السلة...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                const response = await fetch('/Shop/RemoveTempItem', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({
+                        ProductId: productId
+                    })
+                });
+
+                const result = await response.json();
+
+                // إغلاق تحميل SweetAlert
+                Swal.close();
+
+                if (result.success) {
+                    // عرض رسالة نجاح
+                    await Swal.fire({
+                        title: 'تمت الإزالة',
+                        text: 'تم إزالة المنتج من سلة التسوق بنجاح',
+                        icon: 'success',
+                        confirmButtonText: 'حسناً',
+                        timer: 2000,
+                        timerProgressBar: true
                     });
 
-                    const result = await response.json();
-                    if (result.success) {
-                        updateCartTotals();
-                        location.reload();
+                    // تحديث المجموع الكلي
+                    updateCartTotals();
 
-                    } else {
-                        alert(result.message || 'حدث خطأ أثناء الإزالة');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('حدث خطأ في الاتصال بالخادم: ' + error.message);
+                    // إعادة تحميل الصفحة
+                    location.reload();
+                } else {
+                    // عرض رسالة خطأ
+                    await Swal.fire({
+                        title: 'خطأ',
+                        text: result.message || 'حدث خطأ أثناء محاولة إزالة المنتج',
+                        icon: 'error',
+                        confirmButtonText: 'حسناً'
+                    });
                 }
+            } catch (error) {
+                console.error('Error:', error);
+
+                // عرض رسالة خطأ في الاتصال
+                await Swal.fire({
+                    title: 'خطأ في الاتصال',
+                    text: 'تعذر الاتصال بالخادم: ' + error.message,
+                    icon: 'error',
+                    confirmButtonText: 'حسناً'
+                });
             }
         }
 

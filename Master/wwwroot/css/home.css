@@ -1,10 +1,11 @@
 ﻿@import url("https://fonts.googleapis.com/css2?family=Lalezar&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap");
 
-
 * {
-    /* color: #002E18; */
     font-family: 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 html::-webkit-scrollbar {
@@ -35,26 +36,30 @@ html::-webkit-scrollbar-thumb {
     font-family: Lalezar !important;
 }
 
+/* Header Section */
 .h {
-    height: 90vh;
-    background: linear-gradient(to Top, rgba(255, 255, 255, 0.29), #f4f4f4a0), url(/image/cartoonBG.png) ;
+    height: 85vh;
+    background: linear-gradient(to Top, rgba(255, 255, 255, 0.5), #f4f4f4), url(/image/cartoonBG.png);
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
 }
-/* إعدادات البداية (عنصر غير ظاهر) */
+
+/* Animation Classes */
 .hidden {
     opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
 .hidden2 {
     opacity: 0;
-    transform: translatex(50px);
-    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    transform: translateX(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
-/* عندما يظهر العنصر */
 .visible {
     opacity: 1;
     transform: translateY(0);
@@ -62,9 +67,10 @@ html::-webkit-scrollbar-thumb {
 
 .visible2 {
     opacity: 1;
-    transform: translatex(0);
+    transform: translateX(0);
 }
 
+/* General Styles */
 hr {
     color: #118b50 !important;
     opacity: 1 !important;
@@ -81,86 +87,116 @@ hr {
 }
 
 .mar2 {
-    margin-top: 200px;
-    margin-bottom: 200px;
+    margin-top: 100px;
+    margin-bottom: 100px;
 }
 
+/* Animation for sections */
+section {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+    section.visible-section {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Green Section */
 .s2 {
     background-color: #1a8754;
     color: white;
-    padding: 90px 60px;
+    padding: 70px 40px;
+    border-radius: 20px;
+    margin: 80px auto;
+    width: 95%;
 }
 
 .welcome {
     padding: 60px;
 }
 
+/* Buttons */
 .btn-font {
-    font-size: 32px !important;
-    --bs-border-radius: 7.375rem;
-    width: 50%;
-    text-align: center;
+    font-size: 28px !important;
+    border-radius: 7.375rem;
+    width: 45%;
+    padding: 15px 0;
+    transition: all 0.3s ease;
 }
 
+    .btn-font:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 20px rgba(0,0,0,0.2);
+    }
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Text Styles */
 .text {
     text-align: center;
     font-size: 18px;
+    line-height: 1.6;
 }
 
 .text-par {
-    font-size: 30px;
+    font-size: 24px;
+    line-height: 1.7;
+    margin-bottom: 20px;
 }
 
-.moreLink {
-    display: inline-block; /* تأكد من أنها تظهر كعنصر مدمج */
-    color: #118b50;
-    margin-left: 0; /* أزل الهوامش من الجهة اليسرى */
-    text-decoration: none;
-    font-size: 20px;
-    text-align: left; /* لضمان النص يتمحور لليسار */
-}
-
-.btn-success {
-    border: 2px solid #1a6e47 !important;
-    box-shadow: 10px 10px 29px rgba(0, 0, 0, 0.5);
-    --bs-btn-color: #fff;
-    --bs-btn-bg: #198754;
-    --bs-btn-border-color: #0c3e27;
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: #157347;
-    --bs-btn-hover-border-color: #0c3e27;
-    --bs-btn-focus-shadow-rgb: 60, 153, 110;
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: #146c43;
-    --bs-btn-active-border-color: #13653f;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: #fff;
-    --bs-btn-disabled-bg: #198754;
-    --bs-btn-disabled-border-color: #198754;
-}
-
+/* Cards Section */
 .card {
     width: 100%;
-    min-height: 400px;
-    max-width: 447px;
+    min-height: 380px;
+    max-width: 400px;
     perspective: 1000px;
     border: none !important;
+    margin: 0 auto 30px;
 }
 
 .card-img-top {
     width: 70% !important;
+    transition: transform 0.3s ease;
 }
 
 .card-inner {
     width: 100%;
-    height: 400px;
+    height: 380px;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.999s;
+    transition: transform 0.8s;
+    border-radius: 10px;
 }
 
 .card:hover .card-inner {
     transform: rotateY(180deg);
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.1);
 }
 
 .card-front,
@@ -169,100 +205,68 @@ hr {
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 }
 
 .card-front {
     color: #118b50;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 8%;
-    justify-content: center;
-    transform: rotateY(0deg);
     border: 3px solid #118b50 !important;
+    background-color: white;
+    transform: rotateY(0deg);
 }
 
 .card-back {
     background-color: #118b50;
     color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     border: 1px solid #0c3e27;
-    border-radius: 10px;
-    justify-content: center;
     transform: rotateY(180deg);
-    padding: 20px;
-    font-size:24px;
+    font-size: 22px;
+    text-align: center;
 }
 
-.s3 .container-fluid .row {
-    column-gap: 30px !important;
+/* Content Sections */
+.s3 {
+    padding: 50px 0;
 }
+
+    .s3 .container-fluid .row {
+        column-gap: 30px !important;
+        align-items: center;
+    }
 
 .simg {
     border-radius: 5%;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
 }
 
-.newsletter {
-    margin: 0 !important;
-    background: linear-gradient(to right, #118b50, #9cd49f);
-}
-
-.footer {
-    background-color: #02542d;
-}
-
-.footerLink {
-    text-decoration: none;
-    color: #fff;
-    font-size: 16px;
-}
-
-.pillBg {
-    background-color: #fff;
-    border-radius: 170px;
-}
-
-.form-control {
-    border: none !important;
-    direction: ltr;
-}
-
-.btn-green {
-    --bs-btn-color: #fff !important;
-    --bs-btn-bg: #02542d !important;
-    --bs-btn-border-color: #02542d;
-    --bs-btn-hover-color: #02542d;
-    --bs-btn-hover-bg: #fff;
-    --bs-btn-hover-border-color: #02542d !important;
-    --bs-btn-focus-shadow-rgb: 49, 132, 253;
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: #02542d;
-    --bs-btn-active-border-color: #02542d;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: #fff;
-    --bs-btn-disabled-bg: #02542d;
-    --bs-btn-disabled-border-color: #02542d;
-    width: 100%;
-    border-radius: 170px !important;
-}
-
-
-
-    .btn-outline:hover,
-    .btn-outline:focus,
-    .btn-outline:active {
-        color: #000 !important; /* Text color white */
-        background-color: #fff; /* Background color black */
-        border-color: #fff; /* Ensure the border remains black */
+    .simg:hover {
+        transform: scale(1.02);
     }
 
-.Copyright {
-    background-color: #002e18 !important;
-    color: #fff;
+/* Links */
+.moreLink {
+    display: inline-block;
+    color: #118b50;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 8px 20px;
+    border: 2px solid #118b50;
+    border-radius: 30px;
+    transition: all 0.3s ease;
 }
 
+    .moreLink:hover {
+        background-color: #118b50;
+        color: white !important;
+    }
+
+/* Earth Animation */
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -275,61 +279,95 @@ hr {
 
 .rotate-earth {
     animation: spin 20s linear infinite;
+    transition: all 0.3s ease;
+    width: 80% ;
 }
 
     .rotate-earth:hover {
         animation-play-state: paused;
+        transform: scale(1.05);
     }
 
-@media screen and (max-width: 426px) {
-    /* Reorder columns for small screens */
-    header .container-fluid {
-        flex-direction: row-reverse;
-    }
-
-        header .container-fluid .row {
-            display: flex;
-            flex-direction: column-reverse !important; /* Reverses the order of the columns */
-        }
-
-    .navbar-collapse div {
-        display: block !important;
-    }
-
-    .navbar-nav {
-        gap: 12px !important;
-        font-size: 16px;
-    }
-
-    .carousel {
-        width: 50%;
-        float: left;
-    }
-
-    .carousel-item img {
-        height: 100px;
-    }
-
-    header {
-        background-position-y: -70px;
-        background-position-x: -40px;
+/* Responsive Design */
+@media screen and (max-width: 992px) {
+    .h {
+        height: auto;
+        padding: 50px 0;
     }
 
     .btn-font {
-        font-size: 20px !important;
+        width: 70%;
+        font-size: 24px !important;
     }
 
-        .btn-font img {
-            width: 30%;
-        }
-
     .card {
-        margin-bottom: 10px;
+        max-width: 100%;
+        margin-bottom: 30px;
+    }
+
+    .text-par {
+        font-size: 20px;
     }
 }
 
-/*
-* {
-    border: 1px solid red !important;
-  }
-    */
+@media screen and (max-width: 768px) {
+    .welcome {
+        padding: 30px;
+    }
+
+    .logoImg {
+        width: 120%;
+    }
+
+    .s2 {
+        padding: 50px 20px;
+    }
+
+    .s3{
+        padding: 30px 0;
+    }
+
+    .simg {
+        margin-bottom: 20px;
+    }
+
+    .flex-column-reverse {
+        display: flex;
+        flex-direction: column-reverse !important;
+    }
+
+    .order-md-2 {
+        order: 1 !important;
+        margin-bottom: 30px;
+    }
+
+    .s3 .row > div {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .btn-font {
+        width: 80%;
+        font-size: 20px !important;
+    }
+
+   
+
+    .text {
+        font-size: 16px;
+    }
+
+    .text-par {
+        font-size: 18px;
+    }
+
+    .card-back {
+        font-size: 18px;
+    }
+
+    .moreLink {
+        font-size: 16px;
+    }
+}

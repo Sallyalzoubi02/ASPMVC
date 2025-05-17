@@ -1,9 +1,6 @@
 ﻿@model RecyclingRequestVm
 
-@section Styles{
-    <link rel="stylesheet" href="~/css/RecyclingRequest.css" />
 
-}
 
 <div class="step-content">
     <h4 class="step-title text-center mb-4">معلومات العنصر</h4>
@@ -55,8 +52,17 @@
                         <i class="fas fa-hashtag"></i>
                     </span>
                     <input asp-for="Quantity" name="Quantity" type="number" min="1" max="100"
-                           class="form-control" placeholder="عدد القطع" required />
-                    <span class="input-group-text">قطعة</span>
+                           class="form-control" placeholder="عدد القطع" required style="
+                        border-top-left-radius: 0 !important;
+                        border-bottom-left-radius: 0 !important;
+                        border-top-right-radius: 0 !important;
+                        border-bottom-right-radius: 0 !important;" />
+                    <span class="input-group-text" style=" 
+                        border-top-left-radius: 5px !important;
+                        border-bottom-left-radius: 5px !important;
+                        border-top-right-radius: 0 !important;
+                        border-bottom-right-radius: 0 !important;"
+                    >قطعة</span>
                 </div>
                 <span asp-validation-for="Quantity" class="text-danger small"></span>
             </div>

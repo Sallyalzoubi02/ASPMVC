@@ -11,22 +11,21 @@
             <div class="row d-flex justify-content-between align-items-center">
                 <div class="col-md-6">
                     <div class="d-flex flex-column welcome align-items-center justify-content-center hidden animate">
-                        <img src="image/logo-with-title2.png" class="hidden animate mb-5" width="80%" alt="">
-                        <button type="button" class="btn btn-success btn-font laz ">
-                            سجل الأن <img class="pe-4"
-                                          src="image/Arrow 2.png" alt="">
-                        </button>
+                    <img src="image/logo-with-title2.png" class="hidden animate logoImg mb-5" alt="">
+                    <button type="button" class="btn btn-success btn-font laz pulse">
+                        سجل الأن <img class="pe-4" src="image/Arrow 2.png" alt="">
+                    </button>
                     </div>
                 </div>
                 <div class="col-md-5 m">
-                    <div class=" hidden2 animate2">
-                          <img src="image/h6-background-2.png" class="mt-4 rotate-earth" width="80%">
+                <div class=" hidden2 animate2">
+                          <img src="image/h6-background-2.png" class="mt-4 rotate-earth" >
                     </div>
                 </div>
             </div>
         </div>
     </header>
-    <section class="mt-5 mb-5">
+    <section id="section1" class="mt-5 mb-5">
         <div class="container-fluid p-5">
 
 
@@ -94,7 +93,7 @@
         </div>
     </section>
 
-    <section class="s2 mt-5">
+    <section id="section2" class="s2 mt-5">
 
         <div class="container-fluid">
             <div class="row ">
@@ -155,55 +154,90 @@
         </div>
     </section>
 
-    <section class="s3 mar2">
+    <section id="section3" class="s3 mar2">
         <div class="container-fluid">
             <div class="row d-flex justify-content-center">
                 <div class="col-md-5">
                     <img class="simg" src="image/home.jpg" alt="" width="100%">
                 </div>
-                <div class="col-md-6 d-flex flex-column justify-content-center align-items-start">
-                    <h1>ثقف نفسك من أجل أردن أخضر</h1>
-                    <p class="text-par">
-                        نعمل على تعزيز الوعي البيئي وتشجيع ثقافة إعادة التدوير كجزء من نمط حياتنا اليومي. نسعى
-                        لتحفيز الأفراد والمجتمعات على اتخاذ خطوات بسيطة نحو تقليل النفايات وإعادة استخدامها، مما
-                        يسهم في خلق مستقبل أكثر استدامة وازدهارًا في الأردن.
-                    </p>
-
-                    <div class="d-flex justify-content-end w-100">
-                        <!-- إضافة div جديد -->
-                        <a href="#" target="_blank" rel="" class="moreLink">
-                            المزيد<i class="fa-solid fa-arrow-left me-2"></i>
-                        </a>
-                    </div>
+            <div class="col-md-6 d-flex flex-column justify-content-center align-items-start">
+                <h1 class="mb-4">ثقف نفسك من أجل أردن أخضر</h1>
+                <p class="text-par mb-4">
+                    نعمل على تعزيز الوعي البيئي وتشجيع ثقافة إعادة التدوير...
+                </p>
+                <div class="d-flex justify-content-end w-100">
+                    <a href="#" target="_blank" rel="" class="moreLink">
+                        المزيد<i class="fa-solid fa-arrow-left me-2"></i>
+                    </a>
                 </div>
+            </div>
             </div>
         </div>
     </section>
 
-    <section class="s3 mar2">
-        <div class="container-fluid">
-            <div class="row d-flex justify-content-center">
-
-                <div class="col-md-6 d-flex flex-column justify-content-center align-items-start">
-                    <h1>كن جزاءً منا </h1>
-                    <p class="text-par">
-                        كن جزءًا من التغيير وازرع الأثر مع كل خطوة! ابدأ بإعادة الاستخدام والتدوير لتحافظ على بيئتنا
-                        الجميلة. مع كل عملية تدوير تقوم بها، ستكتسب نقاطًا يمكنك استبدالها ببطاقات خصم مميزة لدى
-                        شركائنا. انضم إلينا الآن وكن جزءًا من رحلتنا نحو أردن أكثر استدامة. تدويرك اليوم يعني
-                        توفيرًا لك وغدًا أخضر للجميع
-                    </p>
-
-                    <div class="d-flex justify-content-end w-100">
-                        <!-- إضافة div جديد -->
+    <section id="section4" class="s3 mar2">
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-center flex-md-row flex-column-reverse">
+            <div class="col-md-5 order-md-2">
+                <img class="simg" src="image/home join.jpg" alt="" width="100%">
+            </div>
+            <div class="col-md-6 d-flex flex-column justify-content-center align-items-start order-md-1">
+                <h1>كن جزءاً منا</h1>
+                <p class="text-par">
+                    كن جزءًا من التغيير وازرع الأثر مع كل خطوة! ابدأ بإعادة الاستخدام والتدوير لتحافظ على بيئتنا
+                    الجميلة. مع كل عملية تدوير تقوم بها، ستكتسب نقاطًا يمكنك استبدالها ببطاقات خصم مميزة لدى
+                    شركائنا. انضم إلينا الآن وكن جزءًا من رحلتنا نحو أردن أكثر استدامة. تدويرك اليوم يعني
+                    توفيرًا لك وغدًا أخضر للجميع
+                </p>
+                <div class="d-flex justify-content-end w-100">
                     <a asp-controller="Home" asp-action="JoinUs" class="moreLink">
-                            المزيد<i class="fa-solid fa-arrow-left me-2"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-md-5">
-                    <img class="simg" src="image/home join.jpg" alt="" width="100%">
+                        المزيد<i class="fa-solid fa-arrow-left me-2"></i>
+                    </a>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scroll to sections
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if(targetId !== '#') {
+                        const targetElement = document.querySelector(targetId);
+                        if(targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }
+                });
+            });
+
+            // Animation on scroll
+            const sections = document.querySelectorAll('section');
+
+            function checkScroll() {
+                sections.forEach(section => {
+                    const sectionTop = section.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+
+                    if (sectionTop < windowHeight * 0.75) {
+                        section.classList.add('visible-section');
+                    }
+                });
+            }
+
+            // Initial check
+            checkScroll();
+
+            // Check on scroll
+            window.addEventListener('scroll', checkScroll);
+        });
+    </script>
+}
