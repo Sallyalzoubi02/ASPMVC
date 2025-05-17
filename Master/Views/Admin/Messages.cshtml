@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Master.Models.Contact>
+
+@{
+    ViewData["Title"] = "Contact Messages";
+    Layout = "_AdminLayout";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Contact Messages</h2>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>From</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="@(!item.IsRead ? "table-warning" : "")">
+                        <td>@item.FirstName @item.LastName</td>
+                        <td>@item.Subject</td>
+                        <td>@item.CreatedAt?.ToString("g")</td>
+                        <td>
+                            @if (item.IsRead)
+                            {
+                                <span class="badge bg-success">Read</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">New</span>
+                            }
+                            @if (!string.IsNullOrEmpty(item.ReplyMessage))
+                            {
+                                <span class="badge bg-primary ml-1">Replied</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="MessageDetails" asp-route-id="@item.Id" class="btn btn-sm btn-success">View</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

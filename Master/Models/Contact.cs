@@ -18,4 +18,10 @@ public partial class Contact
     public string Message { get; set; } = null!;
 
     public DateTime? CreatedAt { get; set; }
+
+    public bool IsRead { get; set; }
+
+    public string? ReplyMessage { get; set; }
+
+    public DateTime? ReplyDate { get; set; }
 }

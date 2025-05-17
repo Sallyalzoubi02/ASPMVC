@@ -32,6 +32,37 @@
             background: #fff !important;
         }
     </style>
+
+    <style>
+    @@media print {
+        body * {
+            visibility: hidden;
+        }
+        .table-responsive, .table-responsive * {
+            visibility: visible;
+        }
+        .table-responsive {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+    }
+    
+    /* تحسين مظهر الجداول للطباعة */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table th, .table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: right;
+    }
+    .table th {
+        background-color: #f2f2f2;
+    }
+</style>
 }
 
 <div class="container-fluid">
@@ -39,18 +70,75 @@
         <h2 class="mb-0 text-success">
             <i class="fas fa-shopping-cart me-2"></i>@ViewData["Title"]
         </h2>
+
+        <button onclick="printToPDF()" class="btn btn-danger">
+            <i class="fas fa-file-pdf me-2"></i>طباعة PDF
+        </button>
+        
     </div>
 
-    <div class="card shadow-sm">
+    <!-- فلترة الجدول -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label">حالة الطلب:</label>
+                    <select id="statusFilter" class="form-select">
+                        <option value="all">الكل</option>
+                        <option value="delivered">تم الاستلام</option>
+                        <option value="pending">قيد الانتظار</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="typeFilter" class="form-label">نوع العنصر:</label>
+                    <select id="typeFilter" class="form-select">
+                        <option value="all">الكل</option>
+                        @foreach (var type in Model.Select(m => m.MaterialType).Distinct())
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="cityFilter" class="form-label">المدينة:</label>
+                    <select id="cityFilter" class="form-select">
+                        <option value="all">الكل</option>
+                        @foreach (var city in Model.Where(r => !string.IsNullOrEmpty(r.City)).Select(m => m.City).Distinct())
+                        {
+                            <option value="@city">@city</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="dateSort" class="form-label">ترتيب حسب التاريخ:</label>
+                    <select id="dateSort" class="form-select">
+                        <option value="newest">الأحدث أولاً</option>
+                        <option value="oldest">الأقدم أولاً</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button id="resetFilters" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-undo me-2"></i>إعادة تعيين
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- طلبات VIP -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-crown me-2"></i>الطلبات المدفوعة (VIP)</h5>
+        </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover" id="vipTable">
                     <thead class="table-success">
                         <tr>
                             <th>رقم الطلب</th>
-                            <th> مدفوع</th>
                             <th>اسم العنصر</th>
                             <th>نوع العنصر</th>
+                            <th>مدفوع</th>
                             <th>الكمية</th>
                             <th>تاريخ التسليم</th>
                             <th>ملاحظات</th>
@@ -60,21 +148,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model)
+                        @foreach (var item in Model.Where(r => r.Payment != null).OrderByDescending(r => r.RequestedDate))
                         {
                             <tr>
                                 <td>#@item.Id</td>
-                                <td>@item.Payment?.Id</td>
                                 <td>@item.MaterialName</td>
                                 <td>@item.MaterialType</td>
+                                <td>@item.Payment?.Id</td>
                                 <td>@item.Quantity</td>
                                 <td>@item.RequestedDate</td>
-                                
                                 <td>@item.Notes</td>
                                 <td>@item.User?.Name</td>
                                 <td>
-                                    
-                                    @if (item.Latitude.HasValue && item.Longitude.HasValue) 
+                                    @if (item.Latitude.HasValue && item.Longitude.HasValue)
                                     {
                                         <button class="btn btn-sm btn-outline-primary show-map-btn"
                                                 data-latitude="@item.Latitude"
@@ -90,7 +176,7 @@
                                         <span class="text-muted">لا توجد إحداثيات</span>
                                     }
                                 </td>
-
+                                <td hidden>@item.City</td>
 
                                 <td>
                                     @if (item.DeliveryStatus == false)
@@ -99,7 +185,7 @@
                                             <input type="hidden" name="id" value="@item.Id" />
                                             <select name="delstatus" class="form-select form-select-sm"
                                                     onchange="this.form.submit()">
-                                                <option selected value="false"> pindding</option>
+                                                <option selected value="false">قيد الانتظار</option>
                                                 <option value="true">تم الاستلام</option>
                                             </select>
                                         </form>
@@ -109,7 +195,85 @@
                                         <span class="badge bg-success">@GetStatusText(@item.DeliveryStatus)</span>
                                     }
                                 </td>
-                               
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- الطلبات العادية -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-recycle me-2"></i>الطلبات العادية</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="normalTable">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>رقم الطلب</th>
+                            <th>اسم العنصر</th>
+                            <th>نوع العنصر</th>
+                            <th>الكمية</th>
+                            <th>تاريخ التسليم</th>
+                            <th>ملاحظات</th>
+                            <th>العميل</th>
+                            <th>الموقع</th>
+                            <th>حالة الطلب</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Where(r => r.Payment == null).OrderByDescending(r => r.RequestedDate))
+                        {
+                            <tr>
+                                <td>#@item.Id</td>
+                                <td>@item.MaterialName</td>
+                                <td>@item.MaterialType</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.RequestedDate</td>
+                                <td>@item.Notes</td>
+                                <td>@item.User?.Name</td>
+                                <td>
+                                    @if (item.Latitude.HasValue && item.Longitude.HasValue)
+                                    {
+                                        <button class="btn btn-sm btn-outline-primary show-map-btn"
+                                                data-latitude="@item.Latitude"
+                                                data-longitude="@item.Longitude"
+                                                data-location="@item.Location"
+                                                data-toggle="modal"
+                                                data-target="#mapModal">
+                                            <i class="fas fa-map-marker-alt"></i> عرض الخريطة
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">لا توجد إحداثيات</span>
+                                    }
+                                </td>
+                                <td hidden></td>
+                                <td hidden>@item.City</td>
+
+                                <td>
+                                    @if (item.DeliveryStatus == false)
+                                    {
+                                        <form id="statusForm-@item.Id" asp-action="UpdateDeliveryStatus" method="post">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <select name="delstatus" class="form-select form-select-sm"
+                                                    onchange="this.form.submit()">
+                                                <option selected value="false">قيد الانتظار</option>
+                                                <option value="true">تم الاستلام</option>
+                                            </select>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">@GetStatusText(@item.DeliveryStatus)</span>
+                                    }
+                                </td>
+
                             </tr>
                         }
                     </tbody>
@@ -136,12 +300,8 @@
 @functions {
     string GetStatusText(bool? status)
     {
-        switch (status)
-        {
-            case true: return "تم الاستلام";
-            case false: return "لم يتم الاستلام";
-            default: return "غير محدد";
-        }
+        if (status == null) return "غير محدد";
+        return status == true ? "تم الاستلام" : "قيد الانتظار";
     }
 }
 
@@ -249,5 +409,212 @@
                 });
             }
         });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // فلترة الجدول حسب حالة الطلب
+            $('#statusFilter').change(function() {
+                applyFilters();
+            });
+
+            // فلترة الجدول حسب نوع العنصر
+            $('#typeFilter').change(function() {
+                applyFilters();
+            });
+
+             // فلترة الجدول حسب المدينة
+            $('#cityFilter').change(function(){
+                applyFilters();
+            }
+            );
+
+            // ترتيب الجدول حسب التاريخ
+            $('#dateSort').change(function() {
+                applySorting();
+            });
+
+            // إعادة تعيين الفلاتر
+            $('#resetFilters').click(function() {
+                $('#statusFilter').val('all');
+                $('#typeFilter').val('all');
+                $('#cityFilter').val('all');
+                $('#dateSort').val('newest');
+                $('table tbody tr').show(); // إظهار جميع الصفوف
+                applyFilters();
+                applySorting();
+            });
+
+            // دالة الفلترة المحدثة
+            function applyFilters() {
+                const status = $('#statusFilter').val();
+                const type = $('#typeFilter').val();
+                const city = $('#cityFilter').val();
+
+                $('table tbody tr').each(function() {
+                    const row = $(this);
+                    const statusCell = row.find('td:last');
+                    let rowStatus;
+
+                    // تحديد حالة الطلب
+                    if (statusCell.find('select[name="delstatus"]').length > 0) {
+                        rowStatus = 'pending';
+                    } else if (statusCell.find('.badge').text().includes('تم الاستلام')) {
+                        rowStatus = 'delivered';
+                    } else {
+                        rowStatus = 'pending';
+                    }
+
+                    const rowType = row.find('td:nth-child(3)').text().trim();
+                    const rowCity = row.find('td:nth-child(10)').text().trim(); // تعديل الرقم حسب عمود المدينة
+
+                    const statusMatch = (status === 'all') || (status === rowStatus);
+                    const typeMatch = (type === 'all') || (type === rowType);
+                    const cityMatch = (city === 'all') || (city === rowCity);
+
+                    if (statusMatch && typeMatch && cityMatch) {
+                        row.show();
+                    } else {
+                        row.hide();
+                    }
+                });
+            }
+
+            // دالة الترتيب المحدثة
+            function applySorting() {
+                const order = $('#dateSort').val();
+
+                $('table').each(function() {
+                    const table = $(this);
+                    const tbody = table.find('tbody');
+                    const rows = tbody.find('tr').get();
+
+                    rows.sort(function(a, b) {
+                        const dateTextA = $(a).find('td:nth-child(6)').text().trim();
+                        const dateTextB = $(b).find('td:nth-child(6)').text().trim();
+
+                        // تحويل النص إلى تاريخ
+                        const dateA = parseDate(dateTextA);
+                        const dateB = parseDate(dateTextB);
+
+                        return order === 'newest' ? dateB - dateA : dateA - dateB;
+                    });
+
+                    $.each(rows, function(index, row) {
+                        tbody.append(row);
+                    });
+                });
+            }
+
+            // دالة مساعدة لتحويل النص إلى تاريخ
+            function parseDate(dateText) {
+                // تنسيق التاريخ: "12:00:00 4/27/2025"
+                const parts = dateText.split(' ');
+                if (parts.length === 2) {
+                    const timeParts = parts[0].split(':');
+                    const dateParts = parts[1].split('/');
+
+                    if (timeParts.length === 3 && dateParts.length === 3) {
+                        return new Date(
+                            parseInt(dateParts[2]), // السنة
+                            parseInt(dateParts[0]) - 1, // الشهر (من 0-11)
+                            parseInt(dateParts[1]), // اليوم
+                            parseInt(timeParts[0]), // الساعة
+                            parseInt(timeParts[1]), // الدقائق
+                            parseInt(timeParts[2]) // الثواني
+                        );
+                    }
+                }
+                return new Date(0); // تاريخ افتراضي إذا فشل التحليل
+            }
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        // تهيئة jsPDF
+        const { jsPDF } = window.jspdf;
+
+        async function printToPDF() {
+            try {
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                let yPosition = 20;
+
+                // 1. إخفاء الفلتر مؤقتاً قبل الطباعة
+                const filterSection = document.querySelector('.card.mb-4.shadow-sm');
+                const originalFilterDisplay = filterSection.style.display;
+                filterSection.style.display = 'none';
+
+                // 2. تحديد العناصر المطلوبة بدقة
+                const sections = {
+                    vip: {
+                        title: document.querySelector('.card.shadow-sm.mb-4 .card-header'),
+                        table: document.getElementById('vipTable')
+                    },
+                    normal: {
+                        title: document.querySelector('.card.shadow-sm:not(.mb-4) .card-header'),
+                        table: document.getElementById('normalTable')
+                    }
+                };
+
+                // 3. طباعة كل قسم
+                for (const [key, section] of Object.entries(sections)) {
+                    if (!section.title || !section.table) continue;
+
+                    // إنشاء عنصر مؤقت للطباعة
+                    const printContainer = document.createElement('div');
+                    printContainer.style.position = 'absolute';
+                    printContainer.style.left = '-9999px';
+                    printContainer.style.width = '800px';
+
+                    // إضافة العنوان والجدول إلى العنصر المؤقت
+                    const titleClone = section.title.cloneNode(true);
+                    const tableClone = section.table.cloneNode(true);
+
+                    printContainer.appendChild(titleClone);
+                    printContainer.appendChild(tableClone);
+                    document.body.appendChild(printContainer);
+
+                    // التحويل إلى صورة
+                    const canvas = await html2canvas(printContainer, {
+                        scale: 2,
+                        logging: false,
+                        useCORS: true,
+                        onclone: (clonedDoc) => {
+                            clonedDoc.body.style.fontFamily = 'Arial, sans-serif';
+                            clonedDoc.body.style.direction = 'rtl';
+                        }
+                    });
+
+                    // إزالة العنصر المؤقت
+                    document.body.removeChild(printContainer);
+
+                    // إضافة الصورة إلى PDF
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = 190;
+                    const imgHeight = canvas.height * imgWidth / canvas.width;
+
+                    if (yPosition + imgHeight > 280) {
+                        pdf.addPage();
+                        yPosition = 20;
+                    }
+
+                    pdf.addImage(imgData, 'PNG', 10, yPosition, imgWidth, imgHeight);
+                    yPosition += imgHeight + 10;
+                }
+
+                // 4. إعادة عرض الفلتر
+                filterSection.style.display = originalFilterDisplay;
+
+                pdf.save('طلبات_التدوير.pdf');
+            } catch (error) {
+                console.error('حدث خطأ أثناء إنشاء PDF:', error);
+                alert('حدث خطأ أثناء إنشاء الملف، يرجى المحاولة مرة أخرى');
+                // التأكد من إعادة عرض الفلتر في حالة الخطأ
+                document.querySelector('.card.mb-4.shadow-sm').style.display = '';
+            }
+        }
     </script>
 }

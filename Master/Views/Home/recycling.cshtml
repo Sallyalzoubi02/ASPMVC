@@ -20,11 +20,11 @@
         </div>
     </header>
 
-    <div class="section-title">
+    <section id="section1" class="section-title  hidden animate">
         <p class="text-light text-center sub-size">إعادة استخدام, تقليل, إعادة تدوير</p>
-    </div>
+    </section>
 
-    <div class="container">
+    <section id="section2" class="container hidden animate">
 
         <div class="recycle-buttons mb-5">
             <button onclick="showContent('plastic')">العلب البلاستيكية</button>
@@ -33,7 +33,7 @@
             <button onclick="showContent('cartoon')">كارتون</button>
         </div>
 
-        <div id="plastic" class="recycle-content mb-5">
+        <section id="plastic" class="recycle-content mb-5">
             <h2 class="text-center">الزجاجات البلاستيكية</h2>
             <p class="text-center">
                 يمكن أن تكون الزجاجات البلاستيكية مصنوعة من مادة البولي إيثيلين تيريفثاليت (PET)،
@@ -104,9 +104,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div id="glass" class="recycle-content mb-5">
+        <section id="glass" class="recycle-content mb-5">
             <h2 class="text-center">الزجاج</h2>
             <p class="text-center">
                 الزجاجات الزجاجية مصنوعة من الزجاج، وتختلف في الحجم وطبيعة الزجاج. تُستخدم لتخزين
@@ -174,9 +174,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div id="metal" class="recycle-content mb-5">
+        <section id="metal" class="recycle-content mb-5">
             <h2 class="text-center">علبة الألمنيوم</h2>
             <p class="text-center">
                 علبة الألمنيوم، والتي تعرف عادةً بالعلبة القصدير، مصنوعة أساسًا من العنصر
@@ -249,8 +249,9 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="cartoon" class="recycle-content mb-5">
+        </section>
+
+        <section id="cartoon" class="recycle-content mb-5">
             <h2 class="text-center">الكرتون</h2>
             <p class="text-center">
                 لكرتون يُسمى أيضًا بالصندوق البسيط. يتم تصنيعه من الورق المقوى أو الورق المموج.
@@ -316,11 +317,52 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </section>
 </main>
 
 
 @section Scripts {
     <script src="~/js/recycling.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scroll to sections
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if(targetId !== '#') {
+                        const targetElement = document.querySelector(targetId);
+                        if(targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }
+                });
+            });
+
+            // Animation on scroll
+            const sections = document.querySelectorAll('section');
+
+            function checkScroll() {
+                sections.forEach(section => {
+                    const sectionTop = section.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+
+                    if (sectionTop < windowHeight * 0.75) {
+                        section.classList.add('visible-section');
+                    }
+                });
+            }
+
+            // Initial check
+            checkScroll();
+
+            // Check on scroll
+            window.addEventListener('scroll', checkScroll);
+        });
+    </script>
 }

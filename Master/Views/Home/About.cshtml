@@ -115,10 +115,12 @@
                         <li><i class="fas fa-check-circle"></i> أجور عادلة وتأمينات اجتماعية</li>
                         <li><i class="fas fa-check-circle"></i> فرص للتطور والنمو الوظيفي</li>
                     </ul>
-                    <button class="btn btn-success mt-3 animate__animated animate__pulse animate__infinite" style="    padding: 10px 25px;
+                    <a asp-action="JoinUs">
+                        <button class="btn btn-success mt-3 animate__animated animate__pulse animate__infinite" style="    padding: 10px 25px;
 ">
-                        انضم إلى فريقنا
-                    </button>
+                            انضم إلى فريقنا
+						</button>
+					</a>
                 </div>
                 <div class="col-lg-6 d-flex justify-content-center">
                     <img src="~/image/about3.jpg" class="img-fluid rounded shadow-lg animate__animated animate__fadeInRight" alt="">
@@ -172,10 +174,11 @@
             <p class="cta-text animate__animated animate__fadeInUp animate__delay-1s">
                 انضم إلينا اليوم وساهم في بناء مستقبل أكثر استدامة للأجيال القادمة
             </p>
-            <button class="btn btn-lg btn-success animate__animated animate__pulse animate__infinite" style="    padding: 10px 25px;
-">
-                ابدأ الآن
-            </button>
+            <a asp-action="Sign">
+                <button type="button" class="btn btn-lg btn-success animate__animated animate__pulse animate__infinite" style="    padding: 10px 25px;" >
+                     ابدأ الآن
+				</button>
+			</a>
         </div>
     </section>
 

@@ -60,13 +60,7 @@
     </h2>
 
 </div>
-@if (TempData["ToastrMessage"] != null)
-{
-    <div class="alert alert-@TempData["ToastrType"]">
-        @TempData["ToastrMessage"]
-    </div>
-      
-}
+
 
 @if (TempData["ErrorMessage"] != null)
 {
@@ -185,7 +179,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="replyModalLabel">إرسال رد</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -206,8 +200,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
-                    <button type="submit" class="btn btn-primary">إرسال</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-success">إرسال</button>
                 </div>
             </form>
         </div>
@@ -226,6 +220,12 @@
 }
 
 @section Scripts {
+    <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            createAnimatedCircles();
+
+        }
+    </script>
     <script>
         $(document).ready(function() {
             // فتح المودال - النسخة المعدلة
@@ -264,6 +264,9 @@
                             $('#replyModal .btn-primary').prop('disabled', true);
                         },
                         success: function(response) {
+                            toastr.options = {
+                            "positionClass": "toast-top-left"
+                        };
                             if(response && response.success) {
                                 $('#replyModal').modal('hide');
                                 toastr.success(response.message || 'تم الإرسال بنجاح');

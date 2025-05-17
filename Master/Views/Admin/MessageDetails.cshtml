@@ -1,0 +1,52 @@
+﻿@model Master.Models.Contact
+
+@{
+    ViewData["Title"] = "Message Details";
+    Layout = "_AdminLayout";
+
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4>@Model.Subject</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>From: @Model.FirstName @Model.LastName</h5>
+                        <p class="text-muted">@Model.Email</p>
+                        <p class="text-muted">Sent: @Model.CreatedAt?.ToString("f")</p>
+                    </div>
+
+                    <div class="message-content p-3 mb-4 bg-light rounded">
+                        <p>@Model.Message</p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.ReplyMessage))
+                    {
+                        <div class="reply-content p-3 mb-4 bg-success text-white rounded">
+                            <h5>Your Reply (@Model.ReplyDate?.ToString("f")):</h5>
+                            <p>@Model.ReplyMessage</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-action="Reply" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <div class="form-group">
+                                <label for="replyMessage">Reply Message</label>
+                                <textarea name="replyMessage" class="form-control" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success">Send Reply</button>
+                        </form>
+                    }
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Messages" class="btn btn-secondary">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

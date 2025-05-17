@@ -2,9 +2,12 @@
 using Master.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json; // لتحويل الجلسة إلى JSON
 using Master.Extensions;
-using Microsoft.AspNetCore.Http;
+
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 
 namespace Master.Controllers
 {
@@ -98,7 +101,7 @@ namespace Master.Controllers
             ViewBag.FormType = formType ?? "login";
             return View();
         }
-        [HttpPost]
+    
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
@@ -179,8 +182,20 @@ namespace Master.Controllers
                         HttpContext.Session.Remove("fromPayment");
                         }
                     }
-                
 
+                // 1. إعداد الـ Claims للمصادقة
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Email),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, user.UserType) // لازم تكون Admin مثل قاعدة البيانات
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+
+                // 2. تسجيل الدخول باستخدام الكوكيز
+                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
                 HttpContext.Session.SetString("logged", "true");
                 HttpContext.Session.SetInt32("UserId", user.Id);

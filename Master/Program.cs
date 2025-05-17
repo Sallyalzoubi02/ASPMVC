@@ -1,5 +1,6 @@
 ﻿using Master.Extensions;
 using Master.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +26,11 @@ builder.Services.AddCors(options =>
 builder.Services.AddTransient<EmailService>();
 builder.Services.AddScoped<EcoPointsService>();
 
-// ثم بعد var app = builder.Build();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Home/Login"; // أو المسار الخاص بك
+    });
 
 
 builder.Services.AddSession(options =>

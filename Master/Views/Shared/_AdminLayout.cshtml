@@ -134,6 +134,20 @@
                             الفواتير
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Messages" ? "active" : "")"
+                           asp-controller= "Admin" asp-action="Messages" id="Messages-link">
+                            <i class="fas fa-message"></i>
+
+                            الرسائل
+                            @if (ViewBag.UnreadMessagesCount > 0)
+                            {
+                                <span class="badge bg-warning">@ViewBag.UnreadMessagesCount</span>
+                            }
+                        </a>
+                    </li>
+
                     <li class="nav-item">
                         <a asp-action="logout" class="nav-link" id="logout-link">
                             <i class="fa-solid fa-right-from-bracket"></i>
@@ -142,11 +156,6 @@
                     </li>
                 </ul>
 
-                <div class="mt-auto text-center text-white">
-                    <img src="https://via.placeholder.com/80" alt="User" class="rounded-circle mb-2" width="60">
-                    <h6>مستخدم النظام</h6>
-                    <p class="small text-white-50">مدير النظام</p>
-                </div>
             </div>
         </div>
 
@@ -206,6 +215,23 @@
                 }
             });
         });
+    </script>
+
+    <script>
+        // تحديث عدد الرسائل كل 30 ثانية
+        setInterval(async () => {
+            const response = await fetch('/Admin/GetUnreadMessagesCount');
+            const count = await response.json();
+            const badge = document.querySelector('#Messages-link .badge');
+
+            if (count > 0) {
+                badge?.remove();
+                document.querySelector('#Messages-link').insertAdjacentHTML('beforeend',
+                    `<span class="badge bg-warning">${count}</span>`);
+            } else {
+                badge?.remove();
+            }
+        }, 30000);
     </script>
 
     @RenderSection("Scripts", required: false)

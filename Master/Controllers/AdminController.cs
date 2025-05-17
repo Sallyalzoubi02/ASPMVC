@@ -1,13 +1,17 @@
 ﻿using Master.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Master.Controllers
 {
+
     public class AdminController : Controller
     {
         private readonly MyDBContext _dbContext;
@@ -98,6 +102,9 @@ namespace Master.Controllers
             ViewBag.TopProducts = topProducts;
             ViewBag.LatestOrders = latestOrders;
 
+            // حساب الرسائل غير المقروءة وإضافتها لـ ViewBag
+            // استخدم .Result (لكن احذر قد يسبب Deadlocks في بعض الحالات)
+            ViewBag.UnreadMessagesCount = _dbContext.Contacts.CountAsync(c => !c.IsRead).Result;
             return View();
         }
 
@@ -119,17 +126,16 @@ namespace Master.Controllers
 
             return View(category);
         }
-        // GET: AdminController/Details/5
-        
 
-        // GET: AdminController/Create
+
+        // GET: AdminController/CreateCategory
         public ActionResult CreateCategory()
         {
 
             return View();
         }
 
-        // POST: AdminController/Create
+        // POST: AdminController/CreateCategory
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateCategory(Category category)
@@ -203,7 +209,7 @@ namespace Master.Controllers
 
             return View(products);
         }
-        // GET: Product/EditProduct/5
+        // GET: Product/EditProduct/id
         public async Task<IActionResult> EditProduct(int? id)
         {
             if (id == null)
@@ -548,12 +554,7 @@ namespace Master.Controllers
         
 
         [HttpPost]
-        public async Task<IActionResult> SendReply(
-    int id,
-    string email,
-    string status,
-    string replyMessage,
-    [FromServices] EmailService emailService)
+        public async Task<IActionResult> SendReply(int id,string email, string status,string replyMessage,[FromServices] EmailService emailService)
         {
             try
             {
@@ -595,7 +596,7 @@ namespace Master.Controllers
         }
 
 
-        //------------------------------------subscribtion---------------------------------------
+        //------------------------------------subscription---------------------------------------
 
         public ActionResult subscription()
         {
@@ -640,5 +641,80 @@ namespace Master.Controllers
 
             return View(vouchers);
         }
+
+
+        //--------------------------------Messages-------------------------------------------------
+
+        // لوحة إدارة الرسائل (للمسؤول)
+        public async Task<IActionResult> Messages()
+        {
+            var messages = await _dbContext.Contacts
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+            return View(messages);
+        }
+
+        // عرض رسالة معينة
+        public async Task<IActionResult> MessageDetails(int id)
+        {
+            var message = await _dbContext.Contacts.FindAsync(id);
+            if (message == null)
+            {
+                return NotFound();
+            }
+
+            // وضع علامة مقروءة عند فتح الرسالة
+            if (!message.IsRead)
+            {
+                message.IsRead = true;
+                _dbContext.Update(message);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            return View(message);
+        }
+
+
+        // إرسال رد
+        [HttpPost]
+        public async Task<IActionResult> Reply(int id, string replyMessage, [FromServices] EmailService emailService)
+        {
+            var message = await _dbContext.Contacts.FindAsync(id);
+            if (message == null)
+            {
+                return NotFound();
+            }
+
+            message.ReplyMessage = replyMessage;
+            message.ReplyDate = DateTime.Now;
+            _dbContext.Update(message);
+            await _dbContext.SaveChangesAsync();
+
+
+            // إرسال البريد الإلكتروني
+            string subject = $"نقدر تغذيتك الراجعه و مشاركة رأيك حول الخدمات";
+            string emailBody = $@"
+            <h2>مرحباً {message.FirstName} {message.LastName},</h2>
+            <p>نقدر تغذيتك الراجعه و مشاركة رأيك حول الخدمات</p>
+            <div style='background-color:#f8f9fa; padding:15px; border-radius:5px;'>
+                <p>{message.ReplyMessage}</p>
+            </div>
+            <p>مع تحياتنا،<br/>فريق أثر</p>";
+
+
+            await emailService.SendEmailAsync(message.Email, subject, emailBody);
+
+            
+            return RedirectToAction("MessageDetails", new { id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUnreadMessagesCount()
+        {
+            var count = await _dbContext.Contacts.CountAsync(c => !c.IsRead);
+            return Json(count);
+        }
+
+
     }
 }

@@ -12,6 +12,43 @@
         </h2>
     </div>
 
+    <!-- فلترة الجدول -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label">حالة الطلب:</label>
+                    <select id="statusFilter" class="form-select">
+                        <option value="all">الكل</option>
+                        <option value="جاري المعالجة">جاري المعالجة</option>
+                        <option value="تم الشحن">تم الشحن</option>
+                        <option value="تم التوصيل">تم التوصيل</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="typeFilter" class="form-label">حالة الدفع:</label>
+                    <select id="typeFilter" class="form-select">
+                        <option value="all">الكل</option>
+                        <option value="تم الدفع">تم الدفع</option>
+                        <option value="بانتظار الدفع">بانتظار الدفع</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="dateSort" class="form-label">ترتيب حسب:</label>
+                    <select id="dateSort" class="form-select">
+                        <option value="newest">الأحدث أولاً</option>
+                        <option value="oldest">الأقدم أولاً</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button id="resetFilters" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-undo me-2"></i>إعادة تعيين
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
@@ -223,6 +260,94 @@
             document.body.innerHTML = originalContents;
             location.reload();
         }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // فلترة الجدول حسب حالة الطلب
+            $('#statusFilter').change(applyFilters);
+
+            // فلترة الجدول حسب حالة الدفع
+            $('#typeFilter').change(applyFilters);
+
+            // ترتيب الجدول حسب التاريخ
+            $('#dateSort').change(applySorting);
+
+            // إعادة تعيين الفلاتر
+            $('#resetFilters').click(resetFilters);
+
+            // دالة الفلترة المحدثة
+            function applyFilters() {
+                const status = $('#statusFilter').val();
+                const paymentStatus = $('#typeFilter').val();
+
+                $('table tbody tr').each(function() {
+                    const row = $(this);
+
+                    // تحديد حالة الطلب (العمود الثاني)
+                    let orderStatus = '';
+                    const statusSelect = row.find('select[name="OrderStatus"]');
+                    const statusBadge = row.find('td:nth-child(2) .badge');
+
+                    if (statusSelect.length > 0) {
+                        orderStatus = statusSelect.find('option:selected').text();
+                    } else if (statusBadge.length > 0) {
+                        orderStatus = statusBadge.text().trim();
+                    }
+
+                    // تحديد حالة الدفع (العمود الخامس)
+                    let paymentStatusText = '';
+                    const paymentSelect = row.find('select[name="PaymentStatus"]');
+                    const paymentBadge = row.find('td:nth-child(5) .badge');
+
+                    if (paymentSelect.length > 0) {
+                        paymentStatusText = paymentSelect.find('option:selected').text();
+                    } else if (paymentBadge.length > 0) {
+                        paymentStatusText = paymentBadge.text().trim();
+                    }
+
+                    // تطبيق الفلاتر
+                    const statusMatch = (status === 'all') || (orderStatus === status);
+                    const paymentMatch = (paymentStatus === 'all') || (paymentStatusText === paymentStatus);
+
+                    if (statusMatch && paymentMatch) {
+                        row.show();
+                    } else {
+                        row.hide();
+                    }
+                });
+            }
+
+            // دالة إعادة التعيين
+            function resetFilters() {
+                $('#statusFilter').val('all');
+                $('#typeFilter').val('all');
+                $('#dateSort').val('newest');
+                $('table tbody tr').show();
+            }
+
+            // دالة الترتيب حسب التاريخ
+            function applySorting() {
+                const order = $('#dateSort').val();
+                const table = $('table');
+                const tbody = table.find('tbody');
+                const rows = tbody.find('tr').get();
+
+                rows.sort(function(a, b) {
+                    const dateTextA = $(a).find('td:nth-child(4)').text().trim();
+                    const dateTextB = $(b).find('td:nth-child(4)').text().trim();
+
+                    const dateA = new Date(dateTextA);
+                    const dateB = new Date(dateTextB);
+
+                    return order === 'newest' ? dateB - dateA : dateA - dateB;
+                });
+
+                $.each(rows, function(index, row) {
+                    tbody.append(row);
+                });
+            }
+        });
     </script>
 }
 

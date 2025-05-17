@@ -54,7 +54,6 @@
                             <th>المدينة</th>
                             <th>الموقع</th>
                             <th>طريقة الدفع</th>
-                            <th>العمليات</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,19 +93,7 @@
                                     }
                                 </td>
                                 <td>@GetPaymentMethodArabic(item.PaymentMethod)</td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
-                                            <i class="fas fa-info-circle"></i>
-                                        </a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </a>
-                                    </div>
-                                </td>
+                                
                             </tr>
                         }
                     </tbody>
