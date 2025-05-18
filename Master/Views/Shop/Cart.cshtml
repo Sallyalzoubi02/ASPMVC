@@ -211,6 +211,7 @@
 </div> 
 @section Scripts {
     <script src="~/js/cart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // دوال معالجة السلة المؤقتة (لغير المسجلين)
         async function updateTempQuantity(productId, change, event) {
@@ -416,42 +417,73 @@
             }
         }
 
-        async function removeItem(productId, event) {
+                async function removeItem(productId, event) {
             event.preventDefault();
 
-            if (confirm('هل أنت متأكد من إزالة هذا المنتج من السلة؟')) {
-                try {
-                    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
-                    const response = await fetch('/Shop/RemoveItem', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'RequestVerificationToken': token
-                        },
-                        body: JSON.stringify({
-                            ProductId: productId
-                        })
+            // استخدام SweetAlert للتأكيد
+            const { isConfirmed } = await Swal.fire({
+                title: 'إزالة المنتج',
+                text: 'هل أنت متأكد من رغبتك في إزالة هذا المنتج من السلة؟',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، أزل المنتج',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                reverseButtons: true
+            });
+
+            if (!isConfirmed) return;
+
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                const response = await fetch('/Shop/RemoveItem', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({
+                        ProductId: productId
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    await Swal.fire({
+                        title: 'تمت الإزالة',
+                        text: 'تم إزالة المنتج من السلة بنجاح',
+                        icon: 'success',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: false
                     });
 
-                    const result = await response.json();
-                    if (result.success) {
-                        // إزالة الصف من الجدول
-                        event.target.closest('tr').remove();
+                    // إزالة الصف من الجدول
+                    event.target.closest('tr').remove();
 
-                        // تحديث المجموع الكلي
-                        updateCartTotals();
-
-                        // إظهار رسالة نجاح
-                        showToast('تم إزالة المنتج بنجاح');
-                    } else {
-                        alert(result.message || 'حدث خطأ أثناء الإزالة');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('حدث خطأ في الاتصال بالخادم');
+                    // تحديث المجموع
+                    updateCartTotals();
+                } else {
+                    await Swal.fire({
+                        title: 'خطأ',
+                        text: result.message || 'حدث خطأ أثناء الإزالة',
+                        icon: 'error',
+                        confirmButtonText: 'حسناً'
+                    });
                 }
+            } catch (error) {
+                console.error('Error:', error);
+                await Swal.fire({
+                    title: 'خطأ في الاتصال',
+                    text: 'تعذر الاتصال بالخادم: ' + error.message,
+                    icon: 'error',
+                    confirmButtonText: 'حسناً'
+                });
             }
         }
+
 
         // دالة مساعدة لعرض الرسائل
         function showToast(message) {

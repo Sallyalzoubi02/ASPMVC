@@ -19,7 +19,8 @@
             // الصفحات اللي ما بدنا نتحقق فيها من السيشن
             var allowedPaths = new[]
             {
-                "/", "/Home", "/Shop","/About","/recycling","/contact","/JoinUs", "/Cart", "/Home/Sign", "/Register","/Login"
+                "/", "/Home", "/Shop","/About","/recycling","/contact","/JoinUs",
+                "/Cart", "/Home/Sign", "/Register","/Login","/ProductDetails"
             };
 
             bool isPublic = allowedPaths.Any(p => path.StartsWithSegments(p));

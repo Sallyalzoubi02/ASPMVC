@@ -298,9 +298,9 @@ namespace Master.Controllers
             _db.CartItems.RemoveRange(cartItems);
             await _db.SaveChangesAsync();
 
-            
 
-            return RedirectToAction("profile", "User");
+
+            return Json(new { success = true, redirectUrl = Url.Action("Profile", "User") });
         }
 
         //---------------------------------------------Transfer Temp Cart To User Cart-------------------------------
@@ -486,7 +486,7 @@ namespace Master.Controllers
                 HttpContext.Session.Set("TempCart", tempCart);
                 Console.Write(HttpContext.Session.Get("TempCart"));
             }
-
+            TempData["success"] = "إضافة منتج الى السلة";
             return RedirectToAction("Shop", "Shop"); // أو عرض رسالة نجاح
 
 
@@ -559,6 +559,7 @@ namespace Master.Controllers
 
         public IActionResult Payment()
         {
+            
             return View();
         }
     }
