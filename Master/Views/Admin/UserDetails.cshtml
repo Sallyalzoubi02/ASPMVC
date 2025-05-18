@@ -1,0 +1,254 @@
+﻿@model Master.Models.User
+@{
+    ViewData["Title"] = "تفاصيل المستخدم";
+    Layout = "_AdminLayout";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-success">
+            <i class="fas fa-user-circle me-2"></i>@ViewData["Title"]
+        </h2>
+        <a asp-action="Users" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>العودة للقائمة
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- البطاقة الأساسية للمعلومات -->
+        <div class="col-md-4 mb-4">
+            <div class="card user-details-card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">المعلومات الأساسية</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <img src="https://ui-avatars.com/api/?name=@Model.Name&background=198754&color=fff&size=150"
+                             class="rounded-circle img-thumbnail" alt="صورة المستخدم">
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>الاسم الكامل:</strong> @Model.Name
+                        </li>
+                        <li class="list-group-item">
+                            <strong>البريد الإلكتروني:</strong> @Model.Email
+                        </li>
+                        <li class="list-group-item">
+                            <strong>الهاتف:</strong> @Model.Phone
+                        </li>
+                        <li class="list-group-item">
+                            <strong>المدينة:</strong> @Model.City
+                        </li>
+                        <li class="list-group-item">
+                            <strong>العنوان:</strong> @Model.Location
+                        </li>
+                        <li class="list-group-item">
+                            <strong>تاريخ الميلاد:</strong> @Model.BirthDate?.ToString("yyyy/MM/dd")
+                        </li>
+                        <li class="list-group-item">
+                            <strong>الجنس:</strong> @Model.Gender
+                        </li>
+                        <li class="list-group-item">
+                            <strong>نوع المستخدم:</strong>
+                            <span class="badge @(Model.UserType == "company" ? "bg-primary" : "bg-secondary")">
+                                @Model.UserType
+                            </span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>النقاط:</strong>
+                            <span class="badge bg-warning text-dark">@Model.Points</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- معلومات إضافية حسب نوع المستخدم -->
+        <div class="col-md-8">
+            @if (Model.UserType == "company")
+            {
+                <div class="card user-details-card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">معلومات الشركة</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Companies != null && Model.Companies.Any())
+                        {
+                            foreach (var company in Model.Companies)
+                            {
+                                <div class="mb-3">
+                                    <h6 class="section-title">@company.CompanyName</h6>
+                                    <p class="mb-1"><strong>المالك:</strong> @Model.Name</p>
+                                    <!-- يمكنك إضافة المزيد من معلومات الشركة هنا -->
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted">لا توجد معلومات شركة مسجلة</p>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- طلبات التدوير -->
+            <div class="card user-details-card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">طلبات التدوير</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecyclingRequests != null && Model.RecyclingRequests.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>نوع المادة</th>
+                                        <th>الكمية</th>
+                                        <th>الحالة</th>
+                                        <th>التاريخ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var request in Model.RecyclingRequests.OrderByDescending(r => r.RequestedDate))
+                                    {
+                                        <tr>
+                                            <td>@request.MaterialType</td>
+                                            <td>@request.Quantity</td>
+                                            <td>
+                                                <span class="badge @(request.DeliveryStatus == true ? "bg-success" : "bg-warning text-dark")">
+                                                    @(request.DeliveryStatus == true ? "منتهي" : "قيد الانتظار")
+                                                </span>
+                                            </td>
+                                            <td>@request.RequestedDate.ToString("yyyy/MM/dd")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">لا توجد طلبات تدوير</p>
+                    }
+                </div>
+            </div>
+
+            <!-- الطلبات والمنتجات -->
+            <div class="card user-details-card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">الطلبات السابقة</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Orders != null && Model.Orders.Any())
+                    {
+                        <div class="accordion" id="ordersAccordion">
+                            @foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt))
+                            {
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading@(order.Id)">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#collapse@(order.Id)" aria-expanded="false"
+                                                aria-controls="collapse@(order.Id)">
+                                            طلب #@order.Id - @order.CreatedAt?.ToString("yyyy/MM/dd") -
+                                            <span class="ms-2 badge @(order.OrderStatus == "مكتمل" ? "bg-success" : "bg-warning text-dark")">
+                                                @order.OrderStatus
+                                            </span>
+                                            <span class="ms-2">المجموع: @order.TotalAmount.ToString("C")</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse@(order.Id)" class="accordion-collapse collapse"
+                                         aria-labelledby="heading@(order.Id)" data-bs-parent="#ordersAccordion">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>المنتج</th>
+                                                            <th>الكمية</th>
+                                                            <th>السعر</th>
+                                                            <th>المجموع</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var item in order.OrderItems)
+                                                        {
+                                                            <tr>
+                                                                <td>@item.Product?.Name</td>
+                                                                <td>@item.Quantity</td>
+                                                                <td>@item.Price.ToString("C")</td>
+                                                                <td>@((item.Quantity * item.Price).ToString("C"))</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="mt-3">
+                                                <p><strong>عنوان التوصيل:</strong> @order.DeliveryAddress</p>
+                                                <p><strong>تاريخ التوصيل:</strong> @order.DeliveryTime.ToString("yyyy/MM/dd")</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">لا توجد طلبات سابقة</p>
+                    }
+                </div>
+            </div>
+
+            <!-- الكوبونات -->
+            <div class="card user-details-card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">الكوبونات</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Coupons != null && Model.Coupons.Any())
+                    {
+                        <div class="row">
+                            @foreach (var coupon in Model.Coupons)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <h6 class="card-title">كود: <span class="text-primary">@coupon.Code</span></h6>
+                                            <p class="card-text">
+                                                خصم: @coupon.DiscountPercentage%<br>
+                                                ينتهي في: @coupon.ExpiryDate?.ToString("yyyy/MM/dd")<br>
+                                                الحالة: <span class="badge @(coupon.IsActive ? "bg-success" : "bg-secondary")">
+                                                    @(coupon.IsActive ? "نشط" : "منتهي")
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">لا توجد كوبونات</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // يمكنك إضافة أي سكريبتات إضافية هنا
+        document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة الأكورديون
+            var accordions = document.querySelectorAll('.accordion-button');
+            accordions.forEach(function(accordion) {
+                accordion.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+        });
+    </script>
+}

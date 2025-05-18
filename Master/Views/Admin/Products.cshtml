@@ -135,7 +135,7 @@
                         <i class="fas fa-eye"></i>
                     </a>
                     <form method="post" asp-action="DeleteProduct" asp-route-id="@item.Id" id="delete-form-@item.Id" style="display:inline;">
-                        <button type="button" class="btn btn-outline-danger" onclick="confirmDelete(@item.Id)">
+                            <button type="button" class="btn btn-outline-danger" onclick="confirmDelete(@item.Id)">
                             <i class="fas fa-trash"></i> 
                         </button>
                     </form>
@@ -148,7 +148,38 @@
 </table>
 
 @section Scripts {
+    @if (TempData["success"] != null)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'تم',
+                text: '@Html.Raw(TempData["success"])',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'موافق'
+            });
+        </script>
+    }
+    @if (TempData["error"] != null)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: '@TempData["error"]',
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'موافق'
+            });
+        </script>
+    }
     <script>
+        // تأكد من أن كل الأقواس مغلقة بشكل صحيح
+        document.addEventListener('DOMContentLoaded', function() {
+            createAnimatedCircles();
+        }); // <-- هنا كانت الناقصة
+
         function confirmDelete(id) {
             Swal.fire({
                 title: 'هل أنت متأكد؟',
@@ -166,14 +197,6 @@
                 }
             });
         }
-
-         // <<< تأكد إنها مغلقة
-
-          document.addEventListener('DOMContentLoaded', function() {
-            createAnimatedCircles();
-
-        }
     </script>
-
 }
 

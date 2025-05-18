@@ -7,6 +7,7 @@ using Master.Extensions;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace Master.Controllers
@@ -15,13 +16,17 @@ namespace Master.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly MyDBContext Db;
+        private readonly EmailService _emailService;
 
-        public HomeController(ILogger<HomeController> logger , MyDBContext context )
+        public HomeController(ILogger<HomeController> logger , MyDBContext context , EmailService emailService)
         {
             _logger = logger;
             Db = context;
+            _emailService = emailService;
         }
 
+
+        //---------------------------------------------Home-------------------------------
         public IActionResult Index()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -41,6 +46,7 @@ namespace Master.Controllers
             
             return View();
         }
+        //---------------------------------------------Contact us-------------------------------
 
         public IActionResult Contact()
         {
@@ -88,13 +94,18 @@ namespace Master.Controllers
             return View(model);
         }
 
+        //---------------------------------------------About-------------------------------
 
         public IActionResult About()
         {
+            ViewBag.Users = Db.Users.Count();
+            ViewBag.Volnteer = Db.VolunteerApplications.Where(v => v.Status == "مقبول").Count();
+            ViewBag.Employee = Db.EmploymentApplications.Where(v => v.Status == "مقبول").Count();
             return View();
         }
 
-       
+
+        //---------------------------------------------Sign-------------------------------
 
         public IActionResult Sign(string formType)
         {
@@ -114,6 +125,8 @@ namespace Master.Controllers
 
             if (email == "admin@athar.com" && password == "admin")
             {
+                HttpContext.Session.SetString("logged", "true");
+
                 return RedirectToAction("Index", "Admin");
             }
             // محاولة العثور على المستخدم
@@ -307,16 +320,80 @@ namespace Master.Controllers
             return RedirectToAction("Profile", "User");
         }
 
-
+        //-------------------------------forgetPassword------------------------------------------------------
         public IActionResult forgetPassword()
         {
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> CheckEmailExists(string email)
+        {
+            // التحقق من وجود البريد في قاعدة البيانات
+            var user = Db.Users.SingleOrDefault(u => u.Email == email);
+            return Json(new { exists = user != null });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendOTP([FromBody] OTPRequest request)
+        {
+            try
+            {
+                await _emailService.SendEmailAsync(request.Email,
+                    "كود التحقق لإعادة تعيين كلمة المرور",
+                    $"كود التحقق الخاص بك هو: {request.OTP}");
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "حدث خطأ أثناء إرسال البريد الإلكتروني");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var user = Db.Users.SingleOrDefault(u => u.Email == request.Email);
+            if (user == null)
+            {
+                return NotFound("المستخدم غير موجود");
+            }
+
+            try
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+                Db.Users.Update(user);
+                await Db.SaveChangesAsync();
+
+                return Ok("تم تحديث كلمة المرور بنجاح");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "حدث خطأ أثناء تحديث كلمة المرور: " + ex.Message);
+            }
+        }
+
+
+        public class OTPRequest
+        {
+            public string Email { get; set; }
+            public string OTP { get; set; }
+        }
+
+        public class ResetPasswordRequest
+        {
+            public string Email { get; set; }
+            public string NewPassword { get; set; }
+        }
+
+
+        //---------------------------------------------recycling-------------------------------
         public IActionResult recycling()
         {
             return View();
         }
+        //---------------------------------------------Join us-------------------------------
 
         public IActionResult JoinUs()
         {

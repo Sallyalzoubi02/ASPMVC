@@ -35,6 +35,7 @@
                     <thead class="table-success">
                         <tr>
                             <th>رقم الكوبون</th>
+                            <th>المستفيد</th>
                             <th> كود الخصم</th>
                             <th>النسبة </th>
                             <th>تاريخ الانتهاء</th>
@@ -47,6 +48,7 @@
                         {
                             <tr>
                                 <td>@item.Id</td>
+                                <td>@item.User.Name</td>
                                 <td>@item.Code</td>
                                 <td>@item.DiscountPercentage %</td>
                                 <td>@item.ExpiryDate</td>

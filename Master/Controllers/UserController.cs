@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Master.Extensions;
 using Master.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -301,5 +302,46 @@ namespace Master.Controllers
 
             return RedirectToAction("Profile");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(string CurrentPassword, string NewPassword, string ConfirmPassword)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId"); // أو حسب طريقة تسجيل الدخول عندك
+            if (userId == null)
+            {
+                TempData["Error"] = "يجب تسجيل الدخول أولاً.";
+                return RedirectToAction("Login");
+            }
+
+            var user = await myDb.Users.FindAsync(userId);
+            if (user == null)
+            {
+                TempData["Error"] = "المستخدم غير موجود.";
+                return RedirectToAction("Profile"); // أو أي صفحة مناسبة
+            }
+
+            // تحقق من كلمة المرور الحالية
+            if (!BCrypt.Net.BCrypt.Verify(CurrentPassword, user.Password)) // ⚠️ ملاحظة: يجب استخدام Hash في أنظمة حقيقية
+            {
+                TempData["Error"] = "كلمة المرور الحالية غير صحيحة.";
+                return RedirectToAction("Profile");
+            }
+
+            // تحقق من تطابق الجديدة مع التأكيد
+            if (NewPassword != ConfirmPassword)
+            {
+                TempData["Error"] = "كلمة المرور الجديدة وتأكيدها غير متطابقين.";
+                return RedirectToAction("Profile");
+            }
+
+            // تحديث كلمة المرور
+            user.Password = BCrypt.Net.BCrypt.HashPassword(NewPassword); ; // ⚠️ استخدم تشفير في أنظمة حقيقية
+            myDb.Users.Update(user);
+            myDb.SaveChanges();
+
+            TempData["Success"] = "تم تغيير كلمة المرور بنجاح.";
+            return RedirectToAction("Profile");
+        }
+
     }
 }

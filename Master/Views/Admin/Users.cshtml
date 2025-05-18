@@ -50,6 +50,16 @@
         td img {
             width: 100px;
         }
+
+        .info-btn {
+            color: #0f5132;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+            .info-btn:hover {
+                color: #0f5132;
+            }
     </style>
 }
 
@@ -123,11 +133,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Points)
             </td>
-           @*  <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td> *@
+            <td>
+                <a asp-action="UserDetails" asp-route-id="@item.Id" class="info-btn">
+                    <i class="fas fa-info-circle"></i>
+                </a>
+            </td>
         </tr>
 }
     </tbody>

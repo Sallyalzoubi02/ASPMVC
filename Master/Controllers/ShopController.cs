@@ -17,6 +17,7 @@ namespace Master.Controllers
         {
             _db = db;
         }
+        //---------------------------------------------View Cart-------------------------------
 
         public IActionResult Cart()
         {
@@ -53,6 +54,10 @@ namespace Master.Controllers
                 return View("Cart", tempCart);
             }
         }
+
+
+
+        //---------------------------------------------Update Quantity in cart-------------------------------
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -92,6 +97,10 @@ namespace Master.Controllers
             }
         }
 
+
+        //---------------------------------------------Remove Item from cart-------------------------------
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult RemoveItem([FromBody] CartRequest request)
@@ -120,6 +129,7 @@ namespace Master.Controllers
             }
         }
 
+        //---------------------------------------------Update Quantity in Temp cart-------------------------------
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -146,6 +156,8 @@ namespace Master.Controllers
             }
         }
 
+        //---------------------------------------------Remove Item from Temp cart-------------------------------
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult RemoveTempItem([FromBody] CartRequest request)
@@ -170,12 +182,14 @@ namespace Master.Controllers
             }
         }
 
+        //when change product(del or update quantity)
         public class CartRequest
         {
             public int ProductId { get; set; }
             public int Change { get; set; }
         }
 
+        //---------------------------------------------from cart to payment-------------------------------
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -207,6 +221,8 @@ namespace Master.Controllers
             // توجيه إلى صفحة الدفع
             return RedirectToAction("Payment");
         }
+
+        //---------------------------------------------from payment to order(convert cart to be order)-------------------------------
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -287,6 +303,7 @@ namespace Master.Controllers
             return RedirectToAction("profile", "User");
         }
 
+        //---------------------------------------------Transfer Temp Cart To User Cart-------------------------------
 
         private void TransferTempCartToUserCart(int userId)
         {
@@ -322,9 +339,12 @@ namespace Master.Controllers
                 }
             }
 
+            //اذا سجل مستخدم جديد دغري بتصير هي الكارت تاعته اما اذا فات بيوزر موجود بتنضاف العناصر اضافه
+
             _db.SaveChanges();
             HttpContext.Session.Remove("TempCart");
         }
+        //---------------------------------------------ِapply coupon-------------------------------
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -377,6 +397,8 @@ namespace Master.Controllers
             }
         }
 
+
+        //calculate the total before the coupon
         private decimal CalculateCartSubtotal()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -399,6 +421,8 @@ namespace Master.Controllers
 
             return subtotal;
         }
+
+        //---------------------------------------------add item to cart-------------------------------
 
         public IActionResult AddToCart(int productId, int quantity = 1)
         {
@@ -469,38 +493,8 @@ namespace Master.Controllers
 
         }
 
-        //[HttpPost]
-        //public IActionResult AddToTempCart(int productId, int quantity = 1)
-        //{
-        //    var product = _db.Products.Find(productId);
-        //    if (product == null) return NotFound();
+        //---------------------------------------------view shop page-------------------------------
 
-        //    // جلب السلة الحالية من الجلسة
-        //    var tempCart = HttpContext.Session.Get<List<TempCartItem>>("TempCart") ?? new List<TempCartItem>();
-
-        //    // التحقق إذا كان المنتج موجودًا مسبقًا
-        //    var existingItem = tempCart.FirstOrDefault(item => item.ProductId == productId);
-        //    if (existingItem != null)
-        //    {
-        //        existingItem.Quantity += quantity;
-        //    }
-        //    else
-        //    {
-        //        tempCart.Add(new TempCartItem
-        //        {
-        //            ProductId = product.Id,
-        //            ProductName = product.Name,
-        //            Price = product.Price,
-        //            Quantity = quantity,
-        //            ImageUrl = product.ImageUrl
-        //        });
-        //    }
-
-        //    // حفظ السلة في الجلسة
-        //    HttpContext.Session.Set("TempCart", tempCart);
-
-        //    return RedirectToAction("Shop");
-        //}
         public IActionResult Shop(string category, string company, string priceSort, int? productType)
         {
             var query = _db.Products
@@ -544,6 +538,8 @@ namespace Master.Controllers
             return View(query.ToList());
         }
 
+        //---------------------------------------------single product-------------------------------
+
         [Route("ProductDetails/{id}")]
         public IActionResult ProductDetails(int id)
         {
@@ -558,6 +554,8 @@ namespace Master.Controllers
 
             return View(product);
         }
+
+        //---------------------------------------------payment page-------------------------------
 
         public IActionResult Payment()
         {

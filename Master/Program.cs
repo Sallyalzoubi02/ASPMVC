@@ -1,4 +1,5 @@
 ﻿using Master.Extensions;
+using Master.MiddleWare;
 using Master.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -67,5 +68,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.UseSession();
+
+app.UseMiddleware<AuthMiddleware>();
 
 app.Run();

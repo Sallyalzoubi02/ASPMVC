@@ -110,6 +110,8 @@ namespace Master.Controllers
 
         public ActionResult logout()
         {
+            HttpContext.Session.SetString("logged", "false");
+
             return RedirectToAction("Index", "Home");
         }
         //----------------------------category-------------------------------
@@ -373,8 +375,8 @@ namespace Master.Controllers
                 product.CreatedAt = DateTime.Now;
                 _dbContext.Add(product);
                 await _dbContext.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                TempData["success"] = "تم اضافة منتج جديد بنجاح";
+                return RedirectToAction(nameof(Products));
             }
 
             ViewBag.Categories = _dbContext.Categories
@@ -383,6 +385,7 @@ namespace Master.Controllers
                     Value = c.Id.ToString(),
                     Text = c.CategoryName
                 }).ToList();
+            TempData["erorr"] = "تم اضافة منتج جديد بنجاح";
 
             return View(product);
         }
@@ -404,6 +407,25 @@ namespace Master.Controllers
             }
 
             return View(users);
+        }
+
+        public async Task<IActionResult> UserDetails(int id)
+        {
+            var user = await _dbContext.Users
+                .Include(u => u.Orders)
+                    .ThenInclude(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Include(u => u.RecyclingRequests)
+                .Include(u => u.Companies)
+                .Include(u => u.Coupons)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
         }
 
 
@@ -617,7 +639,7 @@ namespace Master.Controllers
         public ActionResult Voucher()
         {
             var now = DateTime.Now; // التاريخ والوقت الحالي
-            var vouchers = _dbContext.Coupons.ToList();
+            var vouchers = _dbContext.Coupons.Include(c=> c.User).ToList();
 
             if (vouchers.IsNullOrEmpty())
             {
