@@ -71,14 +71,27 @@
     <div id="card-container" class="d-flex my-5 flex-wrap justify-content-center gap-3 hidden animate align-items-center">
         @foreach (var product in Model)
         {
-            <a href="@Url.Action("ProductDetails", new { id = product.Id })" class="card" style="max-width: 250px; height:470px; text-decoration: none; color: inherit;">
-                <img src="~/@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height: 200px; object-fit: cover;">
+            <a href="@Url.Action("ProductDetails", new { id = product.Id })" class="card" style="max-width: 250px; height:470px; text-decoration: none; color: inherit; transition: transform 0.3s;">
+                <img src="~/@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height: 200px; object-fit: cover; border-bottom: 1px solid #eee;">
                 <div class="card-body">
-                    <h5 class="card-title">@product.Name</h5>
-                    <p class="card-text">@product.Description</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="h5 mb-0">@product.Price.ToString("0.00") JD</span>
-                        
+                    <h5 class="card-title" style="height: 50px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">@product.Name</h5>
+                    <p class="card-text text-muted" style="height: 50px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                        @{
+                            var descriptionLines = product.Description.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                            var shortDescription = descriptionLines.Length > 0 ? descriptionLines[0] : product.Description;
+                        }
+                        @shortDescription...
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="h5 mb-0 text-success">@product.Price.ToString("0.00") JD</span>
+                        @if (product.Stock > 0)
+                        {
+                            <span class="badge bg-success">متوفر</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">نفذت الكمية</span>
+                        }
                     </div>
                 </div>
                 <div class="card-footer d-flex justify-content-between bg-light">
@@ -86,15 +99,17 @@
                         <input type="hidden" name="productId" value="@product.Id" />
                         <input type="hidden" name="quantity" value="1" />
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-green btn-sm">
-                            إضافة الى السلة
+                        <button type="submit" class="btn btn-success btn-sm" @(product.Stock <= 0 ? "disabled" : "")>
+                            <i class="fas fa-cart-plus me-1"></i> إضافة الى السلة
                         </button>
                     </form>
+                    <span class="text-muted small align-self-center">
+                        @product.Stock متبقي
+                    </span>
                 </div>
             </a>
         }
     </div>
-
 </div>
 
 

@@ -1,0 +1,187 @@
+﻿@model Master.Models.RecyclingRequest
+
+@{
+    ViewData["Title"] = "تفاصيل طلب التدوير";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        .recycling-details-card {
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+
+            .recycling-details-card:hover {
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+        .impact-badge {
+            font-size: 0.9rem;
+            padding: 0.5rem;
+        }
+
+        .details-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        #map {
+            height: 250px;
+            width: 100%;
+            border-radius: 8px;
+            z-index: 1;
+        }
+
+        .leaflet-control-attribution {
+            font-size: 10px;
+        }
+    </style>
+}
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>تفاصيل طلب التدوير #RC-@Model.Id</h2>
+        <a asp-action="profile" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>العودة إلى سجل التدوير
+        </a>
+    </div>
+
+    <div class="card recycling-details-card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">معلومات الطلب</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <span class="details-label">نوع المادة:</span>
+                        <span class="badge bg-primary">@Model.MaterialType</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="details-label">اسم المادة:</span>
+                        <span>@Model.MaterialName</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="details-label">حالة المادة:</span>
+                        <span>@(Model.ItemCondition ?? "غير محددة")</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="details-label">الكمية:</span>
+                        <span>@Model.Quantity قطعة</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <span class="details-label">تاريخ الطلب:</span>
+                        <span>@Model.RequestedDate.ToString("yyyy/MM/dd")</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="details-label">المدينة:</span>
+                        <span>@(Model.City ?? "غير محددة")</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="details-label">حالة التوصيل:</span>
+                        <span class="badge @GetDeliveryBadge(Model.DeliveryStatus)">
+                            @GetDeliveryStatus(Model.DeliveryStatus)
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card recycling-details-card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">تفاصيل إضافية</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="details-label">الملاحظات:</span>
+                        <p>@(Model.Notes ?? "لا توجد ملاحظات")</p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Location))
+                    {
+                        <div class="mb-3">
+                            <span class="details-label">الموقع:</span>
+                            <p>@Model.Location</p>
+                        </div>
+                    }
+
+                    @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+                    {
+                        <div class="mb-3">
+                            <span class="details-label">الموقع على الخريطة:</span>
+                            <div id="map" class="mt-2"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="text-center">
+                <img src="@Model.ImageUrl" alt="صورة المادة المعاد تدويرها" class="img-fluid rounded" style="max-height: 300px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+{
+    @section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+                 document.addEventListener('DOMContentLoaded', function () {
+            const map = L.map('map').setView([32.5372080, 35.8554900], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // تحقق من أن القيم غير فارغة
+            const lat = @Model.Latitude ?? 32.5372080;
+            const lng = @Model.Longitude ?? 35.8554900;
+
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup('موقع الطلب')
+                .openPopup();
+
+            if (typeof L.control.locate === 'function') {
+                const locateControl = L.control.locate({
+                    position: 'topright',
+                    drawCircle: true,
+                    showPopup: false,
+                    icon: 'fas fa-location-arrow',
+                    metric: true,
+                    strings: {
+                        title: "عرض موقعي الحالي"
+                    }
+                }).addTo(map);
+            }
+        });
+    </script>
+    }
+}
+
+@functions {
+    string GetDeliveryBadge(bool? status)
+    {
+        return status.HasValue && status.Value ? "bg-success" : "bg-warning";
+    }
+
+    string GetDeliveryStatus(bool? status)
+    {
+        return status.HasValue ? (status.Value ? "تم التوصيل" : "قيد التوصيل") : "لم يتم التأكيد";
+    }
+}

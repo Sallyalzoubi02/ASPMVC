@@ -222,9 +222,9 @@ namespace Master.Controllers
         }
 
 
-        [HttpPost]
         public IActionResult Register(string Name, string email, string phone, string city,
-                              string location,DateOnly Bdate, string accont, string gender, string password, string? companyName)
+                      string location, DateOnly Bdate, string accont, string gender,
+                      string password, string? companyName)
         {
             var existingUser = Db.Users.SingleOrDefault(u => u.Email == email);
             if (existingUser != null)
@@ -247,17 +247,20 @@ namespace Master.Controllers
                 Points = 0
             };
 
+            // 🔹 أولًا: أضف المستخدم واحفظه للحصول على Id صالح
+            Db.Users.Add(user);
+            Db.SaveChanges();
+
+            // 🔹 ثانيًا: إذا التسجيل من صفحة الدفع، اربط السلة المؤقتة بالمستخدم الجديد
             if (HttpContext.Session.GetString("fromPayment") == "true")
             {
                 var tempCart = HttpContext.Session.Get<List<TempCartItem>>("TempCart");
                 if (tempCart != null && tempCart.Any())
                 {
-                    // 2. البحث عن سلة المستخدم الحالية
                     var userCart = Db.Carts
                         .Include(c => c.CartItems)
                         .FirstOrDefault(c => c.UserId == user.Id);
 
-                    // 3. إذا لم يكن لديه سلة، ننشئ واحدة جديدة
                     if (userCart == null)
                     {
                         userCart = new Cart
@@ -267,19 +270,18 @@ namespace Master.Controllers
                         Db.Carts.Add(userCart);
                         Db.SaveChanges();
                     }
+
                     foreach (var tempItem in tempCart)
                     {
                         var existingItem = userCart.CartItems.FirstOrDefault(ci => ci.ProductId == tempItem.ProductId);
 
                         if (existingItem != null)
                         {
-                            // إذا كان المنتج موجودًا بالفعل، نزيد الكمية
                             existingItem.Quantity += tempItem.Quantity;
                             existingItem.TotalPrice = existingItem.UnitPrice * existingItem.Quantity;
                         }
                         else
                         {
-                            // إذا كان المنتج غير موجود، نضيفه جديدًا
                             userCart.CartItems.Add(new CartItem
                             {
                                 ProductId = tempItem.ProductId,
@@ -293,31 +295,31 @@ namespace Master.Controllers
 
                     Db.SaveChanges();
 
-                    // 5. مسح السلة المؤقتة من السيشن
+                    // حذف السلة المؤقتة من السيشن
                     HttpContext.Session.Remove("TempCart");
                     HttpContext.Session.Remove("fromPayment");
                 }
             }
 
-            Db.Users.Add(user);
-            Db.SaveChanges();
+            // 🔹 ثالثًا: تسجيل الدخول تلقائيًا
+            //HttpContext.Session.SetInt32("UserId", user.Id);
+            //HttpContext.Session.SetString("UserName", user.Name);
+            //HttpContext.Session.SetString("logged", "true");
 
-            // تسجيل المستخدم تلقائي
-            HttpContext.Session.SetInt32("UserId", user.Id);
-            HttpContext.Session.SetString("UserName", user.Name);
+            // 🔹 رابعًا: إذا كان الحساب شركة، أضف بيانات الشركة
+            //if (accont == "company" && !string.IsNullOrWhiteSpace(companyName))
+            //{
+            //    var company = new Company
+            //    {
+            //        CompanyName = companyName,
+            //        OwnerId = user.Id // ربط الشركة بالمستخدم
+            //    };
+            //    Db.Companies.Add(company);
+            //    Db.SaveChanges();
+            //}
 
-            if (accont == "company" && !string.IsNullOrWhiteSpace(companyName))
-            {
-                var company = new Company
-                {
-                    CompanyName = companyName,
-                    OwnerId = user.Id // الربط مع المستخدم كـ مالك
-                };
-                Db.Companies.Add(company);
-                Db.SaveChanges();
-            }
-
-            return RedirectToAction("Profile", "User");
+            // 🔹 وأخيرًا: إعادة التوجيه لصفحة البروفايل
+            return RedirectToAction("Home", "Sign");
         }
 
         //-------------------------------forgetPassword------------------------------------------------------

@@ -112,7 +112,6 @@ public partial class MyDBContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CompanyName)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("company_name");
             entity.Property(e => e.OwnerId).HasColumnName("owner_Id");
 
@@ -276,7 +275,6 @@ public partial class MyDBContext : DbContext
                 .HasColumnName("description");
             entity.Property(e => e.ImageUrl)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("image_url");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
@@ -339,21 +337,18 @@ public partial class MyDBContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.City).HasMaxLength(100);
             entity.Property(e => e.DayOfWeek)
-                .HasMaxLength(20)
-                .IsUnicode(false)
+                .HasMaxLength(50)
                 .HasColumnName("day_of_week");
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Latitude).HasColumnType("decimal(10, 7)");
             entity.Property(e => e.Location)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("location");
             entity.Property(e => e.Longitude).HasColumnType("decimal(10, 7)");
             entity.Property(e => e.MaterialType).HasMaxLength(50);
             entity.Property(e => e.Notes)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("notes");
             entity.Property(e => e.PaymentId).HasColumnName("payment_id");
             entity.Property(e => e.PaymentMethod).HasMaxLength(50);
@@ -363,7 +358,6 @@ public partial class MyDBContext : DbContext
                 .HasColumnType("datetime");
             entity.Property(e => e.SubscriptionType)
                 .HasMaxLength(50)
-                .IsUnicode(false)
                 .HasColumnName("subscription_type");
             entity.Property(e => e.Time).HasColumnName("time");
             entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -387,40 +381,31 @@ public partial class MyDBContext : DbContext
             entity.Property(e => e.BirthDate).HasColumnName("birth_date");
             entity.Property(e => e.City)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("city");
             entity.Property(e => e.Email)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("email");
             entity.Property(e => e.Gender)
                 .HasMaxLength(50)
-                .IsUnicode(false)
                 .HasColumnName("gender");
             entity.Property(e => e.Image)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("image");
             entity.Property(e => e.Location)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("location");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("password");
             entity.Property(e => e.Phone)
-                .HasMaxLength(20)
-                .IsUnicode(false)
+                .HasMaxLength(50)
                 .HasColumnName("phone");
             entity.Property(e => e.Points).HasColumnName("points");
             entity.Property(e => e.UserType)
                 .HasMaxLength(50)
-                .IsUnicode(false)
                 .HasColumnName("user_type");
         });
 

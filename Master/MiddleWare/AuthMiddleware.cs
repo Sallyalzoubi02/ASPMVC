@@ -20,7 +20,8 @@
             var allowedPaths = new[]
             {
                 "/", "/Home", "/Shop","/About","/recycling","/contact","/JoinUs",
-                "/Cart", "/Home/Sign", "/Register","/Login","/ProductDetails"
+                "/Cart", "/Home/Sign", "/Register","/Login","/ProductDetails",
+                "/Join/SubmitEmployment","/Join/SubmitVolunteer"
             };
 
             bool isPublic = allowedPaths.Any(p => path.StartsWithSegments(p));

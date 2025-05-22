@@ -343,5 +343,26 @@ namespace Master.Controllers
             return RedirectToAction("Profile");
         }
 
+
+        public async Task<IActionResult> RecyclingDetails(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var recyclingRequest = await myDb.RecyclingRequests
+                .Include(r => r.User)
+                .Include(r => r.Payment)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (recyclingRequest == null)
+            {
+                return NotFound();
+            }
+
+            return View(recyclingRequest);
+        }
+
     }
 }

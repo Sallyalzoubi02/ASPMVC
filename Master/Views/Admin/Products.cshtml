@@ -148,14 +148,14 @@
 </table>
 
 @section Scripts {
-    @if (TempData["success"] != null)
+    @if (TempData["Success"] != null)
     {
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             Swal.fire({
                 icon: 'success',
                 title: 'تم',
-                text: '@Html.Raw(TempData["success"])',
+                text: '@Html.Raw(TempData["Success"])',
                 confirmButtonColor: '#d33',
                 confirmButtonText: 'موافق'
             });

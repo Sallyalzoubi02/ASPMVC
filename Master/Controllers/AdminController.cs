@@ -375,7 +375,7 @@ namespace Master.Controllers
                 product.CreatedAt = DateTime.Now;
                 _dbContext.Add(product);
                 await _dbContext.SaveChangesAsync();
-                TempData["success"] = "تم اضافة منتج جديد بنجاح";
+                TempData["Success"] = "تم اضافة منتج جديد بنجاح";
                 return RedirectToAction(nameof(Products));
             }
 
